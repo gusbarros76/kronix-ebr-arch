@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kronix EBR — Arquitetura & Fluxo de Processo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg2: #0f1520;
+    --bg3: #151d2e;
+    --border: #1e2d45;
+    --border-light: #263548;
+    --text: #c8d8f0;
+    --text-dim: #5a7a9a;
+    --text-bright: #e8f0ff;
+    --accent: #00b4d8;
+    --accent2: #0077b6;
+    --accent-glow: rgba(0,180,216,0.15);
+    --green: #06d6a0;
+    --green-dim: rgba(6,214,160,0.12);
+    --orange: #f77f00;
+    --orange-dim: rgba(247,127,0,0.12);
+    --red: #ef233c;
+    --red-dim: rgba(239,35,60,0.1);
+    --purple: #7b2d8b;
+    --purple-light: #c77dff;
+    --gold: #ffd60a;
+    --gold-dim: rgba(255,214,10,0.1);
+    --sap: #1a6b3c;
+    --sap-light: #29a05a;
+    --evolutio: #7c3aed;
+    --evolutio-light: #a78bfa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  .header-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.3px;
+  }
+
+  .header-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 2px;
+  }
+
+  .header-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .badge-gxp {
+    background: var(--red-dim);
+    border: 1px solid rgba(239,35,60,0.3);
+    color: #ff6b81;
+  }
+
+  .badge-anvisa {
+    background: var(--gold-dim);
+    border: 1px solid rgba(255,214,10,0.3);
+    color: var(--gold);
+  }
+
+  .badge-fda {
+    background: rgba(0,119,182,0.15);
+    border: 1px solid rgba(0,119,182,0.3);
+    color: var(--accent);
+  }
+
+  /* MAIN CONTAINER */
+  .main {
+    padding: 28px 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-label-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .section-label-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* LAYER 1: PROCESS FLOW */
+  .process-layer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .process-layer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--green), var(--accent2));
+  }
+
+  .process-title {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .process-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* FLOW PIPELINE */
+  .pipeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .pipeline-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .pipeline-connector {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 18px;
+  }
+
+  .connector-line {
+    width: 24px;
+    height: 2px;
+    background: var(--border-light);
+  }
+
+  .connector-arrow {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid var(--border-light);
+  }
+
+  /* PROCESS NODE */
+  .pnode {
+    position: relative;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    min-width: 120px;
+    max-width: 140px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .pnode:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px var(--accent-glow);
+    transform: translateY(-2px);
+  }
+
+  .pnode.start-node {
+    border-color: var(--green);
+    background: var(--green-dim);
+    box-shadow: 0 0 12px rgba(6,214,160,0.08);
+  }
+
+  .pnode.op-node {
+    border-color: var(--accent2);
+    background: rgba(0,119,182,0.08);
+    min-width: 130px;
+  }
+
+  .pnode.gxp-node {
+    border-color: rgba(239,35,60,0.4);
+    background: var(--red-dim);
+  }
+
+  .pnode.sap-node {
+    border-color: rgba(41,160,90,0.4);
+    background: rgba(41,160,90,0.08);
+  }
+
+  .pnode.gq-node {
+    border-color: rgba(255,214,10,0.4);
+    background: var(--gold-dim);
+  }
+
+  .pnode-icon {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  .pnode-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.3;
+  }
+
+  .pnode-sub {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 3px;
+  }
+
+  .pnode-tag {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-ebr { background: rgba(0,180,216,0.15); color: var(--accent); }
+  .tag-sap { background: rgba(41,160,90,0.15); color: #29a05a; }
+  .tag-evolutio { background: rgba(167,139,250,0.15); color: var(--evolutio-light); }
+  .tag-gq { background: rgba(255,214,10,0.15); color: var(--gold); }
+  .tag-wms { background: rgba(247,127,0,0.15); color: var(--orange); }
+
+  /* OPs GRID */
+  .ops-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .op-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+
+  .op-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 24px rgba(0,180,216,0.1);
+    transform: translateY(-2px);
+  }
+
+  .op-header {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .op-header-70 { background: rgba(0,119,182,0.15); border-bottom: 1px solid rgba(0,119,182,0.2); }
+  .op-header-77 { background: rgba(6,214,160,0.1); border-bottom: 1px solid rgba(6,214,160,0.2); }
+  .op-header-montagem { background: rgba(247,127,0,0.1); border-bottom: 1px solid rgba(247,127,0,0.2); }
+
+  .op-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .op-code-70 { color: var(--accent); }
+  .op-code-77 { color: var(--green); }
+  .op-code-montagem { color: var(--orange); }
+
+  .op-name { font-size: 12px; font-weight: 600; color: var(--text-bright); }
+
+  .op-body { padding: 12px 14px; }
+
+  .op-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .op-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    position: relative;
+  }
+
+  .op-step:last-child { border-bottom: none; }
+
+  .step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .dot-ebr { background: var(--accent); box-shadow: 0 0 4px var(--accent); }
+  .dot-sap { background: var(--sap-light); }
+  .dot-evolutio { background: var(--evolutio-light); }
+  .dot-gq { background: var(--gold); }
+  .dot-wms { background: var(--orange); }
+
+  .step-content { flex: 1; }
+
+  .step-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .step-system {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .step-badge {
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* LAYER 2: ARCHITECTURE */
+  .arch-layer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arch-layer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--purple-light), var(--accent), var(--green));
+  }
+
+  /* ARCH GRID */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr 180px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* SYSTEM BOXES */
+  .sys-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+
+  .sys-box:hover {
+    transform: translateY(-2px);
+  }
+
+  .sys-box-header {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sys-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .sys-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .sys-role {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 1px;
+  }
+
+  .sys-body {
+    padding: 8px 12px 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sys-detail {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  .sys-detail strong { color: var(--text); font-weight: 500; }
+
+  /* KRONIX CORE */
+  .kronix-core {
+    background: var(--bg3);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0,180,216,0.08), inset 0 0 40px rgba(0,180,216,0.02);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .gxp-boundary {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 10px;
+    border: 2px dashed rgba(239,35,60,0.25);
+    pointer-events: none;
+  }
+
+  .kronix-header {
+    background: linear-gradient(135deg, rgba(0,119,182,0.2), rgba(0,180,216,0.1));
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0,180,216,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .kronix-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  .kronix-sub {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 2px;
+  }
+
+  .kronix-body {
+    padding: 16px;
+  }
+
+  /* MODULES GRID */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .module-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .module-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .module-card.active {
+    border-color: var(--accent);
+    background: rgba(0,180,216,0.05);
+  }
+
+  .module-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+  }
+
+  .module-desc {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* AUDIT TRAIL SERVICE */
+  .audit-service {
+    background: var(--bg2);
+    border: 1px solid rgba(239,35,60,0.35);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+
+  .audit-service:hover {
+    border-color: rgba(239,35,60,0.6);
+    box-shadow: 0 0 16px rgba(239,35,60,0.08);
+  }
+
+  .audit-header {
+    background: var(--red-dim);
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(239,35,60,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .audit-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ff6b81;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .audit-body {
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .audit-component {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 7px 9px;
+    text-align: center;
+  }
+
+  .audit-comp-icon { font-size: 14px; margin-bottom: 3px; }
+  .audit-comp-name { font-size: 9px; font-weight: 600; color: var(--text); }
+  .audit-comp-desc { font-size: 8px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+
+  /* AWS INFRA */
+  .aws-infra {
+    background: var(--bg2);
+    border: 1px solid rgba(247,127,0,0.25);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .aws-title {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--orange);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .aws-title::after { content: ''; flex: 1; height: 1px; background: rgba(247,127,0,0.2); }
+
+  .aws-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .aws-chip {
+    padding: 4px 9px;
+    background: rgba(247,127,0,0.08);
+    border: 1px solid rgba(247,127,0,0.2);
+    border-radius: 4px;
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #ffa940;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .aws-chip:hover {
+    background: rgba(247,127,0,0.15);
+    border-color: rgba(247,127,0,0.4);
+  }
+
+  /* INTEGRATION ARROWS */
+  .integrations-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .integration-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+  }
+
+  .integration-card:hover {
+    border-color: var(--border-light);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+
+  .int-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+  }
+
+  .int-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .int-name { font-size: 10px; font-weight: 600; color: var(--text-bright); }
+  .int-protocol {
+    margin-left: auto;
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: var(--bg2);
+    color: var(--text-dim);
+  }
+
+  .int-detail {
+    font-size: 9px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-line { width: 16px; height: 2px; border-radius: 1px; }
+  .legend-dashed { width: 16px; height: 2px; border-radius: 1px; background: repeating-linear-gradient(90deg, rgba(239,35,60,0.5) 0, rgba(239,35,60,0.5) 4px, transparent 4px, transparent 8px); }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: var(--bg2);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 10px 14px;
+    max-width: 260px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-size: 11px;
+  }
+
+  .tooltip.visible { opacity: 1; }
+  .tooltip-title { font-weight: 600; color: var(--text-bright); margin-bottom: 5px; }
+  .tooltip-body { color: var(--text-dim); line-height: 1.5; }
+  .tooltip-adr { margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--accent); }
+
+  /* GAP INDICATOR */
+  .gap-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    background: rgba(255,214,10,0.1);
+    border: 1px solid rgba(255,214,10,0.3);
+    border-radius: 3px;
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gold);
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 24px 0;
+  }
+
+  /* RISKS PANEL */
+  .risks-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .risk-card {
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 12px 14px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .risk-high { border-color: var(--red); }
+  .risk-medium { border-color: var(--orange); }
+  .risk-low { border-color: var(--green); }
+
+  .risk-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .risk-title { font-size: 11px; font-weight: 600; color: var(--text-bright); }
+  .risk-level {
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .risk-level-high { background: var(--red-dim); color: #ff6b81; }
+  .risk-level-medium { background: var(--orange-dim); color: var(--orange); }
+  .risk-level-low { background: var(--green-dim); color: var(--green); }
+
+  .risk-body { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+
+  /* SCROLL ANIMATIONS */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.05s; }
+  .fade-in:nth-child(2) { animation-delay: 0.12s; }
+  .fade-in:nth-child(3) { animation-delay: 0.18s; }
+  .fade-in:nth-child(4) { animation-delay: 0.24s; }
+
+  /* PULSE BADGE */
+  .pulse-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(6,214,160,0.4);
+    animation: pulse 2s infinite;
+    display: inline-block;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(6,214,160,0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(6,214,160,0); }
+    100% { box-shadow: 0 0 0 0 rgba(6,214,160,0); }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+  }
+
+  .section-divider-text {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .section-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <div class="logo-mark">Kx</div>
+    <div>
+      <div class="header-title">Kronix EBR — Arquitetura & Fluxo de Processo</div>
+      <div class="header-sub">NC Tech · RBBL Wave 1 · Go Live dez/2026 · ADR-001 v3 / ADR-004 v1</div>
+    </div>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-gxp">GxP Regulado</span>
+    <span class="badge badge-anvisa">ANVISA RDC 301</span>
+    <span class="badge badge-fda">FDA 21 CFR Pt.11</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">
+      <span class="pulse-dot"></span> PROPOSTO
+    </span>
+  </div>
+</header>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-title" id="tt-title"></div>
+  <div class="tooltip-body" id="tt-body"></div>
+  <div class="tooltip-adr" id="tt-adr"></div>
+</div>
+
+<div class="main">
+
+  <!-- ======== LAYER 1: PROCESS FLOW ======== -->
+  <div class="section-divider fade-in">
+    <span class="section-divider-text">// Camada 1 — Fluxo de Processo AS-IS</span>
+    <div class="section-divider-line"></div>
+    <span class="badge badge-fda" style="font-size:9px;">Supply Chain → Chão de Fábrica</span>
+  </div>
+
+  <div class="process-layer fade-in">
+    <div class="process-title">Pipeline Principal — Da Demanda ao Produto</div>
+
+    <!-- TOP PIPELINE -->
+    <div class="pipeline" style="margin-bottom: 20px;">
+
+      <div class="pipeline-stage">
+        <div class="pnode start-node" data-tt-title="Start — Demanda Comercial" data-tt-body="Origem do processo de fabricação. Demanda de vendas dispara programação no PCP." data-tt-adr="Fora do escopo EBR — upstream SAP SD/PP">
+          <div class="pnode-icon">🏭</div>
+          <div class="pnode-label">Demanda Comercial</div>
+          <div class="pnode-sub">INÍCIO</div>
+        </div>
+      </div>
+
+      <div class="pipeline-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+
+      <div class="pipeline-stage">
+        <div class="pnode sap-node" data-tt-title="Programação Interna (PCP)" data-tt-body="Planejamento e Controle da Produção. Responsável pela abertura das Ordens de Produção no SAP PP." data-tt-adr="Integração: SAP PP → Kronix via SQS (Event Schema pendente — ADR-001)">
+          <div class="pnode-icon">📋</div>
+          <div class="pnode-label">Programação Interna (PCP)</div>
+          <div class="pnode-tag tag-sap">SAP PP</div>
+        </div>
+      </div>
+
+      <div class="pipeline-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+
+      <div class="pipeline-stage">
+        <div class="pnode op-node" data-tt-title="Abertura das OPs" data-tt-body="Ordens de Produção abertas no SAP disparam o EBR: cada OP tem uma receita associada no Kronix que deve ser executada e registrada." data-tt-adr="ADR-003: Modelo de Dados da Receita — OP como entidade raiz do BatchRecord">
+          <div class="pnode-icon">📂</div>
+          <div class="pnode-label">Abertura das OPs</div>
+          <div class="pnode-sub">3 tipos</div>
+          <div class="pnode-tag tag-sap">SAP</div>
+          <div style="margin-left: 4px; display: inline-block;" class="pnode-tag tag-ebr">EBR</div>
+        </div>
+      </div>
+
+      <div class="pipeline-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+
+      <div class="pipeline-stage">
+        <div class="pnode gxp-node" data-tt-title="Execução com Registro GxP" data-tt-body="Toda execução de receita é registrada no EBR com assinatura eletrônica, timestamp UTC e audit trail imutável. Escopo principal do Novo EBR." data-tt-adr="ADR-001 v3 · ADR-004 v1 · ADR-005 (planejado)">
+          <div class="pnode-icon">⚗️</div>
+          <div class="pnode-label">Execução com Registro GxP</div>
+          <div class="pnode-tag tag-ebr">EBR Core</div>
+        </div>
+      </div>
+
+      <div class="pipeline-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+
+      <div class="pipeline-stage">
+        <div class="pnode gq-node" data-tt-title="Liberação de Lote (GQ)" data-tt-body="Farmacêutico responsável revisa o dossiê eletrônico do lote e assina eletronicamente a liberação. Exige re-autenticação (21 CFR Part 11 §11.200)." data-tt-adr="ADR-005 (planejado): Assinatura Eletrônica e re-autenticação">
+          <div class="pnode-icon">✅</div>
+          <div class="pnode-label">Liberação de Lote (GQ)</div>
+          <div class="pnode-sub">Assinatura eletrônica</div>
+          <div class="pnode-tag tag-gq">GQ / QA</div>
+        </div>
+      </div>
+
+      <div class="pipeline-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+
+      <div class="pipeline-stage">
+        <div class="pnode sap-node" data-tt-title="Confirmação SAP + Almoxarifado" data-tt-body="EBR emite evento de encerramento da OP. SAP MM/PP confirma a ordem e movimenta o estoque de produto acabado. Fechamento do ciclo." data-tt-adr="Integração: Kronix → SAP via SQS. Gap identificado: event de confirmação de OP não documentado nos ADRs.">
+          <div class="pnode-icon">📦</div>
+          <div class="pnode-label">Confirmação SAP + Almoxarifado</div>
+          <div class="pnode-tag tag-sap">SAP MM</div>
+          <div style="margin-left: 4px; display: inline-block;" class="pnode-tag tag-wms">WMS</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- OPs GRID -->
+    <div class="section-divider" style="margin: 16px 0 14px;">
+      <span class="section-divider-text">// Ordens de Produção detalhadas</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="ops-grid">
+
+      <!-- OP 70 MANIPULAÇÃO -->
+      <div class="op-card fade-in">
+        <div class="op-header op-header-70">
+          <div>
+            <div class="op-code op-code-70">OP COD 70</div>
+            <div class="op-name">Manipulação</div>
+          </div>
+          <span class="badge badge-fda" style="font-size:8px;">GxP Crítico</span>
+        </div>
+        <div class="op-body">
+          <div class="op-steps">
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Solicitação NT → Almoxarifado</div>
+                <div class="step-system">SAP MM · movimentação de estoque</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-gq"></div>
+              <div class="step-content">
+                <div class="step-name">Emissão da Documentação (GQ)</div>
+                <div class="step-system">GQ emite BPR · Produção recebe</div>
+              </div>
+              <span class="step-badge tag-gq">GQ</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Recebimento do material (via SAP)</div>
+                <div class="step-system">Movimentação área classificada</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-evolutio"></div>
+              <div class="step-content">
+                <div class="step-name">Liberação sala de pesagem</div>
+                <div class="step-system">Pesagem no Sistema Evolutio</div>
+              </div>
+              <span class="step-badge tag-evolutio">Evolutio</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Encaminhamento PA + Excipientes</div>
+                <div class="step-system">EBR registra handoff pesagem → manipulação</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Liberação da Sala · Recebimento materiais</div>
+                <div class="step-system">Line clearance → EBR registra com assinatura</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Adição no Reator + Pré-Filtração</div>
+                <div class="step-system">Parâmetros registrados no EBR com IoT</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OP 77 ENVASE -->
+      <div class="op-card fade-in">
+        <div class="op-header op-header-77">
+          <div>
+            <div class="op-code op-code-77">OP COD 77</div>
+            <div class="op-name">Envase</div>
+          </div>
+          <span class="badge badge-fda" style="font-size:8px;">GxP Crítico</span>
+        </div>
+        <div class="op-body">
+          <div class="op-steps">
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Abastecimento Carpule / Nest (Berço)</div>
+                <div class="step-system">Movimentação material Carpule</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Solicitação NT → Almoxarifado</div>
+                <div class="step-system">Separação Selo e Plunger (via SAP)</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Liberação de Sala</div>
+                <div class="step-system">Line clearance com assinatura GQ</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Transferência do Material → Envase</div>
+                <div class="step-system">EBR registra transferência com rastreabilidade</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Transferência do Carpule</div>
+                <div class="step-system">Parâmetros de envase registrados</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Inspeção Visual</div>
+                <div class="step-system">Formulário estruturado · critérios AQL</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OP MONTAGEM CÂNULA -->
+      <div class="op-card fade-in">
+        <div class="op-header op-header-montagem">
+          <div>
+            <div class="op-code op-code-montagem">OP COD 77 GMS / 13</div>
+            <div class="op-name">Montagem da Cânula</div>
+          </div>
+          <span style="font-size:8px;" class="badge" style="background:var(--orange-dim);border-color:rgba(247,127,0,0.3);color:var(--orange);">WMS Boundary</span>
+        </div>
+        <div class="op-body">
+          <div class="op-steps">
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Solicitação NT → Almoxarifado</div>
+                <div class="step-system">Separação de material (via SAP)</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Recebimento (via SAP) → Liberação do Lote</div>
+                <div class="step-system">Conferência de material recebido</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Abastecimento da Máquina</div>
+                <div class="step-system">Parâmetros de setup registrados no EBR</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-ebr"></div>
+              <div class="step-content">
+                <div class="step-name">Montagem + Rotulagem</div>
+                <div class="step-system">EBR registra operação com rastreabilidade</div>
+              </div>
+              <span class="step-badge tag-ebr">EBR</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-wms"></div>
+              <div class="step-content">
+                <div class="step-name">Transferência para Almoxarifado</div>
+                <div class="step-system">EBR emite evento → SAP confirma OP</div>
+              </div>
+              <span class="step-badge tag-wms">WMS/SAP</span>
+            </div>
+            <div class="op-step">
+              <div class="step-dot dot-sap"></div>
+              <div class="step-content">
+                <div class="step-name">Devolução de Material</div>
+                <div class="step-system">SAP MM · fechamento de ordem</div>
+              </div>
+              <span class="step-badge tag-sap">SAP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======== LAYER 2: ARCHITECTURE ======== -->
+  <div class="section-divider fade-in">
+    <span class="section-divider-text">// Camada 2 — Arquitetura de Sistemas</span>
+    <div class="section-divider-line"></div>
+    <span class="badge badge-gxp" style="font-size:9px;">AWS Cloud · EKS/ECS · Multi-Tenant</span>
+  </div>
+
+  <div class="arch-layer fade-in">
+    <div class="process-title">Stack Técnico — Kronix EBR · ADR-001 v3 / ADR-004 v1</div>
+
+    <div class="arch-grid">
+
+      <!-- LEFT: EXTERNAL SYSTEMS -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Sistemas Externos</div>
+
+        <div class="sys-box" style="border-color:rgba(41,160,90,0.35);" data-tt-title="SAP (ECC)" data-tt-body="Sistema ERP do Grupo NC. PP: Ordens de Produção. MM: Movimentação de estoque/NT. SD: Demanda comercial. Integração bidirecional com Kronix via Amazon SQS/SNS." data-tt-adr="ADR-001: SQS/SNS já em produção para OEE e Heijunka. Event Schema pendente de definição.">
+          <div class="sys-box-header" style="background:rgba(41,160,90,0.08);border-bottom:1px solid rgba(41,160,90,0.2);">
+            <div class="sys-icon" style="background:rgba(41,160,90,0.15);">🏢</div>
+            <div>
+              <div class="sys-name">SAP ECC</div>
+              <div class="sys-role">PP / MM / SD</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>OPs:</strong> dispara receita no EBR</div>
+            <div class="sys-detail"><strong>NT:</strong> movimentação materiais</div>
+            <div class="sys-detail"><strong>MM:</strong> confirmação de ordem</div>
+          </div>
+        </div>
+
+        <div class="sys-box" style="border-color:rgba(167,139,250,0.35);" data-tt-title="Sistema Evolutio (Pesagem)" data-tt-body="Sistema especializado de pesagem farmacêutica. Gera registros de pesagem com rastreabilidade (etiquetas, laudos). Gap crítico: integração com EBR não documentada nos ADRs." data-tt-adr="⚠ GAP: Evolutio tem API? Como o EBR consome dados de pesagem? Quem é fonte da verdade?">
+          <div class="sys-box-header" style="background:rgba(167,139,250,0.08);border-bottom:1px solid rgba(167,139,250,0.2);">
+            <div class="sys-icon" style="background:rgba(167,139,250,0.15);">⚖️</div>
+            <div>
+              <div class="sys-name">Evolutio</div>
+              <div class="sys-role">Sistema de Pesagem</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>Usado em:</strong> OP 70 Pesagem</div>
+            <div class="sys-detail"><strong>Dado:</strong> peso, lote, operador</div>
+            <div class="sys-detail" style="color:var(--gold);">⚠ Integração a definir</div>
+          </div>
+        </div>
+
+        <div class="sys-box" data-tt-title="SSO / SAML (Identidade)" data-tt-body="Infraestrutura de identidade existente no Grupo NC. EBR herda sem criar nova infraestrutura. Expõe claims de usuário, role, tenant_id para o Audit Trail." data-tt-adr="ADR-005 (planejado): Re-autenticação 21 CFR Part 11 §11.200(d)(1). Confirmar: SSO expõe tenant_id como claim?">
+          <div class="sys-box-header" style="background:rgba(0,180,216,0.06);">
+            <div class="sys-icon" style="background:rgba(0,180,216,0.12);">🔑</div>
+            <div>
+              <div class="sys-name">SSO / SAML</div>
+              <div class="sys-role">Identidade Corporativa</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>Herdado</strong> pelo EBR</div>
+            <div class="sys-detail"><strong>Claims:</strong> user, role, tenant</div>
+            <div class="sys-detail">Bearer Token → Audit Trail</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CENTER: KRONIX CORE -->
+      <div class="kronix-core">
+        <div class="gxp-boundary"></div>
+        <div class="kronix-header">
+          <div>
+            <div class="kronix-title">KRONIX EBR</div>
+            <div class="kronix-sub">ASP.NET Core · .NET C# 10 · Modular Monolith</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <span class="badge badge-gxp" style="font-size:8px;">Fronteira GxP</span>
+            <span style="font-size:8px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">EKS/ECS · AWS VPC</span>
+          </div>
+        </div>
+
+        <div class="kronix-body">
+
+          <!-- FRONTEND -->
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:10px;">
+            <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Frontend</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;flex:1;min-width:120px;cursor:pointer;transition:all 0.2s;" data-tt-title="React + React Flow" data-tt-body="Interface principal do operador. React Flow é o engine do editor visual de receitas (grafo dirigido). Também usado no player de execução — operador segue o fluxo da receita em tempo real." data-tt-adr="ADR-003 (planejado): Modelo de Dados da Receita. Receita é um grafo com condicionais (bifurcações), não checklist sequencial.">
+                <div style="font-size:10px;font-weight:600;color:var(--text-bright);">React + React Flow</div>
+                <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">Editor de receita + Player</div>
+              </div>
+              <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;flex:1;min-width:100px;cursor:pointer;transition:all 0.2s;" data-tt-title="Interface Android (Tablets)" data-tt-body="Operadores no chão de fábrica usam tablets Android. A re-autenticação para assinatura eletrônica (21 CFR Part 11) deve ser otimizada para toque em área classificada." data-tt-adr="ADR-005 (planejado): UX de assinatura eletrônica em Android · área classificada">
+                <div style="font-size:10px;font-weight:600;color:var(--text-bright);">Android (Tablets)</div>
+                <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">Chão de fábrica</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CORE MODULES -->
+          <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Módulos Core (Monolito Modular)</div>
+
+          <div class="modules-grid">
+            <div class="module-card active" data-tt-title="Receita (Recipe Engine)" data-tt-body="Gerencia o ciclo de vida da receita: criação, versionamento, aprovação GQ, publicação. Cada versão aprovada é imutável — mudanças geram nova versão. Estrutura JSON persistida no PostgreSQL." data-tt-adr="ADR-003 (planejado): Schema da receita, versionamento GxP, representação React Flow ↔ .NET">
+              <div class="module-name">Receita (Recipe Engine)</div>
+              <div class="module-desc">CREATE · VERSION · APPROVE</div>
+            </div>
+            <div class="module-card" data-tt-title="Execução de Receita" data-tt-body="Runtime de execução: orquestra o operador passo a passo pelo fluxo da receita. Valida que os passos são executados na ordem correta e registra cada ação no Audit Trail." data-tt-adr="Integração síncrona com Audit Trail Service via HTTPS interno (ADR-004)">
+              <div class="module-name">Execução de Receita</div>
+              <div class="module-desc">STEP · SIGN · COMPLETE</div>
+            </div>
+            <div class="module-card" data-tt-title="Dossiê Eletrônico de Lote" data-tt-body="Consolida todos os registros de execução num documento estruturado equivalente ao BPR (Batch Production Record). Gerado para revisão de GQ antes da liberação do lote." data-tt-adr="ADR-003: Como o Dossiê agrega dados de múltiplas OPs relacionadas ao mesmo lote?">
+              <div class="module-name">Dossiê de Lote (BPR)</div>
+              <div class="module-desc">COMPILE · REVIEW · RELEASE</div>
+            </div>
+            <div class="module-card" data-tt-title="Logbook Eletrônico" data-tt-body="Registro de equipamentos, salas e linhas. Conectado à Liberação de Sala (line clearance) — cada sala precisa de logbook limpo antes de iniciar a OP." data-tt-adr="Gap: Liberação de Sala é módulo do EBR? Requer assinatura GQ — deve alimentar Audit Trail.">
+              <div class="module-name">Logbook Eletrônico</div>
+              <div class="module-desc">EQUIPMENT · ROOM · LINE</div>
+            </div>
+            <div class="module-card" data-tt-title="Recebimento de OP" data-tt-body="Recebe a OP do SAP via SQS, valida os dados, cria o BatchRecord no Kronix e associa a receita correta. Ponto de entrada do fluxo EBR." data-tt-adr="ADR-001: Event Schema SQS — OP aberta no SAP → EBR. Pendente definição.">
+              <div class="module-name">Recebimento de OP</div>
+              <div class="module-desc">SAP → EBR TRIGGER</div>
+            </div>
+            <div class="module-card" data-tt-title="Anexos e Documentos" data-tt-body="Armazenamento de documentos associados ao lote: fotos de processo, laudos externos, desvios registrados. S3 para storage, referência no PostgreSQL." data-tt-adr="Armazenamento: Amazon S3 (documentos não regulatórios) · separado do S3 Audit Trail (Object Lock)">
+              <div class="module-name">Anexos / Documentos</div>
+              <div class="module-desc">ATTACH · STORE · LINK</div>
+            </div>
+          </div>
+
+          <!-- SHARED INFRA -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;text-align:center;cursor:pointer;" data-tt-title="Amazon RDS PostgreSQL" data-tt-body="Banco principal do Core EBR. Multi-AZ, encryption at rest (KMS). Role da aplicação: SELECT/INSERT/UPDATE/DELETE no schema core. Separado do banco do Audit Trail Service." data-tt-adr="ADR-001: Decisão pendente — schema por tenant (RBBL, EMS) ou banco por tenant?">
+              <div style="font-size:13px;margin-bottom:3px;">🐘</div>
+              <div style="font-size:10px;font-weight:600;color:var(--text-bright);">PostgreSQL</div>
+              <div style="font-size:8px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">Amazon RDS · Multi-AZ</div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;text-align:center;cursor:pointer;" data-tt-title="Redis (Cache Distribuído)" data-tt-body="Substituiu o in-process cache após incidente de inconsistência entre PODs. Cache compartilhado para sessões, dados de receita em execução, estado de tela do operador." data-tt-adr="ADR-001: Redis já implementado. Definir TTL por tipo de dado e estratégia de invalidação.">
+              <div style="font-size:13px;margin-bottom:3px;">⚡</div>
+              <div style="font-size:10px;font-weight:600;color:var(--text-bright);">Redis</div>
+              <div style="font-size:8px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">ElastiCache · Distribuído</div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;text-align:center;cursor:pointer;" data-tt-title="Amazon SQS / SNS" data-tt-body="Mensageria já em produção para OEE e Heijunka. EBR herda para integrações externas: SAP (OP aberta, confirmação MM), LIMS, SE Suite." data-tt-adr="ADR-001: Event Schema SQS obrigatório antes do primeiro consumer. Versionamento de schema.">
+              <div style="font-size:13px;margin-bottom:3px;">📨</div>
+              <div style="font-size:10px;font-weight:600;color:var(--text-bright);">SQS / SNS</div>
+              <div style="font-size:8px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;">Integrações externas</div>
+            </div>
+          </div>
+
+          <!-- AUDIT TRAIL SERVICE -->
+          <div class="audit-service" data-tt-title="Audit Trail Service — Microserviço Extraído" data-tt-body="Serviço fisicamente separado do Core EBR. Banco PostgreSQL dedicado com role INSERT-only. S3 Object Lock para retenção imutável 5 anos. Comunicação síncrona via HTTPS interno — garantia de entrega na mesma operação de negócio." data-tt-adr="ADR-004 v1 — Arquitetura completa documentada. Pode iniciar desenvolvimento ESTA SEMANA.">
+            <div class="audit-header">
+              <div class="audit-title">
+                🔒 Audit Trail Service
+                <span class="badge badge-gxp" style="font-size:8px;">Microserviço Extraído</span>
+              </div>
+              <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);">ADR-004 v1</span>
+            </div>
+            <div class="audit-body">
+              <div class="audit-component">
+                <div class="audit-comp-icon">🐘</div>
+                <div class="audit-comp-name">RDS Dedicado</div>
+                <div class="audit-comp-desc">INSERT only · KMS</div>
+              </div>
+              <div class="audit-component">
+                <div class="audit-comp-icon">🪣</div>
+                <div class="audit-comp-name">S3 Object Lock</div>
+                <div class="audit-comp-desc">WORM · 5 anos</div>
+              </div>
+              <div class="audit-component">
+                <div class="audit-comp-icon">📊</div>
+                <div class="audit-comp-name">Datadog APM</div>
+                <div class="audit-comp-desc">Tracing · Alertas</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AWS INFRA -->
+          <div class="aws-infra">
+            <div class="aws-title">☁ AWS Infraestrutura</div>
+            <div class="aws-services">
+              <span class="aws-chip" data-tt-title="EKS / ECS" data-tt-body="Orquestrador de containers. EKS (Kubernetes) ou ECS (nativo AWS). Decisão pendente com Marcelo Ramos — define manifesto de deploy do Audit Trail Service." data-tt-adr="ADR-001: Pergunta em aberto #1. Bloqueador para arquitetura de containers.">⚙️ EKS / ECS</span>
+              <span class="aws-chip" data-tt-title="Secrets Manager" data-tt-body="Gestão de credenciais — connection strings RDS, tokens de serviço. Rotação automática a cada 30 dias. Zero credencial hardcoded." data-tt-adr="ADR-004: Proposto. Implementar desde o primeiro deploy.">🔐 Secrets Manager</span>
+              <span class="aws-chip" data-tt-title="CloudTrail" data-tt-body="Auditoria de acesso à infraestrutura AWS. Quem acessou qual recurso AWS e quando. Complementa o Audit Trail de aplicação." data-tt-adr="ADR-004: Proposto como complemento ao Audit Trail de aplicação.">📋 CloudTrail</span>
+              <span class="aws-chip" data-tt-title="KMS" data-tt-body="Encryption at rest para RDS (Core + Audit Trail) e S3. Chaves gerenciadas com rotação automática." data-tt-adr="">🔑 KMS</span>
+              <span class="aws-chip" data-tt-title="AWS Config" data-tt-body="Regras de conformidade que alertam se Security Groups forem modificados fora do padrão definido. Proteção contra bypass da rede de isolamento do Audit Trail." data-tt-adr="ADR-004: Regra de conformidade obrigatória.">✅ AWS Config</span>
+              <span class="aws-chip" data-tt-title="Kafka / MSK (Nice-to-Have)" data-tt-body="Pipeline IoT para sensores de processo. Condicional ao volume real de eventos por linha de produção confirmado no Discovery AS-IS. Critério: > 50 eventos/s ou > 3 linhas simultâneas." data-tt-adr="ADR-001: Condicional. Critério de ativação explícito. Fallback: SQS.">📡 MSK/Kafka ⚠</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: OBSERVABILITY + ADJACENT -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Observabilidade & Adjacentes</div>
+
+        <div class="sys-box" style="border-color:rgba(255,145,0,0.35);" data-tt-title="Datadog APM" data-tt-body="Observabilidade unificada — APM, logs centralizados, tracing distribuído Core EBR → Audit Trail. Dashboard GxP: volume eventos por módulo/tenant. Alerta crítico: falha escrita Audit Trail = não-conformidade GxP." data-tt-adr="ADR-004: Alertas críticos obrigatórios desde o primeiro deploy. Confirmar: Datadog já licenciado no Grupo NC?">
+          <div class="sys-box-header" style="background:rgba(255,145,0,0.08);border-bottom:1px solid rgba(255,145,0,0.2);">
+            <div class="sys-icon" style="background:rgba(255,145,0,0.15);">📊</div>
+            <div>
+              <div class="sys-name">Datadog</div>
+              <div class="sys-role">APM · Logs · Tracing</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>Tracing:</strong> Core → Audit Trail</div>
+            <div class="sys-detail"><strong>Alerta:</strong> &gt;0% erro escrita</div>
+            <div class="sys-detail"><strong>Dashboard:</strong> GxP compliance</div>
+          </div>
+        </div>
+
+        <div class="sys-box" data-tt-title="Kronix — Módulos Existentes" data-tt-body="OEE (Overall Equipment Effectiveness) e Heijunka já estão em produção na plataforma Kronix. EBR é o terceiro módulo. Redis e SQS/SNS já foram adotados nesses módulos — EBR herda a infraestrutura." data-tt-adr="ADR-001: Verificar se Audit Trail do OEE/Heijunka usa padrão que o EBR deve herdar.">
+          <div class="sys-box-header" style="background:rgba(0,180,216,0.06);">
+            <div class="sys-icon" style="background:rgba(0,180,216,0.12);">🏭</div>
+            <div>
+              <div class="sys-name">Kronix (existente)</div>
+              <div class="sys-role">OEE · Heijunka</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>Redis:</strong> herdado → EBR</div>
+            <div class="sys-detail"><strong>SQS/SNS:</strong> herdado → EBR</div>
+            <div class="sys-detail">Roadmap: MFV · IoT</div>
+          </div>
+        </div>
+
+        <div class="sys-box" style="border-color:rgba(255,214,10,0.3);" data-tt-title="GQ / QA (Stakeholder)" data-tt-body="Daiane Onida (GQ EMS) e Juliana Zendim (VSC). Revisam e aprovam: schema do Audit Trail, casos de teste de imutabilidade, protocolo VSC (IQ/OQ/PQ). Audiência da API read-only do Audit Trail." data-tt-adr="ADR-004: Apresentar schema e contrato de API para GQ antes de codar o cliente. Ação imediata.">
+          <div class="sys-box-header" style="background:rgba(255,214,10,0.06);border-bottom:1px solid rgba(255,214,10,0.15);">
+            <div class="sys-icon" style="background:rgba(255,214,10,0.12);">🔬</div>
+            <div>
+              <div class="sys-name">GQ / VSC</div>
+              <div class="sys-role">Quality Assurance</div>
+            </div>
+          </div>
+          <div class="sys-body">
+            <div class="sys-detail"><strong>Daiane:</strong> GQ EMS</div>
+            <div class="sys-detail"><strong>Juliana:</strong> VSC (IQ/OQ/PQ)</div>
+            <div class="sys-detail">Revisar ADR-004 urgente</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <div class="section-divider" style="margin: 20px 0 14px;">
+      <span class="section-divider-text">// Integrações — Event Contracts</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="integrations-row">
+      <div class="integration-card" data-tt-title="SAP → Kronix: OP Aberta" data-tt-body="SAP PP publica evento de abertura de OP. Kronix consome via SQS, valida, cria BatchRecord e associa receita. Ponto de entrada do fluxo EBR." data-tt-adr="ADR-001: Event Schema SQS pendente de definição. Campos mínimos: OP number, material, quantidade, data prevista, receita associada.">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--sap-light);"></div>
+          <div class="int-name">SAP → Kronix</div>
+          <div class="int-protocol">SQS</div>
+        </div>
+        <div class="int-detail">OP aberta dispara criação de BatchRecord. Receita associada pelo código do material.</div>
+      </div>
+      <div class="integration-card" data-tt-title="Kronix → Audit Trail: Evento de Auditoria" data-tt-body="Chamada HTTPS síncrona. Core EBR posta evento a cada ação significativa. Idempotency Key obrigatório. Resposta 201 ou 503 — sem retry silencioso em GxP." data-tt-adr="ADR-004: Contrato POST /api/v1/audit/events documentado. Iniciar implementação esta semana.">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--red);"></div>
+          <div class="int-name">Core EBR → Audit Trail</div>
+          <div class="int-protocol">HTTPS VPC</div>
+        </div>
+        <div class="int-detail">Síncrono · Bearer Token SSO · Idempotency Key UUID · INSERT-only RDS dedicado.</div>
+      </div>
+      <div class="integration-card" data-tt-title="Kronix → SAP: Confirmação de OP" data-tt-body="Ao fechar o Dossiê de Lote, EBR emite evento de encerramento para SAP confirmar a ordem (MM/PP). SAP movimenta estoque de produto acabado. Gap: não documentado nos ADRs atuais." data-tt-adr="⚠ GAP: Event de confirmação de OP (EBR → SAP) não está nos ADRs. Adicionar ao ADR-001.">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--sap-light);"></div>
+          <div class="int-name">Kronix → SAP</div>
+          <div class="int-protocol">SQS</div>
+        </div>
+        <div class="int-detail">Confirmação de OP encerrada. SAP confirma ordem e movimenta PA para Almoxarifado.</div>
+      </div>
+      <div class="integration-card" data-tt-title="Evolutio → Kronix: Dados de Pesagem" data-tt-body="Gap crítico: Evolutio é sistema de pesagem com dados de rastreabilidade do lote (PA + excipientes). EBR precisa consumir ou referenciar esses dados. Integração não documentada nos ADRs." data-tt-adr="⚠ GAP CRÍTICO: Levantar no Discovery com Gustavo Fontes. Evolutio tem API? Webservice? Arquivo? Impacta schema audit_events (actor_id sistêmico).">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--evolutio-light);"></div>
+          <div class="int-name">Evolutio → Kronix</div>
+          <div class="int-protocol">⚠ A DEFINIR</div>
+        </div>
+        <div class="int-detail">Dados de pesagem (PA + excipientes). Protocolo de integração não confirmado. Levantar no Discovery.</div>
+      </div>
+      <div class="integration-card" data-tt-title="GQ → Audit Trail: API Read-Only" data-tt-body="Daiane Onida e auditores ANVISA/FDA consultam o Audit Trail via API read-only. Autenticação SSO/SAML com role GQ. Cada acesso registrado no CloudWatch Logs." data-tt-adr="ADR-004: Endpoints GET documentados. Paginação obrigatória (max 100/página). Acesso logado.">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--gold);"></div>
+          <div class="int-name">GQ → Audit Trail</div>
+          <div class="int-protocol">HTTPS</div>
+        </div>
+        <div class="int-detail">API read-only para GQ e auditorias ANVISA/FDA. Role GQ via SSO. CloudWatch log de cada acesso.</div>
+      </div>
+      <div class="integration-card" data-tt-title="Core EBR → S3 (Documentos)" data-tt-body="Anexos não regulatórios: fotos de processo, laudos externos, desvios. S3 padrão (sem Object Lock). Separado do S3 do Audit Trail que usa Object Lock modo Compliance." data-tt-adr="Dois buckets S3 distintos: (1) Documentos EBR — S3 padrão. (2) Audit Trail backup — S3 Object Lock WORM 5 anos.">
+        <div class="int-header">
+          <div class="int-dot" style="background:var(--orange);"></div>
+          <div class="int-name">Core EBR → S3</div>
+          <div class="int-protocol">AWS SDK</div>
+        </div>
+        <div class="int-detail">Documentos do dossiê (não regulatórios). Separado do S3 Object Lock do Audit Trail.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend fade-in" style="margin-top:16px;">
+    <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:8px;">Legenda:</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent);"></div>EBR Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--sap-light);"></div>SAP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--evolutio-light);"></div>Evolutio</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>GQ / QA</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div>WMS / Almoxarifado</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div>Audit Trail (GxP)</div>
+    <div class="legend-item"><div class="legend-dashed"></div>Fronteira GxP regulatória</div>
+    <div class="legend-item" style="margin-left:auto;"><span class="gap-indicator">⚠ GAP</span> = não documentado nos ADRs</div>
+    <div class="legend-item" style="font-size:9px;color:var(--text-dim);">Hover nos elementos para detalhes</div>
+  </div>
+
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  const ttTitle = document.getElementById('tt-title');
+  const ttBody = document.getElementById('tt-body');
+  const ttAdr = document.getElementById('tt-adr');
+
+  document.querySelectorAll('[data-tt-title]').forEach(el => {
+    el.addEventListener('mouseenter', (e) => {
+      const title = el.getAttribute('data-tt-title');
+      const body = el.getAttribute('data-tt-body');
+      const adr = el.getAttribute('data-tt-adr');
+      if (!title) return;
+      ttTitle.textContent = title;
+      ttBody.textContent = body || '';
+      ttAdr.textContent = adr || '';
+      tooltip.classList.add('visible');
+      positionTooltip(e);
+    });
+
+    el.addEventListener('mousemove', positionTooltip);
+
+    el.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+
+  function positionTooltip(e) {
+    const x = e.clientX + 14;
+    const y = e.clientY - 10;
+    const rect = tooltip.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    tooltip.style.left = (x + rect.width > vw ? e.clientX - rect.width - 14 : x) + 'px';
+    tooltip.style.top = (y + rect.height > vh ? e.clientY - rect.height - 10 : y) + 'px';
+  }
+</script>
+
+</body>
+</html>
