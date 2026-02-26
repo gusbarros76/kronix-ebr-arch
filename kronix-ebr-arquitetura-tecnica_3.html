@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kronix EBR — Arquitetura Técnica (Validação IT)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f6f9; --bg2:#fff; --bg3:#eef1f6;
+    --border:#d0d9e8; --border-strong:#a8b8d0;
+    --text:#1a2535; --text-mid:#3d5066; --text-dim:#6b8096;
+    --accent:#0055cc; --accent-light:#e8f0fd; --accent-border:#99bbee;
+    --green:#0a7c4e; --green-light:#e6f5ee; --green-border:#7ecfaa;
+    --red:#c0143c; --red-light:#fdeef2; --red-border:#f0a0b0;
+    --orange:#b85c00; --orange-light:#fef3e6; --orange-border:#f0b87a;
+    --purple:#5b21b6; --purple-light:#f0ebff; --purple-border:#b39ee0;
+    --gold:#856404; --gold-light:#fefbe6; --gold-border:#e0c84a;
+    --teal:#0e7490; --teal-light:#e6f6fa; --teal-border:#7dd3e8;
+    --slate:#334155; --slate-light:#f1f5f9; --slate-border:#94a3b8;
+    --r:8px; --rl:12px;
+    --sh:0 1px 3px rgba(0,0,0,.08); --shm:0 4px 12px rgba(0,0,0,.1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+  code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px}
+
+  /* HEADER */
+  header{background:var(--text);padding:18px 36px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shm);position:sticky;top:0;z-index:100}
+  .logo{background:var(--accent);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .hdr-left{display:flex;align-items:center;gap:14px}
+  .hdr-title{font-size:17px;font-weight:600;color:#fff}
+  .hdr-sub{font-size:12px;color:#8899aa;font-family:'JetBrains Mono',monospace;margin-top:2px}
+  .hdr-tags{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .htag{padding:5px 11px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:500}
+  .htag-blue{background:rgba(0,85,204,.25);color:#88bbff;border:1px solid rgba(0,85,204,.4)}
+  .htag-red{background:rgba(192,20,60,.25);color:#ffaacc;border:1px solid rgba(192,20,60,.4)}
+  .htag-green{background:rgba(10,124,78,.25);color:#88ddbb;border:1px solid rgba(10,124,78,.4)}
+  .htag-warn{background:rgba(184,92,0,.25);color:#ffcc88;border:1px solid rgba(184,92,0,.4)}
+
+  /* LAYOUT */
+  .main{padding:28px 36px;max-width:1520px;margin:0 auto}
+
+  /* SECTION HEAD */
+  .sh{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:11px;border-bottom:2px solid var(--border);margin-top:24px}
+  .sh:first-child{margin-top:0}
+  .sn{background:var(--accent);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+  .st{font-size:16px;font-weight:700;color:var(--text)}
+  .sd{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-left:auto}
+
+  /* PILLS */
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:500;white-space:nowrap}
+  .p-blue{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border)}
+  .p-green{background:var(--green-light);color:var(--green);border:1px solid var(--green-border)}
+  .p-red{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
+  .p-orange{background:var(--orange-light);color:var(--orange);border:1px solid var(--orange-border)}
+  .p-purple{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border)}
+  .p-gold{background:var(--gold-light);color:var(--gold);border:1px solid var(--gold-border)}
+  .p-teal{background:var(--teal-light);color:var(--teal);border:1px solid var(--teal-border)}
+  .p-slate{background:var(--slate-light);color:var(--slate);border:1px solid var(--slate-border)}
+
+  /* NOTICES */
+  .notice{padding:10px 14px;border-radius:6px;font-size:13px;display:flex;gap:8px;align-items:flex-start;margin-top:10px;line-height:1.5}
+  .n-warn{background:var(--gold-light);border:1px solid var(--gold-border);color:var(--gold)}
+  .n-info{background:var(--accent-light);border:1px solid var(--accent-border);color:var(--accent)}
+  .n-ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green)}
+  .ni{font-size:14px;flex-shrink:0;margin-top:1px}
+  .nt strong{font-weight:600}
+
+  /* K8S WRAPPER */
+  .k8s-wrap{background:#f0f4ff;border:2px dashed #7799dd;border-radius:16px;padding:20px;position:relative;margin-bottom:0}
+  .k8s-lbl{position:absolute;top:-13px;left:20px;background:var(--accent);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px}
+  .k8s-inner{display:grid;grid-template-columns:1fr 292px;gap:16px;margin-top:8px}
+
+  /* CORE BOX */
+  .core{background:var(--bg2);border:2px solid var(--accent);border-radius:var(--rl);box-shadow:0 0 0 4px rgba(0,85,204,.06);overflow:hidden}
+  .core-hd{background:linear-gradient(135deg,#e8f0fd,#f0f4ff);padding:14px 18px;border-bottom:1.5px solid var(--accent-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .core-title{font-size:15px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace}
+  .core-body{padding:16px 18px}
+
+  /* MODULES */
+  .mods-lbl{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+  .mods-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .mod{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px}
+  .mod-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+  .mod-desc{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;line-height:1.4}
+  .mod-tag{margin-top:6px}
+
+  /* CLEAN ARCH */
+  .ca{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+  .ca-title{padding:8px 12px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg2);font-weight:600}
+  .ca-layers{padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+  .cal{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:5px;border:1px solid transparent}
+  .cal-p{background:#f0f4ff;border-color:#c0d0f0}
+  .cal-a{background:#f0f8f4;border-color:#b0ddc0}
+  .cal-d{background:#fef8e6;border-color:#e0d080}
+  .cal-i{background:#f5f0ff;border-color:#ccc0f0}
+  .cal-name{font-size:12px;font-weight:600;color:var(--text)}
+  .cal-items{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+
+  /* AUDIT INTERCEPTOR */
+  .ait{background:var(--red-light);border:2px solid var(--red-border);border-radius:8px;padding:12px 14px;margin-bottom:14px}
+  .ait-title{font-size:13px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .ait-desc{font-size:13px;color:var(--text-mid);line-height:1.5;margin-bottom:8px}
+
+  /* REDIS */
+  .redis{background:var(--orange-light);border:1.5px solid var(--orange-border);border-radius:8px;padding:10px 14px}
+  .redis-title{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .r-item{font-size:12px;color:var(--text-mid);display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid rgba(184,92,0,.1)}
+  .r-item:last-child{border-bottom:none}
+  .rdot{width:5px;height:5px;background:var(--orange);border-radius:50%;flex-shrink:0;margin-top:5px}
+
+  /* SIDEBAR */
+  .sidebar{display:flex;flex-direction:column;gap:12px}
+  .elsa{background:var(--purple-light);border:1.5px solid var(--purple-border);border-radius:8px;padding:12px 14px}
+  .elsa-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .elsa-desc{font-size:12px;color:var(--text-mid);line-height:1.5}
+
+  .card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+  .card-hd{padding:11px 15px;display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--border)}
+  .card-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .card-title{font-size:13px;font-weight:700;color:var(--text)}
+  .card-sub{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .card-body{padding:13px 15px}
+
+  /* DB */
+  .db-wrap{background:#f8f9fb;border:2px solid var(--border-strong);border-radius:16px;padding:20px;position:relative}
+  .db-lbl{position:absolute;top:-13px;left:20px;background:var(--text);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px}
+  .db-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .db-box{border-radius:10px;padding:14px 16px;border:2px solid transparent}
+  .db-main{background:#f0f4ff;border-color:var(--accent-border)}
+  .db-audit{background:var(--red-light);border-color:var(--red-border)}
+  .db-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .db-schema{background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;overflow:hidden}
+  .db-sh{padding:6px 10px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .db-sb{padding:8px 10px;font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;line-height:1.8}
+  .dc{display:flex;gap:6px;align-items:center}
+  .dk{color:var(--accent);font-weight:600}
+  .dt{color:var(--text-dim)}
+  .dn{color:var(--green);font-size:10px}
+
+  /* S3 */
+  .s3-box{background:var(--orange-light);border:1.5px solid var(--orange-border);border-radius:8px;padding:13px 15px;margin-top:13px}
+  .s3-title{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .s3-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .s3-sub{font-size:12px;font-weight:700;color:var(--orange);margin-bottom:7px;font-family:'JetBrains Mono',monospace}
+  .s3-row{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--text-mid);padding:4px 0;border-bottom:1px solid rgba(184,92,0,.1)}
+  .s3-row:last-child{border-bottom:none}
+  .sdot{width:5px;height:5px;background:var(--orange);border-radius:50%;flex-shrink:0;margin-top:5px}
+
+  /* INTEGRATIONS */
+  .int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .int-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)}
+  .int-hd{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--border)}
+  .int-name{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+  .idot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .int-body{padding:12px 14px}
+  .int-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--bg3);font-size:13px}
+  .int-row:last-child{border-bottom:none}
+  .int-dir{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);width:30px;flex-shrink:0;margin-top:2px}
+  .int-desc{color:var(--text-mid);line-height:1.4}
+  .iot-card{background:var(--teal-light);border:2px solid var(--teal-border);border-radius:var(--rl);overflow:hidden}
+  .iot-hd{background:rgba(14,116,144,.08);padding:10px 14px;border-bottom:1.5px solid var(--teal-border);display:flex;align-items:center;justify-content:space-between}
+  .iot-name{font-size:13px;font-weight:700;color:var(--teal);display:flex;align-items:center;gap:8px}
+  .iot-body{padding:12px 14px}
+  .vol-badge{background:var(--teal);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:8px}
+
+  /* OBSERVABILITY */
+  .obs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .obs-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)}
+  .obs-hd{padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--border)}
+  .obs-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .obs-title{font-size:13px;font-weight:700;color:var(--text)}
+  .obs-role{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+  .obs-body{padding:12px 14px}
+  .obs-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-mid);padding:5px 0;border-bottom:1px solid var(--bg3);line-height:1.4}
+  .obs-item:last-child{border-bottom:none}
+  .obdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+  /* QA */
+  .qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .qa-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)}
+  .qa-hd{padding:10px 14px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:8px}
+  .qa-icon{font-size:18px}
+  .qa-title{font-size:13px;font-weight:700}
+  .qa-sub{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+  .qa-body{padding:10px 14px}
+  .qa-item{font-size:12px;color:var(--text-mid);padding:5px 0;border-bottom:1px solid var(--bg3);display:flex;gap:6px;line-height:1.4}
+  .qa-item:last-child{border-bottom:none}
+  .qdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+  /* LEGEND */
+  .legend{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);padding:13px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:0}
+  .leg-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+  .leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-mid)}
+  .ldot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+  /* FOOTNOTE */
+  .footnote{border-top:1px solid var(--border);padding-top:13px;margin-top:16px;font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;line-height:1.7}
+
+  /* ANIMATIONS */
+  .fade{opacity:0;transform:translateY(10px);animation:fu .4s ease forwards}
+  @keyframes fu{to{opacity:1;transform:none}}
+  .fade:nth-child(1){animation-delay:.05s}.fade:nth-child(2){animation-delay:.10s}
+  .fade:nth-child(3){animation-delay:.15s}.fade:nth-child(4){animation-delay:.20s}
+  .fade:nth-child(5){animation-delay:.25s}.fade:nth-child(6){animation-delay:.30s}
+  .fade:nth-child(7){animation-delay:.35s}.fade:nth-child(8){animation-delay:.40s}
+  .fade:nth-child(9){animation-delay:.45s}.fade:nth-child(10){animation-delay:.50s}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo">Kx</div>
+    <div>
+      <div class="hdr-title">Kronix EBR — Arquitetura Técnica</div>
+      <div class="hdr-sub">Versão para validação IT · NC Tech · RBBL Wave 1 · Go Live dez/2026</div>
+    </div>
+  </div>
+  <div class="hdr-tags">
+    <span class="htag htag-blue">☸ Kubernetes (AWS EKS)</span>
+    <span class="htag htag-red">GxP · ANVISA RDC 658/2022 · FDA 21 CFR Part 11</span>
+    <span class="htag htag-green">.NET C# 10 · React</span>
+    <span class="htag htag-warn">Em validação IT</span>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════
+     01 · KUBERNETES + CORE API
+══════════════════════════════════════════ -->
+<div class="sh fade">
+  <span class="sn">01</span>
+  <span class="st">Camada de Aplicação — Kubernetes (AWS EKS)</span>
+  <span class="sd">Premissa confirmada · Namespace: kronix-ebr</span>
+</div>
+
+<div class="k8s-wrap fade">
+  <div class="k8s-lbl">☸ AWS EKS — Kubernetes Cluster · Namespace: kronix-ebr · Horizontal Pod Autoscaler habilitado</div>
+  <div class="k8s-inner">
+
+    <!-- CORE -->
+    <div class="core">
+      <div class="core-hd">
+        <div>
+          <div class="core-title">NovoEBR — API</div>
+          <div style="font-size:12px;color:var(--text-mid);margin-top:3px;font-family:'JetBrains Mono',monospace">ASP.NET Core Web API · .NET C# 10 · Modular Monolith</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill p-blue">Múltiplas réplicas</span>
+          <span class="pill p-green">HPA — Auto Scale</span>
+        </div>
+      </div>
+      <div class="core-body">
+
+        <!-- FRONTEND -->
+        <div style="background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">KRONIX — Frontend React</div>
+            <div style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:2px">React + React Flow · Editor visual de receitas (grafo dirigido) · Player de execução · Interface Android (tablets chão de fábrica)</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <span class="pill p-blue">React Flow</span>
+            <span class="pill p-green">Android Tablets</span>
+          </div>
+        </div>
+
+        <!-- MODULES -->
+        <div class="mods-lbl">Módulos de Negócio — dentro do Monolito Modular</div>
+        <div class="mods-grid">
+          <div class="mod">
+            <div class="mod-name">Receita (Recipe Engine)</div>
+            <div class="mod-desc">Ciclo de vida: criação, versionamento GxP, aprovação GQ, publicação. Receita modelada como grafo dirigido com condicionais.</div>
+            <div class="mod-tag"><span class="pill p-blue" style="font-size:10px">CREATE · VERSION · APPROVE</span></div>
+          </div>
+          <div class="mod">
+            <div class="mod-name">Execução de Receita</div>
+            <div class="mod-desc">Runtime step-by-step com assinatura eletrônica por etapa e registro automático no Audit Trail via Interceptor.</div>
+            <div class="mod-tag"><span class="pill p-red" style="font-size:10px">STEP · SIGN · COMPLETE</span></div>
+          </div>
+          <div class="mod">
+            <div class="mod-name">Dossiê de Lote (BPR)</div>
+            <div class="mod-desc">Batch Production Record eletrônico — consolida toda execução para revisão e liberação formal por GQ.</div>
+            <div class="mod-tag"><span class="pill p-gold" style="font-size:10px">COMPILE · REVIEW · RELEASE</span></div>
+          </div>
+          <div class="mod">
+            <div class="mod-name">Logbook Eletrônico</div>
+            <div class="mod-desc">Registro de salas, equipamentos e linhas. Line clearance obrigatório antes de cada OP — assinatura GQ.</div>
+            <div class="mod-tag"><span class="pill p-green" style="font-size:10px">EQUIPMENT · ROOM · LINE</span></div>
+          </div>
+          <div class="mod">
+            <div class="mod-name">Recebimento de OP</div>
+            <div class="mod-desc">Consome evento SAP S/4 HANA via SQS. Cria BatchRecord e associa receita ao lote automaticamente.</div>
+            <div class="mod-tag"><span class="pill p-blue" style="font-size:10px">SAP → EBR TRIGGER</span></div>
+          </div>
+          <div class="mod">
+            <div class="mod-name">Anexos e Documentos</div>
+            <div class="mod-desc">Fotos de processo, laudos e registros de desvio. Armazenados em S3 Standard — separado do S3 WORM regulatório.</div>
+            <div class="mod-tag"><span class="pill p-orange" style="font-size:10px">ATTACH · STORE · LINK</span></div>
+          </div>
+        </div>
+
+        <!-- CLEAN ARCH -->
+        <div class="ca">
+          <div class="ca-title">Estrutura interna de cada Módulo — Clean Architecture</div>
+          <div class="ca-layers">
+            <div class="cal cal-p"><div class="cal-name">Presentation</div><div class="cal-items">API Controllers · Swagger / OpenAPI · Request &amp; Response DTOs</div></div>
+            <div class="cal cal-a"><div class="cal-name">Application</div><div class="cal-items">Services · Validators · Use Cases · Command / Query (CQRS)</div></div>
+            <div class="cal cal-d"><div class="cal-name">Domain</div><div class="cal-items">Entities · Aggregates · Domain Events · Business Rules GxP</div></div>
+            <div class="cal cal-i"><div class="cal-name">Infrastructure</div><div class="cal-items">EF Core (ORM) · Repositories · SQS Consumers · S3 Client · Kafka Consumer</div></div>
+          </div>
+        </div>
+
+        <!-- AUDIT INTERCEPTOR -->
+        <div class="ait">
+          <div class="ait-title">
+            🔒 AuditTrail — EF Core Interceptor
+            <span class="pill p-red" style="font-size:10px">Camada horizontal — todos os módulos</span>
+          </div>
+          <div class="ait-desc">
+            Intercepta toda operação de persistência via EF Core (<code>SaveChangesInterceptor</code>). Captura <strong>before_state / after_state</strong> de cada mudança, identifica o ator via token SSO/SAML e persiste no schema dedicado <code>ebr_audit</code>. Sem chamada HTTP — sem latência de rede no caminho crítico do operador.
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="pill p-red">SaveChangesInterceptor</span>
+            <span class="pill p-blue">actor_id via SSO claim</span>
+            <span class="pill p-green">before_state / after_state (JSONB)</span>
+            <span class="pill p-gold">INSERT-only no schema ebr_audit</span>
+          </div>
+          <div class="notice n-warn">
+            <div class="ni">⚠️</div>
+            <div class="nt"><strong>Validação pendente — Consultoria Especializada em Compliance GxP (*):</strong> a abordagem de dois schemas na mesma instância PostgreSQL requer validação formal quanto aos requisitos de isolamento aplicáveis ao ambiente regulatório. Decisão não finalizada.</div>
+          </div>
+        </div>
+
+        <!-- REDIS -->
+        <div class="redis" style="margin-top:12px">
+          <div class="redis-title">⚡ Redis — AWS ElastiCache · Cache Distribuído entre pods</div>
+          <div>
+            <div class="r-item"><div class="rdot"></div><div><strong>Cache de receita em execução</strong> — estado atual do operador compartilhado entre réplicas do pod</div></div>
+            <div class="r-item"><div class="rdot"></div><div><strong>Distributed Lock — RedLock</strong> — impede dois operadores de executar o mesmo step simultaneamente (crítico em ambiente multi-pod GxP)</div></div>
+            <div class="r-item"><div class="rdot"></div><div><strong>Estado transitório de execução</strong> — sessão do operador, progresso de etapa, dados temporários de formulário</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <div class="elsa">
+        <div class="elsa-title">🔄 Elsa Workflows <span class="pill p-purple" style="font-size:10px">Em avaliação</span></div>
+        <div class="elsa-desc">Engine open source .NET para orquestração de fluxos server-side. Candidato a gerenciar a lógica de execução de workflow no backend, complementando o React Flow (editor e player no frontend).</div>
+        <div class="notice n-info" style="margin-top:8px">
+          <div class="ni">ℹ️</div>
+          <div class="nt"><strong>Avaliação pendente:</strong> definir divisão de responsabilidade Elsa (backend) vs. React Flow (frontend) antes do ADR-003 (Modelo de Dados da Receita).</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" style="background:var(--accent-light);border-bottom-color:var(--accent-border)">
+          <div class="card-icon" style="background:var(--accent-light)">🔑</div>
+          <div>
+            <div class="card-title" style="color:var(--accent)">SSO / SAML</div>
+            <div class="card-sub">Identidade Corporativa — herdada do Grupo NC</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="font-size:13px;color:var(--text-mid);line-height:1.5;margin-bottom:8px">EBR herda a infraestrutura de identidade existente. Sem nova estrutura de autenticação.</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:12px;color:var(--text-mid)"><strong>Claims obrigatórios:</strong> user_id · role · tenant_id</div>
+            <div style="font-size:12px;color:var(--text-mid)"><strong>Uso no Audit Trail:</strong> actor_id extraído do Bearer Token</div>
+            <div style="font-size:12px;color:var(--text-mid)"><strong>Re-autenticação:</strong> exigida para assinatura eletrônica GxP</div>
+          </div>
+          <div class="notice n-warn">
+            <div class="ni">⚠️</div>
+            <div class="nt"><strong>Confirmar:</strong> SSO atual expõe <code>tenant_id</code> como claim? Necessário para Row Level Security no schema de auditoria.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" style="background:var(--orange-light);border-bottom-color:var(--orange-border)">
+          <div class="card-icon" style="background:var(--orange-light)">🔐</div>
+          <div>
+            <div class="card-title" style="color:var(--orange)">AWS Secrets Manager</div>
+            <div class="card-sub">Gestão de credenciais — zero hardcode</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="font-size:13px;color:var(--text-mid);line-height:1.5">Zero credencial em variável de ambiente, código ou arquivo de config. Connection strings e tokens gerenciados com rotação automática a cada 30 dias. Acesso via IAM Role do Pod — sem access keys estáticas.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     02 · DATABASE + S3
+══════════════════════════════════════════ -->
+<div class="sh fade">
+  <span class="sn">02</span>
+  <span class="st">Camada de Dados — Amazon RDS PostgreSQL + Amazon S3</span>
+  <span class="sd">Multi-AZ · Encryption at rest (AWS KMS) · Retenção regulatória 5 anos</span>
+</div>
+
+<div class="fade">
+  <div class="db-wrap">
+    <div class="db-lbl">🐘 Amazon RDS PostgreSQL — Instância única · Dois schemas separados · Backup automático 35 dias · Multi-AZ</div>
+    <div class="db-grid">
+
+      <div class="db-box db-main">
+        <div class="db-title" style="color:var(--accent)">
+          <span style="font-size:18px">📋</span> Schema: <code>ebr_core</code> — Aplicação
+          <span class="pill p-blue" style="margin-left:auto;font-size:10px">SELECT / INSERT / UPDATE / DELETE</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;line-height:1.5">Dados operacionais do EBR. Role da aplicação com permissões completas nas tabelas de negócio.</div>
+        <div class="db-schema">
+          <div class="db-sh" style="background:#f0f4ff"><span style="color:var(--accent);font-weight:700">Tabelas principais</span></div>
+          <div class="db-sb">
+            <div class="dc"><span class="dk">batch_records</span><span class="dt">— Registro de lote (raiz do agregado)</span></div>
+            <div class="dc"><span class="dk">recipes</span><span class="dt">— Receitas e versões com controle GxP</span></div>
+            <div class="dc"><span class="dk">recipe_steps</span><span class="dt">— Etapas e condicionais do fluxo</span></div>
+            <div class="dc"><span class="dk">executions</span><span class="dt">— Execução por operador e turno</span></div>
+            <div class="dc"><span class="dk">logbook_entries</span><span class="dt">— Logbook de salas e equipamentos</span></div>
+          </div>
+        </div>
+        <div class="notice n-info">
+          <div class="ni">ℹ️</div>
+          <div class="nt"><strong>Multi-tenancy pendente:</strong> estratégia de isolamento por tenant (RBBL, EMS) — Row Level Security ou schema por empresa — a definir antes do ADR-003.</div>
+        </div>
+      </div>
+
+      <div class="db-box db-audit">
+        <div class="db-title" style="color:var(--red)">
+          <span style="font-size:18px">🔒</span> Schema: <code>ebr_audit</code> — Audit Trail
+          <span class="pill p-red" style="margin-left:auto;font-size:10px">Somente INSERT · REVOKE UPDATE/DELETE</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;line-height:1.5">Schema dedicado. Role da aplicação tem apenas permissão de INSERT — UPDATE e DELETE revogados via GRANT no banco.</div>
+        <div class="db-schema">
+          <div class="db-sh" style="background:var(--red-light)">
+            <span style="color:var(--red);font-weight:700">Tabela: audit_events</span>
+            <span class="pill p-red" style="font-size:10px">REVOKE UPDATE, DELETE</span>
+          </div>
+          <div class="db-sb">
+            <div class="dc"><span class="dk">event_id</span><span class="dt">UUID</span><span class="dn">· idempotência</span></div>
+            <div class="dc"><span class="dk">timestamp_utc</span><span class="dt">TIMESTAMPTZ</span><span class="dn">· sempre UTC</span></div>
+            <div class="dc"><span class="dk">tenant_id</span><span class="dt">VARCHAR</span><span class="dn">· RBBL, EMS...</span></div>
+            <div class="dc"><span class="dk">actor_id</span><span class="dt">VARCHAR</span><span class="dn">· usuário SSO</span></div>
+            <div class="dc"><span class="dk">entity_type</span><span class="dt">VARCHAR</span><span class="dn">· BatchRecord, Step...</span></div>
+            <div class="dc"><span class="dk">action</span><span class="dt">VARCHAR</span><span class="dn">· CREATE / SIGN / APPROVE</span></div>
+            <div class="dc"><span class="dk">before_state</span><span class="dt">JSONB</span><span class="dn">· estado anterior</span></div>
+            <div class="dc"><span class="dk">after_state</span><span class="dt">JSONB</span><span class="dn">· estado posterior</span></div>
+            <div class="dc"><span class="dk">reason</span><span class="dt">TEXT</span><span class="dn">· motivo (obrigatório GxP)</span></div>
+          </div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill p-red">Row Level Security por tenant</span>
+        </div>
+        <div class="notice n-warn">
+          <div class="ni">⚠️</div>
+          <div class="nt"><strong>Validação pendente — Consultoria Especializada em Compliance GxP (*):</strong> o isolamento por schema requer validação formal antes da decisão final. Decisão não finalizada.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- S3 -->
+    <div class="s3-box">
+      <div class="s3-title">🪣 Amazon S3 — Armazenamento de Longo Prazo</div>
+      <div class="s3-grid">
+        <div>
+          <div class="s3-sub">S3 GLACIER + OBJECT LOCK (WORM) — Audit Trail</div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Destino:</strong> exportação diária dos registros do schema <code>ebr_audit</code></div></div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Retenção:</strong> mínimo 5 anos — imutável após gravação (Write Once Read Many)</div></div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Object Lock:</strong> impede deleção ou sobrescrita mesmo por administrador AWS</div></div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Criptografia:</strong> SSE-KMS com chave dedicada ao EBR</div></div>
+        </div>
+        <div>
+          <div class="s3-sub">S3 STANDARD — Anexos Operacionais</div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Destino:</strong> fotos de processo, laudos não regulatórios, anexos de desvio</div></div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Acesso:</strong> via pre-signed URL com expiração — nunca exposto publicamente</div></div>
+          <div class="s3-row"><div class="sdot"></div><div><strong>Retenção:</strong> política por tipo de documento — a confirmar com área de Qualidade</div></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(184,92,0,.15);font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace">
+        <strong style="color:var(--orange)">RDS Backup:</strong> snapshot automático diário · retenção 35 dias · restauração point-in-time disponível (PITR)
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     03 · INTEGRAÇÕES
+══════════════════════════════════════════ -->
+<div class="sh fade">
+  <span class="sn">03</span>
+  <span class="st">Integrações — Contratos de Eventos e Mensageria</span>
+  <span class="sd">SQS/SNS já em produção no Grupo NC · Kafka para IoT</span>
+</div>
+
+<div class="int-grid fade">
+
+  <div class="int-card">
+    <div class="int-hd" style="background:var(--green-light)">
+      <div class="int-name"><div class="idot" style="background:var(--green)"></div>SAP S/4 HANA</div>
+      <span class="pill p-green">SQS / SNS</span>
+    </div>
+    <div class="int-body">
+      <div style="font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:8px">PP / MM / SD — ERP do Grupo NC · SAP MII = EBR legado (a migrar para Kronix EBR)</div>
+      <div class="int-row"><div class="int-dir">SAP→</div><div class="int-desc"><strong>OP aberta (SAP PP):</strong> dispara criação do BatchRecord e associação da receita no EBR</div></div>
+      <div class="int-row"><div class="int-dir">→SAP</div><div class="int-desc"><strong>Confirmação de OP encerrada:</strong> EBR notifica SAP MM/PP para confirmar ordem e movimentar estoque</div></div>
+      <div class="int-row"><div class="int-dir">SAP→</div><div class="int-desc"><strong>NT (Necessidade de Transporte):</strong> movimentação de material — almoxarifado → área classificada</div></div>
+      <div class="notice n-warn">
+        <div class="ni">⚠️</div>
+        <div class="nt"><strong>Event Schema SQS pendente:</strong> campos mínimos de cada evento a definir antes do primeiro consumer (ADR-001).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="int-card">
+    <div class="int-hd" style="background:var(--purple-light)">
+      <div class="int-name"><div class="idot" style="background:var(--purple)"></div>SE Suite</div>
+      <span class="pill p-purple">SQS / SNS</span>
+    </div>
+    <div class="int-body">
+      <div style="font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Sistema de Gestão de Qualidade e Documentos</div>
+      <div class="int-row"><div class="int-dir">SE→</div><div class="int-desc"><strong>SOPs e documentos:</strong> procedimentos operacionais vinculados às etapas da receita</div></div>
+      <div class="int-row"><div class="int-dir">→SE</div><div class="int-desc"><strong>Desvios e não-conformidades:</strong> EBR notifica SE Suite quando desvio é registrado durante execução</div></div>
+      <div class="notice n-info">
+        <div class="ni">ℹ️</div>
+        <div class="nt"><strong>Escopo a detalhar:</strong> contratos de evento da integração bidirecional a definir no Discovery.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="iot-card">
+    <div class="iot-hd">
+      <div class="iot-name"><div class="idot" style="background:var(--teal)"></div>IoT — Sensores de Processo</div>
+      <span class="pill p-teal">Apache Kafka (Amazon MSK)</span>
+    </div>
+    <div class="iot-body">
+      <div style="font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Sensores de equipamentos · Parâmetros de processo em tempo real</div>
+      <div class="vol-badge">📊 Volumetria — justificativa Kafka</div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:8px">
+        <strong>RBBL:</strong> &gt; 20.000 unidades/dia (canetas emagrecedoras)<br>
+        <strong>EMS:</strong> Volume consideravelmente maior (portfólio diversificado de produtos)<br>
+        <strong>Decisão:</strong> frequência e volume de eventos de sensor incompatíveis com SQS como buffer primário de IoT.
+      </div>
+      <div class="int-row"><div class="int-dir">IoT→</div><div class="int-desc"><strong>Parâmetros de processo:</strong> temperatura, pressão, peso em tempo real durante manipulação e envase</div></div>
+      <div class="int-row"><div class="int-dir">IoT→</div><div class="int-desc"><strong>Eventos de equipamento:</strong> início/fim de ciclo, alarmes, confirmação de setup de máquina</div></div>
+      <div class="notice n-ok" style="margin-top:8px">
+        <div class="ni">✅</div>
+        <div class="nt"><strong>Kafka confirmado</strong> pela volumetria da RBBL. Consumer integrado à API (Infrastructure layer) — sem serviço separado nesta wave.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     04 · OBSERVABILIDADE
+══════════════════════════════════════════ -->
+<div class="sh fade">
+  <span class="sn">04</span>
+  <span class="st">Observabilidade — Datadog + Grafana</span>
+  <span class="sd">APM · Distributed Tracing · Logs · Alertas GxP · Dashboards</span>
+</div>
+
+<div class="obs-grid fade">
+  <div class="obs-card">
+    <div class="obs-hd" style="background:#fff8f0;border-bottom-color:var(--orange-border)">
+      <div class="obs-icon" style="background:var(--orange-light)">🐕</div>
+      <div>
+        <div class="obs-title">Datadog APM</div>
+        <div class="obs-role">Application Performance Monitoring · Distributed Tracing · Logs centralizados</div>
+      </div>
+    </div>
+    <div class="obs-body">
+      <div class="obs-item"><div class="obdot" style="background:var(--orange)"></div><div><strong>Distributed Tracing:</strong> rastreamento end-to-end da ação do operador no frontend até a escrita no Audit Trail</div></div>
+      <div class="obs-item"><div class="obdot" style="background:var(--red)"></div><div><strong>Alerta crítico GxP:</strong> qualquer falha na escrita do Audit Trail gera alerta imediato — zero tolerância regulatória</div></div>
+      <div class="obs-item"><div class="obdot" style="background:var(--orange)"></div><div><strong>Dashboard GxP:</strong> volume de eventos de auditoria por módulo, tenant e hora</div></div>
+      <div class="obs-item"><div class="obdot" style="background:var(--orange)"></div><div><strong>Logs centralizados:</strong> todos os pods do cluster correlacionados por trace_id</div></div>
+      <div class="notice n-warn">
+        <div class="ni">⚠️</div>
+        <div class="nt"><strong>Confirmar:</strong> Datadog já está licenciado no Grupo NC? Se sim, herdar configuração dos módulos OEE e Heijunka.</div>
+      </div>
+    </div>
+  </div>
+  <div class="obs-card">
+    <div class="obs-hd" style="background:#f5f5ff;border-bottom-color:#c0c0f0">
+      <div class="obs-icon" style="background:#f0f0ff">📊</div>
+      <div>
+        <div class="obs-title">Grafana</div>
+        <div class="obs-role">Dashboards operacionais · Alertas customizados · Visão para GQ</div>
+      </div>
+    </div>
+    <div class="obs-body">
+      <div class="obs-item"><div class="obdot" style="background:#5050cc"></div><div><strong>Dashboards operacionais:</strong> OPs em execução em tempo real, status por linha de produção, throughput por turno</div></div>
+      <div class="obs-item"><div class="obdot" style="background:#5050cc"></div><div><strong>Alertas customizados:</strong> thresholds por módulo — latência, volume Kafka, uso de Redis, falhas de integração</div></div>
+      <div class="obs-item"><div class="obdot" style="background:#5050cc"></div><div><strong>Dashboard GxP para GQ:</strong> visão consolidada de auditoria acessível para área de Qualidade — sem acesso à API técnica</div></div>
+      <div class="obs-item"><div class="obdot" style="background:#5050cc"></div><div><strong>Fonte de dados:</strong> consome métricas do Datadog — sem duplicação de agentes no cluster</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     05 · QUALIDADE & SEGURANÇA
+══════════════════════════════════════════ -->
+<div class="sh fade">
+  <span class="sn">05</span>
+  <span class="st">Qualidade &amp; Segurança — Ferramentas Planejadas</span>
+  <span class="sd">Validação de NFRs · Testes GxP · Segurança de código</span>
+</div>
+
+<div class="qa-grid fade">
+
+  <div class="qa-card">
+    <div class="qa-hd" style="background:#f0f8f4;border-bottom-color:var(--green-border)">
+      <div class="qa-icon">🎭</div>
+      <div>
+        <div class="qa-title" style="color:var(--green)">Testes E2E</div>
+        <div class="qa-sub">UI real + Backend em Staging</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div>Playwright ou Cypress — ferramenta a definir pelo time</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div>Cobertura obrigatória: execução de receita, assinatura eletrônica, geração de BPR</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div><strong>Relevância VSC:</strong> evidências de E2E fazem parte do protocolo IQ/OQ — validação formal do sistema</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">📋 Planejado</span>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--accent-light);border-bottom-color:var(--accent-border)">
+      <div class="qa-icon">🔭</div>
+      <div>
+        <div class="qa-title" style="color:var(--accent)">OpenTelemetry</div>
+        <div class="qa-sub">Traces · Metrics · Logs distribuídos</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--accent)"></div><div>Padrão de mercado para observabilidade distribuída em .NET — integra nativamente com Datadog</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--accent)"></div><div>Instrumentação automática de ASP.NET Core, EF Core e HttpClient sem mudança de código de negócio</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--accent)"></div><div>Diagnóstico de performance em testes de carga e ambiente de staging</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">⚠️ Avaliar necessidade</span>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--teal-light);border-bottom-color:var(--teal-border)">
+      <div class="qa-icon">💣</div>
+      <div>
+        <div class="qa-title" style="color:var(--teal)">NBomber</div>
+        <div class="qa-sub">Performance &amp; Carga — .NET nativo</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div>Framework de load test nativo .NET — sem dependência de ferramenta externa</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div><strong>NFR alvo:</strong> latência de escrita no Audit Trail &lt; 100ms sob carga de produção RBBL</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div>Execução obrigatória em staging antes do Go Live dez/2026 — validação dos NFRs documentados</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">📋 Planejado</span>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--red-light);border-bottom-color:var(--red-border)">
+      <div class="qa-icon">🛡️</div>
+      <div>
+        <div class="qa-title" style="color:var(--red)">Segurança de Código</div>
+        <div class="qa-sub">SonarQube · OWASP ZAP</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--red)"></div><div><strong>SonarQube:</strong> análise estática contínua — vulnerabilidades, code smells, cobertura de testes</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--red)"></div><div><strong>OWASP ZAP:</strong> scan de segurança dinâmico (DAST) na API — padrão para sistemas com dados regulatórios sensíveis</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--red)"></div><div>Resultados documentados como evidência de segurança para o dossiê de validação VSC</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">📋 Planejado</span>
+    </div>
+  </div>
+
+</div>
+
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--green-light);border-bottom-color:var(--green-border)">
+      <div class="qa-icon">🔍</div>
+      <div>
+        <div class="qa-title" style="color:var(--green)">Linter — Análise Estática</div>
+        <div class="qa-sub">ESLint (React) · Roslyn Analyzers (.NET)</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div><strong>ESLint:</strong> análise estática do frontend React — padrões de código, imports não utilizados, regras de acessibilidade</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div><strong>Roslyn Analyzers:</strong> análise estática nativa do .NET — detecta bugs, más práticas e vulnerabilidades em tempo de build</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--green)"></div><div>Executa no pipeline antes do merge — problemas detectados antes do code review, não depois</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">📋 Planejado</span>
+    </div>
+  </div>
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--teal-light);border-bottom-color:var(--teal-border)">
+      <div class="qa-icon">💓</div>
+      <div>
+        <div class="qa-title" style="color:var(--teal)">Health Checks</div>
+        <div class="qa-sub">ASP.NET Core nativo · Kubernetes Probes</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div><strong>Liveness probe</strong> <code>/health/live</code> — Kubernetes reinicia pod automaticamente se aplicação travar</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div><strong>Readiness probe</strong> <code>/health/ready</code> — verifica RDS, Redis, Kafka e S3 antes de receber tráfego</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--teal)"></div><div>Funcionalidade nativa do ASP.NET Core (<code>IHealthCheck</code>) — pré-requisito operacional do EKS, não opcional</div></div>
+      <span class="pill p-slate" style="margin-top:6px;font-size:10px">📋 Planejado</span>
+    </div>
+  </div>
+  <div class="qa-card">
+    <div class="qa-hd" style="background:var(--purple-light);border-bottom-color:var(--purple-border)">
+      <div class="qa-icon">🤝</div>
+      <div>
+        <div class="qa-title" style="color:var(--purple)">Contract Testing</div>
+        <div class="qa-sub">Pact — SQS/SNS + Kafka</div>
+      </div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-item"><div class="qdot" style="background:var(--purple)"></div><div>Valida contratos de evento entre produtor e consumer — SAP, SE Suite e IoT via Kafka</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--purple)"></div><div>Mudança de schema no produtor sem atualizar o consumer é detectada antes do deploy — evita falha silenciosa no Audit Trail</div></div>
+      <div class="qa-item"><div class="qdot" style="background:var(--purple)"></div><div>Suporte nativo a .NET e React — sem dependência de linguagem externa</div></div>
+      <div class="notice n-warn" style="margin-top:8px">
+        <div class="ni">⚠️</div>
+        <div class="nt"><strong>Em avaliação:</strong> requer alinhamento com o time antes de adotar — prática comum em arquiteturas distribuídas maduras, mas com curva de aprendizado.</div>
+      </div>
+    </div>
+  </div>
+
+<!-- LEGEND -->
+<div class="legend fade">
+  <span class="leg-title">Legenda:</span>
+  <div class="leg-item"><div class="ldot" style="background:var(--accent)"></div>EBR Core / Confirmado</div>
+  <div class="leg-item"><div class="ldot" style="background:var(--green)"></div>SAP S/4 HANA</div>
+  <div class="leg-item"><div class="ldot" style="background:var(--purple)"></div>SE Suite</div>
+  <div class="leg-item"><div class="ldot" style="background:var(--teal)"></div>IoT / Kafka</div>
+  <div class="leg-item"><div class="ldot" style="background:var(--red)"></div>Audit Trail GxP</div>
+  <div class="leg-item"><div class="ldot" style="background:var(--orange)"></div>Redis / S3 / Infra</div>
+  <div class="leg-item">
+    <div style="width:20px;height:2px;background:repeating-linear-gradient(90deg,#7799dd 0,#7799dd 5px,transparent 5px,transparent 10px);border-radius:1px"></div>
+    Fronteira Kubernetes
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+    <span class="pill p-gold" style="font-size:11px">⚠️ Validação pendente (*)</span>
+    <span class="pill p-blue" style="font-size:11px">ℹ️ Em avaliação</span>
+    <span class="pill p-green" style="font-size:11px">✅ Confirmado</span>
+    <span class="pill p-slate" style="font-size:11px">📋 Planejado</span>
+  </div>
+</div>
+
+<!-- FOOTNOTE -->
+<div class="footnote fade">
+  <strong style="color:var(--text-mid)">(*) Validação pendente — Consultoria Especializada em Compliance GxP:</strong>
+  os pontos sinalizados representam decisões arquiteturais com impacto em requisitos regulatórios
+  (ANVISA RDC 658/2022 · FDA 21 CFR Part 11 · GMP Annex 11) que devem ser formalmente validados
+  por consultoria especializada antes de serem considerados decisão final.
+  As abordagens descritas representam a direção técnica proposta pelo time de arquitetura —
+  não uma declaração de conformidade regulatória.
+</div>
+
+</div>
+</body>
+</html>
