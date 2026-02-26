@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kronix EBR — Diagrama C4</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
+    --border:#30363d; --border-bright:#484f58;
+    --text:#e6edf3; --text-mid:#8b949e; --text-dim:#484f58;
+    --blue:#58a6ff; --blue-bg:rgba(88,166,255,0.1); --blue-border:rgba(88,166,255,0.3);
+    --green:#3fb950; --green-bg:rgba(63,185,80,0.1); --green-border:rgba(63,185,80,0.3);
+    --red:#f85149; --red-bg:rgba(248,81,73,0.1); --red-border:rgba(248,81,73,0.3);
+    --orange:#e3b341; --orange-bg:rgba(227,179,65,0.1); --orange-border:rgba(227,179,65,0.3);
+    --purple:#bc8cff; --purple-bg:rgba(188,140,255,0.1); --purple-border:rgba(188,140,255,0.3);
+    --teal:#26a6c0; --teal-bg:rgba(38,166,192,0.1); --teal-border:rgba(38,166,192,0.3);
+    --gold:#e3b341;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+
+  header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:10px}
+  .logo{background:var(--blue);color:#0d1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .hdr-left{display:flex;align-items:center;gap:12px}
+  .hdr-title{font-size:15px;font-weight:600;color:var(--text)}
+  .hdr-sub{font-size:11px;color:var(--text-mid);font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .hdr-right{display:flex;align-items:center;gap:10px}
+  .nav-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:500;text-decoration:none;border:1px solid var(--border-bright);color:var(--text-mid);background:var(--bg3);transition:all .15s}
+  .nav-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .view-badge{padding:4px 10px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+
+  .breadcrumb{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 32px;display:flex;align-items:center;gap:8px;font-size:12px;font-family:'JetBrains Mono',monospace}
+  .bc-item{color:var(--text-mid);cursor:pointer;transition:color .15s}
+  .bc-item:hover{color:var(--blue)}
+  .bc-active{color:var(--text)}
+  .bc-sep{color:var(--text-dim)}
+
+  .legend-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .leg-title{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px}
+  .leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid);font-family:'JetBrains Mono',monospace}
+  .leg-box{width:12px;height:12px;border-radius:2px;border:1px solid;flex-shrink:0}
+  .leg-hint{margin-left:auto;font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+
+  .canvas{padding:32px;min-height:calc(100vh - 130px)}
+
+  .view{display:none}
+  .view.active{display:block}
+
+  .diagram-wrap{width:100%;overflow-x:auto;overflow-y:visible}
+  svg{font-family:'IBM Plex Sans',sans-serif;display:block}
+
+  .clickable{cursor:pointer}
+  .clickable:hover .container-box{filter:brightness(1.15)}
+
+  .tip{position:fixed;background:var(--bg2);border:1px solid var(--border-bright);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text-mid);max-width:280px;pointer-events:none;z-index:500;display:none;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .tip strong{color:var(--text);display:block;margin-bottom:4px;font-size:13px}
+
+  .info-panel{position:fixed;right:0;top:0;bottom:0;width:340px;background:var(--bg2);border-left:1px solid var(--border);padding:20px;z-index:300;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease}
+  .info-panel.open{transform:translateX(0)}
+  .info-close{position:absolute;top:14px;right:16px;background:var(--bg3);border:1px solid var(--border);color:var(--text-mid);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .info-close:hover{color:var(--text);border-color:var(--border-bright)}
+  .info-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;padding-right:36px}
+  .info-sub{font-size:11px;color:var(--text-mid);font-family:'JetBrains Mono',monospace;margin-bottom:16px}
+  .info-section{margin-bottom:14px}
+  .info-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-weight:600;margin-bottom:8px}
+  .info-row{font-size:12px;color:var(--text-mid);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;line-height:1.4}
+  .info-row:last-child{border-bottom:none}
+  .info-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+  .info-tag{display:inline-flex;padding:2px 8px;border-radius:12px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:500;margin:2px;border:1px solid}
+
+  .comp-header{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .comp-header-title{font-size:16px;font-weight:700;color:var(--text)}
+  .comp-header-sub{font-size:12px;color:var(--text-mid);font-family:'JetBrains Mono',monospace;margin-top:2px}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;cursor:pointer;background:var(--bg3);border:1px solid var(--border-bright);color:var(--text-mid);transition:all .15s}
+  .back-btn:hover{color:var(--blue);border-color:var(--blue)}
+
+  .fade-in{animation:fi .3s ease}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="tip" id="tip"></div>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo">Kx</div>
+    <div>
+      <div class="hdr-title">Kronix EBR — Diagrama C4</div>
+      <div class="hdr-sub">Visão Dev / PO / Tester · NC Tech · RBBL Wave 1</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span class="view-badge">⬡ Dev / PO View</span>
+    <a class="nav-btn" href="kronix-ebr-arquitetura-tecnica_4.html">📋 Visão IT Management →</a>
+  </div>
+</header>
+
+<div class="breadcrumb" id="breadcrumb">
+  <span class="bc-item bc-active">Sistema</span>
+</div>
+
+<div class="legend-bar">
+  <span class="leg-title">Legenda:</span>
+  <div class="leg-item"><div class="leg-box" style="background:var(--blue-bg);border-color:var(--blue)"></div>Kronix EBR (interno)</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--green-bg);border-color:var(--green)"></div>Sistemas externos / SAP CPI</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--red-bg);border-color:var(--red)"></div>Dados / Persistência</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--orange-bg);border-color:var(--orange)"></div>Infra / Cache / Impressão</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--purple-bg);border-color:var(--purple)"></div>Observabilidade</div>
+  <div class="leg-item"><div style="width:20px;height:2px;background:var(--blue)"></div>Síncrono</div>
+  <div class="leg-item"><div style="width:20px;height:0;border-top:2px dashed var(--green)"></div>Async SQS/Kafka</div>
+  <span class="leg-hint">💡 Clique nos containers azuis para ver os componentes internos</span>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <div class="info-close" onclick="closePanel()">✕</div>
+  <div id="infoPanelContent"></div>
+</div>
+
+<div class="canvas">
+
+  <!-- ═══ CONTAINER VIEW ═══ -->
+  <div class="view active fade-in" id="view-container">
+    <div class="diagram-wrap">
+      <svg width="1300" height="820" viewBox="0 0 1300 820">
+        <defs>
+          <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+          <marker id="arr-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3fb950"/></marker>
+          <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e3b341"/></marker>
+          <marker id="arr-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+          <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bc8cff"/></marker>
+          <marker id="arr-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#26a6c0"/></marker>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- KRONIX PLATFORM boundary -->
+        <rect x="260" y="30" width="700" height="590" rx="12" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.35"/>
+        <text x="276" y="20" font-family="JetBrains Mono" font-size="11" fill="#58a6ff" opacity="0.6">☸ Kronix Platform — AWS EKS · Namespace: kronix-ebr · OEE e Heijunka co-residem</text>
+
+        <!-- SAP CPI (middleware) -->
+        <g class="clickable" onclick="showContainerInfo('cpi')" onmouseenter="showTip(event,'SAP CPI — Integration Suite','Middleware operado pelo NC Tech · Traduz eventos SQS para IDoc/BAPI/RFC e vice-versa')" onmouseleave="hideTip()">
+          <rect x="20" y="80" width="170" height="80" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5" class="container-box"/>
+          <text x="105" y="108" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#3fb950">SAP CPI</text>
+          <text x="105" y="126" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">Integration Suite</text>
+          <text x="105" y="142" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">NC Tech · SQS ↔ RFC</text>
+        </g>
+
+        <!-- SAP S4 -->
+        <g class="clickable" onclick="showContainerInfo('sap')" onmouseenter="showTip(event,'SAP S/4 HANA','ERP Grupo NC · PP/MM/SD · SAP MII = EBR legado EMS (a migrar)')" onmouseleave="hideTip()">
+          <rect x="20" y="200" width="170" height="70" rx="8" fill="rgba(63,185,80,0.07)" stroke="#3fb950" stroke-width="1" stroke-dasharray="4,2" class="container-box"/>
+          <text x="105" y="228" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#3fb950">SAP S/4 HANA</text>
+          <text x="105" y="246" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[ERP Grupo NC]</text>
+          <text x="105" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">PP · MM · SD</text>
+        </g>
+
+        <!-- SE Suite -->
+        <g class="clickable" onclick="showContainerInfo('se')" onmouseenter="showTip(event,'SE Suite','QMS e GED · SOPs vinculados à receita · Desvios e não-conformidades')" onmouseleave="hideTip()">
+          <rect x="20" y="310" width="170" height="70" rx="8" fill="rgba(188,140,255,0.1)" stroke="#bc8cff" stroke-width="1.5" class="container-box"/>
+          <text x="105" y="338" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#bc8cff">SE Suite</text>
+          <text x="105" y="356" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[QMS · GED]</text>
+          <text x="105" y="370" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">SQS / SNS</text>
+        </g>
+
+        <!-- IoT -->
+        <g class="clickable" onclick="showContainerInfo('iot')" onmouseenter="showTip(event,'IoT — Sensores','Kafka MSK · &gt;20k eventos/dia RBBL · Temperatura, pressão, peso')" onmouseleave="hideTip()">
+          <rect x="20" y="420" width="170" height="70" rx="8" fill="rgba(38,166,192,0.1)" stroke="#26a6c0" stroke-width="1.5" class="container-box"/>
+          <text x="105" y="448" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#26a6c0">IoT Sensores</text>
+          <text x="105" y="466" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[Equipamentos]</text>
+          <text x="105" y="480" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#26a6c0">Kafka (MSK)</text>
+        </g>
+
+        <!-- Zebra -->
+        <g class="clickable" onclick="showContainerInfo('zebra')" onmouseenter="showTip(event,'Impressoras Zebra','ZPL/TCP · Impressão de etiquetas durante execução da receita')" onmouseleave="hideTip()">
+          <rect x="20" y="530" width="170" height="60" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5" class="container-box"/>
+          <text x="105" y="558" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#e3b341">Zebra Printers</text>
+          <text x="105" y="576" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">ZPL / TCP · Etiquetas</text>
+        </g>
+
+        <!-- SSO -->
+        <g class="clickable" onclick="showContainerInfo('sso')" onmouseenter="showTip(event,'SSO / SAML','Identidade corporativa herdada · tenant_id obrigatório para isolamento por site')" onmouseleave="hideTip()">
+          <rect x="20" y="630" width="170" height="60" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5" class="container-box"/>
+          <text x="105" y="658" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#e3b341">SSO / SAML</text>
+          <text x="105" y="676" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Identidade · Grupo NC</text>
+        </g>
+
+        <!-- FRONTEND -->
+        <g class="clickable" onclick="drillDown('frontend')" onmouseenter="showTip(event,'Frontend React','Clique para ver componentes internos · React Flow · Android tablets')" onmouseleave="hideTip()">
+          <rect x="280" y="50" width="200" height="90" rx="8" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="2" class="container-box" filter="url(#glow)"/>
+          <text x="380" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="#58a6ff">Frontend</text>
+          <text x="380" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[React Container]</text>
+          <text x="380" y="118" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">React + React Flow</text>
+          <text x="362" y="133" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#484f58">▶ clique para expandir</text>
+        </g>
+
+        <!-- API -->
+        <g class="clickable" onclick="drillDown('api')" onmouseenter="showTip(event,'NovoEBR API','Clique para ver módulos · .NET C# 10 · Modular Monolith · Wave 1: 7 módulos')" onmouseleave="hideTip()">
+          <rect x="520" y="180" width="220" height="230" rx="8" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="2" class="container-box" filter="url(#glow)"/>
+          <text x="630" y="212" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="#58a6ff">NovoEBR API</text>
+          <text x="630" y="232" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[ASP.NET Core · .NET C# 10]</text>
+          <line x1="536" y1="248" x2="724" y2="248" stroke="#30363d" stroke-width="1"/>
+          <text x="630" y="268" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#3fb950">Wave 1: 7 módulos negócio</text>
+          <text x="630" y="286" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Audit · Receb · Exec · Anexos</text>
+          <text x="630" y="302" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Logbook · BPR · Ambiental</text>
+          <line x1="536" y1="316" x2="724" y2="316" stroke="#30363d" stroke-width="1"/>
+          <text x="630" y="334" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#f85149">AuditTrail Interceptor</text>
+          <text x="630" y="352" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#e3b341">SQS · Kafka · ZPL Consumers</text>
+          <text x="630" y="370" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#26a6c0">Health: /live · /ready</text>
+          <text x="610" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#484f58">▶ clique para expandir</text>
+        </g>
+
+        <!-- SHARED REF DB -->
+        <g class="clickable" onclick="showContainerInfo('refdb')" onmouseenter="showTip(event,'Shared Reference DB','Banco compartilhado entre todos os sites · Cadastros gerais e parâmetros universais')" onmouseleave="hideTip()">
+          <rect x="280" y="530" width="200" height="80" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="5,3" class="container-box"/>
+          <text x="380" y="558" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#e3b341">Shared Ref DB</text>
+          <text x="380" y="576" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">PostgreSQL · Compartilhado</text>
+          <text x="380" y="592" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#e3b341">⚠️ Design pendente (*)</text>
+        </g>
+
+        <!-- POSTGRESQL (per site) -->
+        <g class="clickable" onclick="drillDown('postgres')" onmouseenter="showTip(event,'PostgreSQL RDS (por site)','Clique para ver schemas · Multi-AZ · ebr_core + ebr_audit')" onmouseleave="hideTip()">
+          <rect x="960" y="180" width="190" height="120" rx="8" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="1.5" class="container-box"/>
+          <text x="1055" y="212" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#f85149">PostgreSQL RDS</text>
+          <text x="1055" y="230" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[Por site · Multi-AZ]</text>
+          <text x="1055" y="248" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">schema: ebr_core</text>
+          <text x="1055" y="264" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f85149">schema: ebr_audit (INSERT-only)</text>
+          <text x="1030" y="292" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#484f58">▶ clique para expandir</text>
+        </g>
+
+        <!-- REDIS -->
+        <g class="clickable" onclick="showContainerInfo('redis')" onmouseenter="showTip(event,'Redis ElastiCache','Cache · RedLock · Estado transitório · Compartilhado entre pods')" onmouseleave="hideTip()">
+          <rect x="960" y="360" width="190" height="80" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5" class="container-box"/>
+          <text x="1055" y="392" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#e3b341">Redis</text>
+          <text x="1055" y="410" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[AWS ElastiCache]</text>
+          <text x="1055" y="428" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Cache · RedLock · Session</text>
+        </g>
+
+        <!-- S3 -->
+        <g class="clickable" onclick="showContainerInfo('s3')" onmouseenter="showTip(event,'Amazon S3','Glacier WORM 5 anos (ebr_audit) · Standard para anexos operacionais')" onmouseleave="hideTip()">
+          <rect x="960" y="500" width="190" height="80" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5" class="container-box"/>
+          <text x="1055" y="532" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#e3b341">Amazon S3</text>
+          <text x="1055" y="550" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">[Object Storage]</text>
+          <text x="1055" y="568" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f85149">Glacier WORM · 5 anos</text>
+        </g>
+
+        <!-- OBSERVABILITY -->
+        <g class="clickable" onclick="showContainerInfo('obs')" onmouseenter="showTip(event,'Observabilidade','Datadog APM + Grafana · Alertas GxP · Dashboard área de Qualidade')" onmouseleave="hideTip()">
+          <rect x="280" y="640" width="660" height="65" rx="8" fill="rgba(188,140,255,0.1)" stroke="#bc8cff" stroke-width="1.5" class="container-box"/>
+          <text x="610" y="668" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#bc8cff">Observabilidade</text>
+          <text x="610" y="686" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">Datadog APM · Grafana · Alertas GxP críticos · Health Checks /live /ready</text>
+          <text x="610" y="700" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#484f58">GitHub Actions CI/CD pipeline: Lint → Test → Security → Deploy EKS</text>
+        </g>
+
+        <!-- ═══ CONNECTIONS ═══ -->
+
+        <!-- User → Frontend -->
+        <text x="310" y="26" font-family="JetBrains Mono" font-size="10" fill="#8b949e">👤 Operador / GQ (browser / Android)</text>
+        <line x1="360" y1="32" x2="360" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-blue)" stroke-dasharray="4,3" opacity="0.6"/>
+
+        <!-- Frontend → API -->
+        <line x1="480" y1="95" x2="518" y2="240" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr-blue)"/>
+        <text x="470" y="178" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">HTTPS</text>
+
+        <!-- CPI ↔ API (SQS) -->
+        <line x1="190" y1="108" x2="518" y2="270" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-green)"/>
+        <line x1="518" y1="288" x2="190" y2="126" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-green)"/>
+        <text x="310" y="200" font-family="JetBrains Mono" font-size="10" fill="#3fb950">SQS/SNS</text>
+
+        <!-- CPI ↔ SAP -->
+        <line x1="105" y1="160" x2="105" y2="200" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-green)"/>
+        <line x1="115" y1="200" x2="115" y2="160" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-green)"/>
+        <text x="122" y="185" font-family="JetBrains Mono" font-size="9" fill="#3fb950">RFC</text>
+
+        <!-- SE Suite ↔ API (SQS) -->
+        <line x1="190" y1="332" x2="518" y2="305" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-purple)"/>
+        <line x1="518" y1="320" x2="190" y2="348" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-purple)"/>
+        <text x="300" y="322" font-family="JetBrains Mono" font-size="10" fill="#bc8cff">SQS/SNS</text>
+
+        <!-- IoT → API (Kafka) -->
+        <line x1="190" y1="448" x2="518" y2="360" stroke="#26a6c0" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-teal)"/>
+        <text x="295" y="418" font-family="JetBrains Mono" font-size="10" fill="#26a6c0">Kafka (MSK)</text>
+
+        <!-- Zebra ← API (ZPL/TCP) -->
+        <line x1="518" y1="395" x2="190" y2="555" stroke="#e3b341" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+        <text x="295" y="488" font-family="JetBrains Mono" font-size="10" fill="#e3b341">ZPL / TCP</text>
+
+        <!-- SSO → API -->
+        <line x1="190" y1="652" x2="518" y2="400" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-orange)" opacity="0.7"/>
+        <text x="280" y="548" font-family="JetBrains Mono" font-size="10" fill="#e3b341" opacity="0.8">SAML/JWT</text>
+
+        <!-- API → PostgreSQL -->
+        <line x1="740" y1="280" x2="958" y2="255" stroke="#f85149" stroke-width="2" marker-end="url(#arr-red)"/>
+        <text x="830" y="260" font-family="JetBrains Mono" font-size="10" fill="#f85149">EF Core</text>
+
+        <!-- API → Redis -->
+        <line x1="740" y1="330" x2="958" y2="395" stroke="#e3b341" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+        <text x="830" y="368" font-family="JetBrains Mono" font-size="10" fill="#e3b341">Cache</text>
+
+        <!-- API → S3 -->
+        <line x1="740" y1="380" x2="958" y2="530" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-orange)"/>
+        <text x="870" y="455" font-family="JetBrains Mono" font-size="10" fill="#e3b341">SDK</text>
+
+        <!-- PostgreSQL → S3 (daily export) -->
+        <line x1="1055" y1="300" x2="1055" y2="498" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-red)" opacity="0.6"/>
+        <text x="1062" y="408" font-family="JetBrains Mono" font-size="9" fill="#f85149" opacity="0.7">export diário</text>
+        <text x="1062" y="420" font-family="JetBrains Mono" font-size="9" fill="#f85149" opacity="0.7">WORM 5 anos</text>
+
+        <!-- API → Shared Ref DB -->
+        <line x1="630" y1="410" x2="465" y2="528" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-orange)" opacity="0.7"/>
+        <text x="510" y="477" font-family="JetBrains Mono" font-size="9" fill="#e3b341" opacity="0.8">read</text>
+
+        <!-- API → Observability -->
+        <line x1="630" y1="410" x2="630" y2="638" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-purple)" opacity="0.7"/>
+        <text x="636" y="528" font-family="JetBrains Mono" font-size="9" fill="#bc8cff" opacity="0.8">traces/logs</text>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══ FRONTEND VIEW ═══ -->
+  <div class="view fade-in" id="view-frontend">
+    <div class="comp-header">
+      <div>
+        <div class="comp-header-title">Frontend — Componentes Internos</div>
+        <div class="comp-header-sub">React · React Flow · Android tablets · C4 Level 3</div>
+      </div>
+      <div class="back-btn" onclick="backToContainer()">← Voltar ao Container</div>
+    </div>
+    <div class="diagram-wrap">
+      <svg width="960" height="520" viewBox="0 0 960 520">
+        <defs>
+          <marker id="ab2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+          <marker id="ao2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e3b341"/></marker>
+        </defs>
+
+        <rect x="20" y="20" width="920" height="230" rx="10" fill="none" stroke="#30363d" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="36" y="14" font-family="JetBrains Mono" font-size="11" fill="#484f58">Browser / Android Tablet</text>
+
+        <!-- Components -->
+        <g onmouseenter="showTip(event,'Recipe Editor','React Flow · Grafo dirigido com condicionais · Versionamento GxP · Aprovação GQ')" onmouseleave="hideTip()">
+          <rect x="40" y="40" width="175" height="90" rx="6" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="127" y="62" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#58a6ff">Recipe Editor</text>
+          <text x="127" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">React Flow</text>
+          <text x="127" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Grafo dirigido</text>
+          <text x="127" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Versionamento GxP</text>
+        </g>
+        <g onmouseenter="showTip(event,'Execution Player','Step-by-step runtime · Assinatura eletrônica por etapa · Android tablets · Captura de foto')" onmouseleave="hideTip()">
+          <rect x="230" y="40" width="175" height="90" rx="6" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="317" y="62" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#58a6ff">Execution Player</text>
+          <text x="317" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Step-by-step runtime</text>
+          <text x="317" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Assinatura eletrônica</text>
+          <text x="317" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#3fb950">Android tablets</text>
+        </g>
+        <g onmouseenter="showTip(event,'BPR Viewer','Dossiê de Lote · Revisão GQ · Geração PDF regulatório · Fluxo de aprovação')" onmouseleave="hideTip()">
+          <rect x="420" y="40" width="175" height="90" rx="6" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="507" y="62" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#58a6ff">BPR Viewer</text>
+          <text x="507" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Dossiê de Lote</text>
+          <text x="507" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Revisão GQ</text>
+          <text x="507" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f85149">PDF regulatório</text>
+        </g>
+        <g onmouseenter="showTip(event,'Logbook UI','Salas e equipamentos · Line clearance · Monitoramento Ambiental (coleta de amostras)')" onmouseleave="hideTip()">
+          <rect x="610" y="40" width="175" height="90" rx="6" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="697" y="62" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#58a6ff">Logbook / Ambiental</text>
+          <text x="697" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Line clearance</text>
+          <text x="697" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Salas / Equipamentos</text>
+          <text x="697" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#26a6c0">Amostras estéreis</text>
+        </g>
+        <g onmouseenter="showTip(event,'Anexos UI','Formulários de processo · Captura de foto como evidência · Perguntas (resposta, opção, calculada, estatística)')" onmouseleave="hideTip()">
+          <rect x="800" y="40" width="120" height="90" rx="6" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="860" y="62" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#58a6ff">Anexos UI</text>
+          <text x="860" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Forms GxP</text>
+          <text x="860" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Foto evidência</text>
+          <text x="860" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Questões</text>
+        </g>
+
+        <!-- State -->
+        <rect x="280" y="170" width="360" height="58" rx="8" fill="rgba(227,179,65,0.08)" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="460" y="196" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#e3b341">State Management</text>
+        <text x="460" y="214" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">React Context / Zustand · SSO Token · Execution State · Tenant Context</text>
+
+        <line x1="317" y1="130" x2="380" y2="170" stroke="#e3b341" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#ao2)" opacity="0.5"/>
+        <line x1="460" y1="130" x2="460" y2="170" stroke="#e3b341" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#ao2)" opacity="0.5"/>
+        <line x1="507" y1="130" x2="520" y2="170" stroke="#e3b341" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#ao2)" opacity="0.5"/>
+
+        <rect x="350" y="295" width="220" height="50" rx="8" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="460" y="317" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#58a6ff">API Gateway (HTTPS)</text>
+        <text x="460" y="335" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Bearer Token · REST · JSON</text>
+
+        <line x1="460" y1="228" x2="460" y2="295" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ab2)"/>
+
+        <line x1="460" y1="345" x2="460" y2="400" stroke="#58a6ff" stroke-width="2" marker-end="url(#ab2)"/>
+        <rect x="350" y="400" width="220" height="36" rx="6" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1"/>
+        <text x="460" y="423" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#3fb950">→ NovoEBR API</text>
+
+        <text x="40" y="470" font-family="JetBrains Mono" font-size="10" fill="#484f58">🔍 ESLint habilitado · Unit tests: Jest + React Testing Library · E2E: Playwright/Cypress</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══ API VIEW ═══ -->
+  <div class="view fade-in" id="view-api">
+    <div class="comp-header">
+      <div>
+        <div class="comp-header-title">NovoEBR API — Componentes Internos</div>
+        <div class="comp-header-sub">ASP.NET Core · .NET C# 10 · Modular Monolith · Clean Architecture · C4 Level 3</div>
+      </div>
+      <div class="back-btn" onclick="backToContainer()">← Voltar ao Container</div>
+    </div>
+    <div class="diagram-wrap">
+      <svg width="1150" height="660" viewBox="0 0 1150 660">
+        <defs>
+          <marker id="ab3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+          <marker id="ar3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+          <marker id="ag3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3fb950"/></marker>
+          <marker id="ao3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e3b341"/></marker>
+        </defs>
+
+        <!-- Presentation -->
+        <rect x="20" y="20" width="1110" height="68" rx="8" fill="rgba(88,166,255,0.06)" stroke="#58a6ff" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="36" y="14" font-family="JetBrains Mono" font-size="11" fill="#58a6ff" opacity="0.7">Presentation Layer</text>
+        <rect x="40" y="34" width="150" height="40" rx="5" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="115" y="51" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">API Controllers</text>
+        <text x="115" y="67" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">REST · Swagger · OpenAPI</text>
+        <rect x="205" y="34" width="150" height="40" rx="5" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="280" y="51" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">Request DTOs</text>
+        <text x="280" y="67" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">FluentValidation</text>
+
+        <!-- Wave 1 Modules -->
+        <rect x="20" y="118" width="750" height="220" rx="8" fill="rgba(63,185,80,0.04)" stroke="#3fb950" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="36" y="112" font-family="JetBrains Mono" font-size="11" fill="#3fb950" opacity="0.7">Application + Domain — Wave 1 (7 módulos)</text>
+
+        <g onmouseenter="showTip(event,'Audit Trail','Camada horizontal · EF Core Interceptor · before/after state · INSERT-only ebr_audit')" onmouseleave="hideTip()">
+          <rect x="40" y="132" width="148" height="68" rx="6" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="2"/>
+          <text x="114" y="153" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#f85149">Audit Trail</text>
+          <text x="114" y="169" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Interceptor</text>
+          <text x="114" y="185" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f85149">GxP CRÍTICO</text>
+        </g>
+        <g onmouseenter="showTip(event,'Recebimento','Consumer SQS · Evento OP aberta via CPI · Cria BatchRecord · Valida pallet e volumes')" onmouseleave="hideTip()">
+          <rect x="198" y="132" width="148" height="68" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="272" y="153" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#3fb950">Recebimento</text>
+          <text x="272" y="169" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">SQS Consumer</text>
+          <text x="272" y="185" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">SAP CPI → EBR</text>
+        </g>
+        <g onmouseenter="showTip(event,'Execução de Receita','Step-by-step · Assinatura eletrônica obrigatória · RedLock para concorrência · Interpreta OPs')" onmouseleave="hideTip()">
+          <rect x="356" y="132" width="148" height="68" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="430" y="153" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#3fb950">Execução</text>
+          <text x="430" y="169" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Step · Sign · Lock</text>
+          <text x="430" y="185" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">RedLock Redis</text>
+        </g>
+        <g onmouseenter="showTip(event,'Anexos','Formulários GxP · Foto evidência · Perguntas (resposta, opção, calculada, estatística) · Controle de versão')" onmouseleave="hideTip()">
+          <rect x="514" y="132" width="148" height="68" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="588" y="153" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#3fb950">Anexos</text>
+          <text x="588" y="169" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Forms · Foto</text>
+          <text x="588" y="185" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Versão · Gestão Rotina</text>
+        </g>
+        <g onmouseenter="showTip(event,'Logbook','Salas · Equipamentos · Line clearance · Histórico completo de ações por recurso')" onmouseleave="hideTip()">
+          <rect x="40" y="218" width="148" height="68" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="114" y="239" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#3fb950">Logbook</text>
+          <text x="114" y="255" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Room · Equipment</text>
+          <text x="114" y="271" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Line Clearance</text>
+        </g>
+        <g onmouseenter="showTip(event,'Dossiê (BPR)','Compila execução · Gera PDF regulatório · Fluxo de aprovação GQ com etapas de assinatura')" onmouseleave="hideTip()">
+          <rect x="198" y="218" width="148" height="68" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="272" y="239" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#3fb950">BPR</text>
+          <text x="272" y="255" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Compile · PDF</text>
+          <text x="272" y="271" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Approve · Release</text>
+        </g>
+        <g onmouseenter="showTip(event,'Monitoramento Ambiental','Amostras de esterilidade em salas estéreis · Link com fluxo GQ de liberação do lote · Wave 1')" onmouseleave="hideTip()">
+          <rect x="356" y="218" width="148" height="68" rx="6" fill="rgba(38,166,192,0.12)" stroke="#26a6c0" stroke-width="1.5"/>
+          <text x="430" y="239" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#26a6c0">Ambiental</text>
+          <text x="430" y="255" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Amostras estéreis</text>
+          <text x="430" y="271" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#26a6c0">Link GQ · Lote</text>
+        </g>
+
+        <!-- Future modules placeholder -->
+        <rect x="514" y="218" width="236" height="68" rx="6" fill="rgba(51,65,85,0.3)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="632" y="248" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#484f58">+ 11 módulos waves futuras</text>
+        <text x="632" y="266" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#334155">Forms · Manutenção · Cards · RPP...</text>
+
+        <!-- AuditTrail interceptor bar -->
+        <rect x="40" y="310" width="710" height="50" rx="6" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="2"/>
+        <text x="395" y="332" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#f85149">🔒 EF Core SaveChangesInterceptor — AuditTrail</text>
+        <text x="395" y="350" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">Intercepta todos os módulos · actor_id via SSO · before/after_state JSONB · INSERT-only → ebr_audit</text>
+
+        <!-- Infrastructure -->
+        <rect x="800" y="118" width="330" height="260" rx="8" fill="rgba(227,179,65,0.05)" stroke="#e3b341" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="816" y="112" font-family="JetBrains Mono" font-size="11" fill="#e3b341" opacity="0.7">Infrastructure Layer</text>
+
+        <g onmouseenter="showTip(event,'EF Core','ORM · PostgreSQL · SaveChangesInterceptor hook · Migrations versionadas')" onmouseleave="hideTip()">
+          <rect x="820" y="132" width="130" height="50" rx="6" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="885" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#e3b341">EF Core</text>
+          <text x="885" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">ORM · Migrations</text>
+        </g>
+        <g onmouseenter="showTip(event,'SQS/SNS Client','Consumer e Producer · SAP CPI ↔ EBR · SE Suite ↔ EBR · Dead-letter queue')" onmouseleave="hideTip()">
+          <rect x="965" y="132" width="130" height="50" rx="6" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="1030" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#3fb950">SQS/SNS</text>
+          <text x="1030" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Consumer/Producer</text>
+        </g>
+        <g onmouseenter="showTip(event,'Kafka Consumer','Consome eventos IoT · Amazon MSK · &gt;20k msg/dia RBBL')" onmouseleave="hideTip()">
+          <rect x="820" y="198" width="130" height="50" rx="6" fill="rgba(38,166,192,0.1)" stroke="#26a6c0" stroke-width="1.5"/>
+          <text x="885" y="220" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#26a6c0">Kafka Consumer</text>
+          <text x="885" y="236" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">IoT · MSK</text>
+        </g>
+        <g onmouseenter="showTip(event,'Redis Client','Cache de receita · RedLock para execução concorrente · ElastiCache')" onmouseleave="hideTip()">
+          <rect x="965" y="198" width="130" height="50" rx="6" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="1030" y="220" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#e3b341">Redis Client</text>
+          <text x="1030" y="236" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Cache · RedLock</text>
+        </g>
+        <g onmouseenter="showTip(event,'S3 Client','Upload de anexos · Pre-signed URL · AWS SDK')" onmouseleave="hideTip()">
+          <rect x="820" y="264" width="130" height="50" rx="6" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="885" y="286" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#e3b341">S3 Client</text>
+          <text x="885" y="302" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Anexos · AWS SDK</text>
+        </g>
+        <g onmouseenter="showTip(event,'Zebra ZPL/TCP','Geração ZPL · Envio TCP · Impressão de etiquetas durante execução · Reimpressão auditada')" onmouseleave="hideTip()">
+          <rect x="965" y="264" width="130" height="50" rx="6" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="1030" y="286" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#e3b341">Zebra ZPL/TCP</text>
+          <text x="1030" y="302" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Impressão etiquetas</text>
+        </g>
+
+        <!-- Health Checks -->
+        <rect x="20" y="400" width="430" height="48" rx="6" fill="rgba(38,166,192,0.08)" stroke="#26a6c0" stroke-width="1.5"/>
+        <text x="235" y="422" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#26a6c0">💓 Health Checks — IHealthCheck</text>
+        <text x="235" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">/health/live (Liveness) · /health/ready → RDS, Redis, Kafka, S3</text>
+
+        <!-- Elsa -->
+        <rect x="465" y="400" width="305" height="48" rx="6" fill="rgba(188,140,255,0.08)" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="617" y="422" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="700" fill="#bc8cff">🔄 Elsa Workflows</text>
+        <text x="617" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">Em avaliação · Orquestração server-side · Complementa React Flow</text>
+
+        <!-- Secrets + CI/CD note -->
+        <text x="20" y="490" font-family="JetBrains Mono" font-size="10" fill="#484f58">🔐 AWS Secrets Manager · IAM Role per Pod · Zero hardcode</text>
+        <text x="20" y="508" font-family="JetBrains Mono" font-size="10" fill="#484f58">⚙️ GitHub Actions CI/CD: Lint (ESLint + Roslyn) → Tests → SonarQube → OWASP ZAP → Deploy EKS</text>
+        <text x="20" y="526" font-family="JetBrains Mono" font-size="10" fill="#484f58">🔍 Roslyn Analyzers · NBomber (NFR &lt;100ms Audit) · Pact (contract testing — em avaliação)</text>
+
+        <!-- Arrow presentation → modules -->
+        <line x1="115" y1="88" x2="115" y2="132" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ab3)" opacity="0.5"/>
+        <line x1="272" y1="88" x2="272" y2="132" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ab3)" opacity="0.5"/>
+
+        <!-- Modules → interceptor -->
+        <line x1="395" y1="300" x2="395" y2="310" stroke="#f85149" stroke-width="1.5" marker-end="url(#ar3)" opacity="0.7"/>
+
+        <!-- Interceptor → Infra -->
+        <line x1="750" y1="335" x2="818" y2="210" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ar3)" opacity="0.6"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══ POSTGRES VIEW ═══ -->
+  <div class="view fade-in" id="view-postgres">
+    <div class="comp-header">
+      <div>
+        <div class="comp-header-title">PostgreSQL RDS — Schemas por Site</div>
+        <div class="comp-header-sub">Amazon RDS · Um banco por site (RBBL, EMS...) · Multi-AZ · Backup 35 dias · KMS · C4 Level 3</div>
+      </div>
+      <div class="back-btn" onclick="backToContainer()">← Voltar ao Container</div>
+    </div>
+    <div class="diagram-wrap">
+      <svg width="1000" height="560" viewBox="0 0 1000 560">
+        <defs>
+          <marker id="ao4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e3b341"/></marker>
+          <marker id="ar4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+        </defs>
+
+        <!-- Multi-tenancy note -->
+        <rect x="20" y="10" width="960" height="36" rx="6" fill="rgba(38,166,192,0.08)" stroke="#26a6c0" stroke-width="1"/>
+        <text x="500" y="25" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#26a6c0">🏭 Multi-Tenancy: um banco RDS dedicado por site — RBBL, EMS, demais empresas NC · Falha em um site não afeta os demais</text>
+        <text x="500" y="40" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#484f58">Abaixo: estrutura de schemas aplicada a cada instância</text>
+
+        <!-- RDS boundary -->
+        <rect x="20" y="56" width="960" height="380" rx="12" fill="none" stroke="#f85149" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+        <text x="36" y="50" font-family="JetBrains Mono" font-size="11" fill="#f85149" opacity="0.7">Amazon RDS PostgreSQL — Instância por site · Multi-AZ · Encryption KMS</text>
+
+        <!-- ebr_core -->
+        <rect x="40" y="72" width="430" height="290" rx="10" fill="rgba(88,166,255,0.06)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="255" y="98" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#58a6ff">schema: ebr_core</text>
+        <text x="255" y="116" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8b949e">SELECT · INSERT · UPDATE · DELETE</text>
+
+        <rect x="60" y="128" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="152" y="144" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">batch_records</text>
+        <text x="152" y="158" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · recipe_id · status</text>
+
+        <rect x="260" y="128" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="352" y="144" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">recipes</text>
+        <text x="352" y="158" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · version · graph_json</text>
+
+        <rect x="60" y="178" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="152" y="194" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">recipe_steps</text>
+        <text x="152" y="208" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · recipe_id · conditions</text>
+
+        <rect x="260" y="178" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="352" y="194" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">executions</text>
+        <text x="352" y="208" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · batch_id · actor_id</text>
+
+        <rect x="60" y="228" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="152" y="244" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">logbook_entries</text>
+        <text x="152" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · room_id · signed_by</text>
+
+        <rect x="260" y="228" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="352" y="244" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">environmental_samples</text>
+        <text x="352" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#26a6c0">amostras esterilidade</text>
+
+        <rect x="60" y="278" width="185" height="36" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="152" y="294" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#58a6ff">materials</text>
+        <text x="152" y="308" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">id · sap_code · snapshot</text>
+
+        <text x="255" y="346" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#484f58">⚠️ Estratégia multi-tenancy entre sites: banco dedicado confirmado</text>
+
+        <!-- ebr_audit -->
+        <rect x="510" y="72" width="450" height="290" rx="10" fill="rgba(248,81,73,0.06)" stroke="#f85149" stroke-width="2"/>
+        <text x="735" y="98" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#f85149">schema: ebr_audit</text>
+        <text x="735" y="116" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#f85149">INSERT-only · REVOKE UPDATE, DELETE</text>
+
+        <rect x="530" y="128" width="410" height="210" rx="8" fill="rgba(248,81,73,0.08)" stroke="#f85149" stroke-width="1.5"/>
+        <text x="735" y="150" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#f85149">TABLE: audit_events</text>
+
+        <text x="548" y="170" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">event_id</text>
+        <text x="720" y="170" font-family="JetBrains Mono" font-size="9" fill="#8b949e">UUID · PK · idempotência</text>
+        <text x="548" y="186" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">timestamp_utc</text>
+        <text x="720" y="186" font-family="JetBrains Mono" font-size="9" fill="#8b949e">TIMESTAMPTZ · sempre UTC</text>
+        <text x="548" y="202" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">actor_id</text>
+        <text x="720" y="202" font-family="JetBrains Mono" font-size="9" fill="#8b949e">VARCHAR · usuário SSO</text>
+        <text x="548" y="218" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">entity_type</text>
+        <text x="720" y="218" font-family="JetBrains Mono" font-size="9" fill="#8b949e">VARCHAR · BatchRecord, Step...</text>
+        <text x="548" y="234" font-family="JetBrains Mono" font-size="10" fill="#58a6ff">action</text>
+        <text x="720" y="234" font-family="JetBrains Mono" font-size="9" fill="#8b949e">VARCHAR · CREATE/SIGN/APPROVE</text>
+        <text x="548" y="250" font-family="JetBrains Mono" font-size="10" fill="#3fb950">before_state</text>
+        <text x="720" y="250" font-family="JetBrains Mono" font-size="9" fill="#8b949e">JSONB · estado anterior</text>
+        <text x="548" y="266" font-family="JetBrains Mono" font-size="10" fill="#3fb950">after_state</text>
+        <text x="720" y="266" font-family="JetBrains Mono" font-size="9" fill="#8b949e">JSONB · estado posterior</text>
+        <text x="548" y="282" font-family="JetBrains Mono" font-size="10" fill="#e3b341">reason</text>
+        <text x="720" y="282" font-family="JetBrains Mono" font-size="9" fill="#8b949e">TEXT · motivo obrigatório GxP</text>
+
+        <text x="735" y="328" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#f85149">⚠️ Validação pendente — Consultoria GxP (*)</text>
+
+        <!-- S3 export -->
+        <rect x="360" y="460" width="280" height="50" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+        <text x="500" y="480" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="700" fill="#e3b341">S3 Glacier · Object Lock WORM</text>
+        <text x="500" y="498" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b949e">5 anos · exportação diária ebr_audit · SSE-KMS</text>
+
+        <line x1="735" y1="362" x2="560" y2="460" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ao4)" opacity="0.8"/>
+        <text x="680" y="418" font-family="JetBrains Mono" font-size="9" fill="#e3b341">daily export</text>
+        <text x="20" y="530" font-family="JetBrains Mono" font-size="10" fill="#484f58">RDS Backup: snapshot automático diário · retenção 35 dias · Point-in-Time Recovery (PITR)</text>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const tip = document.getElementById('tip');
+
+  function showTip(e, title, body) {
+    tip.innerHTML = '<strong>' + title + '</strong>' + body;
+    tip.style.display = 'block';
+    moveTip(e);
+  }
+  function moveTip(e) {
+    tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 300) + 'px';
+    tip.style.top = Math.min(e.clientY + 14, window.innerHeight - 120) + 'px';
+  }
+  function hideTip() { tip.style.display = 'none'; }
+  document.addEventListener('mousemove', e => { if (tip.style.display !== 'none') moveTip(e); });
+
+  function drillDown(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const t = document.getElementById('view-' + name);
+    if (t) { t.classList.add('active'); t.classList.remove('fade-in'); void t.offsetWidth; t.classList.add('fade-in'); }
+    updateBreadcrumb(name);
+    closePanel();
+  }
+
+  function backToContainer() { drillDown('container'); }
+
+  function updateBreadcrumb(view) {
+    const labels = { container: 'Sistema', frontend: 'Frontend React', api: 'NovoEBR API', postgres: 'PostgreSQL RDS' };
+    const bc = document.getElementById('breadcrumb');
+    bc.innerHTML = view === 'container'
+      ? '<span class="bc-item bc-active">Sistema</span>'
+      : `<span class="bc-item" onclick="backToContainer()">Sistema</span><span class="bc-sep">›</span><span class="bc-item bc-active">${labels[view] || view}</span>`;
+  }
+
+  const panelData = {
+    cpi: {
+      title: 'SAP CPI — Integration Suite',
+      sub: 'Middleware de integração · Operado pelo NC Tech',
+      sections: [
+        { title: 'Função', items: ['Traduz eventos SQS do EBR para IDoc/BAPI/RFC do SAP e vice-versa', 'EBR nunca fala diretamente com o SAP — CPI é o barramento'] },
+        { title: 'Fluxos confirmados', items: ['SAP PP → CPI → SQS → EBR: OP aberta (cria BatchRecord)', 'EBR → SQS → CPI → SAP: confirmação de OP encerrada', 'SAP MM → CPI → SQS → EBR: NT (movimentação de material)'] },
+        { title: 'Pendência', items: ['Event Schema SQS: campos mínimos de cada evento a definir com NC Tech antes do ADR-001', 'Tratamento de erro: dead-letter queue e retry a definir'] }
+      ],
+      tags: [{label:'SQS/SNS', color:'#3fb950'}, {label:'IDoc/BAPI/RFC', color:'#58a6ff'}, {label:'Schema pendente ⚠️', color:'#e3b341'}]
+    },
+    sap: {
+      title: 'SAP S/4 HANA',
+      sub: 'ERP Grupo NC · PP / MM / SD',
+      sections: [
+        { title: 'Módulos integrados', items: ['PP — Ordens de Produção', 'MM — Movimentação de estoque e NT', 'SD — Demanda comercial'] },
+        { title: 'SAP MII', items: ['EBR legado da EMS — será migrado para Kronix EBR', 'Estratégia de carga histórica: pendente de definição'] }
+      ],
+      tags: [{label:'Via SAP CPI', color:'#3fb950'}]
+    },
+    se: {
+      title: 'SE Suite',
+      sub: 'QMS e GED · Gestão de documentos',
+      sections: [
+        { title: 'Integração', items: ['SE → EBR: SOPs e documentos vinculados às etapas da receita (Consulta POP)', 'EBR → SE: Desvios e não-conformidades registradas durante execução'] },
+        { title: 'Pendência', items: ['Contratos de evento (Event Schema) a detalhar no Discovery'] }
+      ],
+      tags: [{label:'SQS/SNS', color:'#bc8cff'}, {label:'Bidirecional', color:'#58a6ff'}]
+    },
+    iot: {
+      title: 'IoT — Sensores de Processo',
+      sub: 'Kafka (Amazon MSK) · Unidirecional',
+      sections: [
+        { title: 'Volumetria (justificativa Kafka)', items: ['RBBL: > 20.000 unidades/dia', 'EMS: volume consideravelmente maior (portfólio diversificado)', 'Frequência incompatível com SQS como buffer primário de IoT'] },
+        { title: 'Eventos', items: ['Parâmetros de processo: temperatura, pressão, peso em tempo real', 'Eventos de equipamento: início/fim de ciclo, alarmes, setup'] }
+      ],
+      tags: [{label:'Kafka MSK', color:'#26a6c0'}, {label:'Confirmado ✅', color:'#3fb950'}]
+    },
+    zebra: {
+      title: 'Impressoras Zebra',
+      sub: 'ZPL / TCP · Impressão de etiquetas',
+      sections: [
+        { title: 'Protocolo', items: ['ZPL (Zebra Programming Language) gerado pela API', 'Envio via TCP/IP direto da Infrastructure layer'] },
+        { title: 'Pontos em aberto', items: ['Em qual step da execução da receita ocorre a impressão?', 'Fluxo de reimpressão: deve ser registrado no Audit Trail'] }
+      ],
+      tags: [{label:'ZPL/TCP confirmado', color:'#e3b341'}, {label:'Fluxo pendente ⚠️', color:'#e3b341'}]
+    },
+    sso: {
+      title: 'SSO / SAML',
+      sub: 'Identidade corporativa · Grupo NC',
+      sections: [
+        { title: 'Claims obrigatórios', items: ['user_id · role · tenant_id (a confirmar com TI)', 'actor_id extraído do Bearer Token para o Audit Trail'] },
+        { title: 'Uso no EBR', items: ['Re-autenticação exigida para assinatura eletrônica GxP', 'tenant_id usado para roteamento ao banco correto por site'] }
+      ],
+      tags: [{label:'SAML · JWT', color:'#e3b341'}, {label:'Confirmar tenant_id claim ⚠️', color:'#e3b341'}]
+    },
+    redis: {
+      title: 'Redis — AWS ElastiCache',
+      sub: 'Cache distribuído entre pods Kubernetes',
+      sections: [
+        { title: 'Casos de uso', items: ['Cache de receita em execução — estado compartilhado entre réplicas', 'RedLock (Distributed Lock) — impede dois operadores no mesmo step (crítico GxP multi-pod)', 'Estado transitório — sessão do operador, progresso, dados temporários de formulário'] }
+      ],
+      tags: [{label:'RedLock', color:'#e3b341'}, {label:'ElastiCache', color:'#e3b341'}, {label:'Confirmado ✅', color:'#3fb950'}]
+    },
+    s3: {
+      title: 'Amazon S3',
+      sub: 'Dois buckets com políticas distintas',
+      sections: [
+        { title: 'S3 Glacier + Object Lock (WORM)', items: ['Audit Trail: exportação diária do schema ebr_audit', 'Retenção mínima 5 anos · imutável após gravação', 'Criptografia SSE-KMS com chave dedicada ao EBR'] },
+        { title: 'S3 Standard', items: ['Anexos operacionais: fotos, laudos não regulatórios', 'Acesso via pre-signed URL com expiração'] }
+      ],
+      tags: [{label:'WORM 5 anos', color:'#f85149'}, {label:'Object Lock', color:'#f85149'}, {label:'KMS', color:'#e3b341'}]
+    },
+    refdb: {
+      title: 'Shared Reference Database',
+      sub: 'PostgreSQL compartilhado entre todos os sites',
+      sections: [
+        { title: 'O que vive aqui (hipótese)', items: ['Unidades de medida, categorias de desvio, perfis de role', 'Tipos de equipamento, códigos de status, templates globais', 'Não contém dados de lote, processo ou informações de site'] },
+        { title: 'Pontos em aberto', items: ['Quais entidades exatas vivem neste banco? Definir antes do modelo de dados', 'Parâmetros que influenciam execução de receitas: validar nível de rastreabilidade exigido com área de Qualidade', 'Se exigir auditoria regulatória, o design aumenta em complexidade'] }
+      ],
+      tags: [{label:'Design pendente ⚠️', color:'#e3b341'}, {label:'Validar com Qualidade', color:'#f85149'}]
+    },
+    obs: {
+      title: 'Observabilidade',
+      sub: 'Datadog APM + Grafana',
+      sections: [
+        { title: 'Datadog APM', items: ['Distributed Tracing end-to-end: operador → Audit Trail', 'Alerta crítico GxP: falha no Audit Trail = alerta imediato', 'Logs centralizados por trace_id · todos os pods'] },
+        { title: 'Grafana', items: ['Dashboards operacionais por site e por linha de produção', 'Dashboard para área de Qualidade — sem acesso à API técnica', 'Consome métricas do Datadog como fonte de dados'] },
+        { title: 'CI/CD — GitHub Actions', items: ['Lint (ESLint + Roslyn) → Testes → SonarQube → OWASP ZAP → Deploy EKS', 'Pipeline automatizado: PR → Staging → Produção'] }
+      ],
+      tags: [{label:'Datadog APM', color:'#bc8cff'}, {label:'Grafana', color:'#bc8cff'}, {label:'GitHub Actions', color:'#58a6ff'}, {label:'Confirmar licença Datadog ⚠️', color:'#e3b341'}]
+    }
+  };
+
+  function showContainerInfo(key) {
+    const d = panelData[key];
+    if (!d) return;
+    let html = `<div class="info-title">${d.title}</div><div class="info-sub">${d.sub}</div>`;
+    d.sections.forEach(s => {
+      html += `<div class="info-section"><div class="info-section-title">${s.title}</div>`;
+      s.items.forEach(i => { html += `<div class="info-row"><div class="info-dot" style="background:#8b949e"></div><div>${i}</div></div>`; });
+      html += '</div>';
+    });
+    if (d.tags) {
+      html += '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px">';
+      d.tags.forEach(t => { html += `<span class="info-tag" style="background:${t.color}22;color:${t.color};border-color:${t.color}55">${t.label}</span>`; });
+      html += '</div>';
+    }
+    document.getElementById('infoPanelContent').innerHTML = html;
+    document.getElementById('infoPanel').classList.add('open');
+  }
+
+  function closePanel() { document.getElementById('infoPanel').classList.remove('open'); }
+
+  document.addEventListener('click', e => {
+    const panel = document.getElementById('infoPanel');
+    if (panel.classList.contains('open') && !panel.contains(e.target) && !e.target.closest('[onclick]')) closePanel();
+  });
+</script>
+</body>
+</html>
