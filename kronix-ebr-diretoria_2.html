@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kronix EBR — Visão Executiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --blue-900: #003070;
+  --blue-700: #0055A5;
+  --blue-500: #0077CC;
+  --blue-200: #C8DEF5;
+  --blue-50:  #EBF4FF;
+
+  --teal-600: #006D80;
+  --teal-100: #DFF4F7;
+
+  --amber-700: #B05800;
+  --amber-100: #FFF3E0;
+  --amber-300: #F5C36A;
+
+  --red-700:   #B8001A;
+  --red-100:   #FEECEF;
+
+  --purple-700: #4E2A9E;
+  --purple-100: #F0EBFB;
+
+  --green-700: #1A6B3C;
+  --green-100: #E8F7EE;
+
+  --slate-800: #1A2A3C;
+  --slate-600: #3D5168;
+  --slate-400: #6B82A0;
+  --slate-200: #C8D5E4;
+  --slate-100: #EDF1F7;
+  --slate-50:  #F6F8FB;
+
+  --white: #FFFFFF;
+  --page:  #EFF3F9;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-card: 0 2px 12px rgba(0,48,112,.08), 0 1px 3px rgba(0,48,112,.04);
+  --shadow-hover: 0 8px 32px rgba(0,48,112,.14), 0 2px 6px rgba(0,48,112,.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--page);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--slate-800);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────────────────
+   HEADER
+───────────────────────────────────────── */
+.header {
+  background: var(--blue-900);
+  padding: 28px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-logo {
+  width: 52px; height: 52px;
+  background: var(--blue-500);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.4px;
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,.55);
+  margin-top: 4px;
+  font-weight: 500;
+  letter-spacing: .2px;
+}
+
+.header-kpis {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.kpi {
+  text-align: center;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -.3px;
+}
+
+.kpi-value.accent { color: var(--amber-300); }
+
+.kpi-label {
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 5px;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ─────────────────────────────────────────
+   PAGE LAYOUT
+───────────────────────────────────────── */
+.page {
+  padding: 44px 60px 72px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────
+   SECTION HEADING
+───────────────────────────────────────── */
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.section-pill {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  flex-shrink: 0;
+}
+.pill-blue  { background: var(--blue-700); color: #fff; }
+.pill-slate { background: var(--slate-100); color: var(--slate-600); border: 1px solid var(--slate-200); }
+
+.section-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--slate-800);
+  letter-spacing: -.3px;
+}
+
+.section-meta {
+  font-size: 12px;
+  color: var(--slate-400);
+  font-weight: 600;
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ─────────────────────────────────────────
+   WAVE 1 FLOW — novo layout 2 linhas
+───────────────────────────────────────── */
+
+/* SAP START */
+.sap-start {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+/* wrapper que empilha SAP box + seta vertical + row-top alinhados */
+.sap-recebimento-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.sap-arrow-down {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  /* centraliza sob a sap-box (160px) */
+  width: 160px;
+}
+
+.sap-arrow-down-line {
+  width: 2px;
+  height: 22px;
+  background: var(--green-700);
+  position: relative;
+}
+
+.sap-arrow-down-line::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: -4px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid var(--green-700);
+}
+
+.sap-arrow-down-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--green-700);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  font-family: 'DM Mono', monospace;
+}
+
+.sap-box {
+  background: var(--green-100);
+  border: 2px solid var(--green-700);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  flex-shrink: 0;
+  width: 160px;
+}
+
+.sap-label-top {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--green-700);
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 6px;
+}
+
+.sap-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--slate-800);
+  line-height: 1.2;
+}
+
+.sap-sub {
+  font-size: 10px;
+  color: var(--slate-400);
+  font-weight: 600;
+  margin-top: 3px;
+  font-family: 'DM Mono', monospace;
+}
+
+.sap-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.sap-arrow-line {
+  width: 48px;
+  height: 2px;
+  background: var(--green-700);
+  position: relative;
+}
+
+.sap-arrow-line::after {
+  content: '';
+  position: absolute;
+  right: -1px; top: -4px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--green-700);
+}
+
+.sap-arrow-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--green-700);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  font-family: 'DM Mono', monospace;
+}
+
+.sap-target {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--slate-600);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── OUTER WRAPPER: diagrama + dados mestre lateral ── */
+.diagram-outer {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+/* ── DIAGRAM INNER: linhas de módulos ── */
+.diagram-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── LINHA 1: Criação de Receita + Recebimento ── */
+.row-top {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  align-items: end;
+  padding-bottom: 0;
+  gap: 0;
+}
+
+/* separador visual entre as duas colunas do topo */
+.top-sep {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+.top-sep-text {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--slate-300);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* setas descendo do topo até Execução */
+.arrows-down {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  align-items: start;
+  gap: 0;
+  height: 44px;
+}
+
+.arrow-down-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding-top: 4px;
+}
+
+.arrow-down-line {
+  width: 2px;
+  height: 26px;
+  background: var(--blue-500);
+  position: relative;
+}
+
+.arrow-down-line::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: -4px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid var(--blue-500);
+}
+
+.arrow-down-lbl {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--slate-400);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+
+.arrow-down-col.empty { visibility: hidden; }
+
+/* ── LINHA 2: Logbook + Execução (destaque) + Anexos ── */
+.row-mid {
+  display: grid;
+  grid-template-columns: 0.8fr 48px 1.25fr 48px 0.8fr;
+  align-items: start;
+  gap: 0;
+}
+
+/* Execução: destaque sutil como módulo principal */
+.mc-featured {
+  border-color: var(--teal-600) !important;
+  border-width: 2.5px !important;
+  background: linear-gradient(150deg, #E4F7FA 0%, #CCF0F5 100%) !important;
+  box-shadow: 0 0 0 5px rgba(0,109,128,.09), var(--shadow-card) !important;
+}
+.mc-featured:hover {
+  box-shadow: 0 0 0 5px rgba(0,109,128,.15), var(--shadow-hover) !important;
+}
+.mc-featured .mod-name { font-size: 16px; }
+.mc-featured .mod-icon { font-size: 28px; }
+
+.badge-main {
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--teal-600);
+  color: #fff;
+  font-size: 9px; font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+}
+
+/* conectores horizontais bidirecionais */
+.conn-bidir {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  gap: 4px;
+}
+
+.bidir-track {
+  position: relative;
+  width: 48px;
+  height: 20px;
+}
+
+/* linha de ida */
+.bidir-track::before {
+  content: '';
+  position: absolute;
+  top: 4px; left: 0; right: 0;
+  height: 2px;
+  background: var(--blue-500);
+}
+/* seta de ida (→) */
+.bidir-track::after {
+  content: '';
+  position: absolute;
+  top: 0; right: -1px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--blue-500);
+}
+
+/* linha de volta */
+.bidir-return {
+  position: absolute;
+  bottom: 4px; left: 0; right: 0;
+  height: 2px;
+  background: var(--teal-600);
+}
+/* seta de volta (←) */
+.bidir-return::after {
+  content: '';
+  position: absolute;
+  top: -3px; left: -1px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 7px solid var(--teal-600);
+}
+
+.bidir-lbl {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--slate-400);
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ── SETA EXECUÇÃO → BPR ── */
+.arrow-to-bpr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 44px;
+  padding-top: 4px;
+  gap: 3px;
+}
+
+.arrow-to-bpr-line {
+  width: 2px;
+  height: 26px;
+  background: var(--blue-500);
+  position: relative;
+}
+
+.arrow-to-bpr-line::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: -4px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid var(--blue-500);
+}
+
+.arrow-to-bpr-lbl {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--slate-400);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* wrapper para BPR — abaixo dos três módulos, centralizado na coluna da Execução */
+.row-bpr-wrapper {
+  display: grid;
+  grid-template-columns: 0.8fr 48px 1.25fr 48px 0.8fr;
+  gap: 0;
+}
+
+.bpr-col {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.bpr-arrow-center {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4px;
+  height: 44px;
+}
+
+/* ── DADOS MESTRE — card lateral ── */
+.dados-mestre-card {
+  background: var(--purple-100);
+  border: 2px dashed #BBA4E8;
+  border-radius: var(--radius-lg);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.dm-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #C8B4E8;
+}
+
+.dm-icon { font-size: 24px; line-height: 1; }
+
+.dm-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--purple-700);
+  letter-spacing: -.2px;
+  line-height: 1.2;
+}
+
+.dm-tagline {
+  font-size: 10px;
+  color: var(--slate-600);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.dm-badge {
+  display: inline-block;
+  background: var(--purple-700);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  align-self: flex-start;
+}
+
+.dm-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.dm-feat {
+  font-size: 11px;
+  color: var(--slate-600);
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 6px 8px;
+  background: rgba(255,255,255,.6);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--purple-700);
+}
+
+.dm-feat-label {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--purple-700);
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 2px;
+}
+
+.dm-note {
+  font-size: 10px;
+  color: var(--slate-400);
+  font-weight: 600;
+  text-align: center;
+  font-style: italic;
+  padding-top: 8px;
+  border-top: 1px dashed #C8B4E8;
+  line-height: 1.4;
+}
+
+/* MODULE CARD */
+.mod-card {
+  background: var(--white);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px 18px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow .2s, transform .2s;
+  cursor: default;
+}
+
+.mod-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* colour themes */
+.mc-blue   { border-color: var(--blue-200);   background: var(--blue-50); }
+.mc-amber  { border-color: var(--amber-300);  background: var(--amber-100); border-width: 2.5px; }
+.mc-teal   { border-color: var(--teal-100);   background: var(--teal-100); border-color: #8DD4DC; }
+.mc-purple { border-color: var(--purple-100); background: var(--purple-100); border-color: #BBA4E8; }
+.mc-red    { border-color: var(--red-100);    background: var(--red-100); border-color: #F0A0AA; }
+.mc-gold   { border-color: #D4AA50;           background: #FEFAF0; }
+
+/* 1ª ENTREGA badge */
+.badge-first {
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--amber-700);
+  color: #fff;
+  font-size: 9px; font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+}
+
+.mod-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.mod-number {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--slate-200);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: -.5px;
+}
+
+.mod-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--slate-800);
+  line-height: 1.2;
+  letter-spacing: -.2px;
+}
+
+.mod-tagline {
+  font-size: 11px;
+  color: var(--slate-600);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.mod-features {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+  flex: 1;
+}
+
+.feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--slate-600);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.feat::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--slate-400);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.mc-blue   .feat::before { background: var(--blue-500); }
+.mc-amber  .feat::before { background: var(--amber-700); }
+.mc-teal   .feat::before { background: var(--teal-600); }
+.mc-purple .feat::before { background: var(--purple-700); }
+.mc-red    .feat::before { background: var(--red-700); }
+.mc-gold   .feat::before { background: #8A6000; }
+
+.mod-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.mchip {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.mchip-blue   { background: var(--blue-700);   color: #fff; }
+.mchip-amber  { background: var(--amber-700);  color: #fff; }
+.mchip-teal   { background: var(--teal-600);   color: #fff; }
+.mchip-purple { background: var(--purple-700); color: #fff; }
+.mchip-gold   { background: #8A6000;           color: #fff; }
+.mchip-ghost  { background: var(--slate-100);  color: var(--slate-600); border: 1px solid var(--slate-200); }
+
+/* ─────────────────────────────────────────
+   AUDIT TRAIL — banner transversal
+───────────────────────────────────────── */
+.audit-trail {
+  background: var(--red-100);
+  border: 2.5px solid var(--red-700);
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.audit-trail::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 7px;
+  background: var(--red-700);
+}
+
+.audit-trail-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.audit-trail-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.audit-trail-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--red-700);
+  letter-spacing: -.2px;
+  margin-bottom: 5px;
+}
+
+.audit-trail-desc {
+  font-size: 12px;
+  color: var(--slate-600);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.audit-trail-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.atag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  letter-spacing: .5px;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+}
+.atag-red   { background: var(--red-700); color: #fff; }
+.atag-amber { background: var(--amber-700); color: #fff; }
+
+/* ─────────────────────────────────────────
+   DIVIDER
+───────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--slate-200);
+  border: none;
+  margin: 48px 0 40px;
+}
+
+/* ─────────────────────────────────────────
+   INTEGRAÇÕES BLOCK
+───────────────────────────────────────── */
+.integrations-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.int-card {
+  background: var(--white);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 18px 18px 16px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: .9;
+  transition: opacity .2s, box-shadow .2s;
+}
+
+.int-card:hover { opacity: 1; box-shadow: var(--shadow-hover); }
+
+.int-icon { font-size: 20px; line-height: 1; }
+.int-name { font-size: 13px; font-weight: 800; color: var(--slate-800); }
+.int-desc { font-size: 11px; color: var(--slate-400); font-weight: 600; line-height: 1.45; }
+
+.int-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.int-topic {
+  font-size: 10px;
+  color: var(--slate-600);
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  padding: 2px 0;
+  border-bottom: 1px dashed var(--slate-200);
+  line-height: 1.4;
+}
+
+.int-topic:last-child { border-bottom: none; }
+
+.int-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  margin-top: 4px;
+}
+
+.ib-green  { background: var(--green-100); color: var(--green-700); border: 1px solid #7EC89A; }
+.ib-slate  { background: var(--slate-100); color: var(--slate-600); border: 1px solid var(--slate-200); }
+.ib-amber  { background: var(--amber-100); color: var(--amber-700); border: 1px solid var(--amber-300); }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+.footer {
+  background: var(--blue-900);
+  padding: 18px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-left {
+  font-size: 11px;
+  color: rgba(255,255,255,.45);
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+.footer-right {
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .3px;
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  animation: fadeUp .6s cubic-bezier(.22,.68,0,1.2) both;
+}
+.r1 { animation-delay: .05s; }
+.r2 { animation-delay: .12s; }
+.r3 { animation-delay: .22s; }
+.r4 { animation-delay: .32s; }
+.r5 { animation-delay: .42s; }
+.r6 { animation-delay: .52s; }
+
+/* ─────────────────────────────────────────
+   PRINT
+───────────────────────────────────────── */
+@media print {
+  body { background: #fff; }
+  .reveal { animation: none; opacity: 1; transform: none; }
+  .mod-card, .int-card { box-shadow: none; break-inside: avoid; }
+  .page { padding: 24px 32px 40px; }
+  .header, .footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header reveal r1">
+  <div class="header-brand">
+    <div class="header-logo">KX</div>
+    <div>
+      <div class="header-title">Kronix EBR — Registro Eletrônico de Lotes</div>
+      <div class="header-subtitle">NC Tech · EMS Farmacêutica · Visão Executiva de Produto</div>
+    </div>
+  </div>
+  <div class="header-kpis">
+    <div class="kpi">
+      <div class="kpi-value accent">Dez 2026</div>
+      <div class="kpi-label">Go Live Wave 1</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">RBBL</div>
+      <div class="kpi-label">Site Piloto</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value accent">7</div>
+      <div class="kpi-label">Módulos Wave 1</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">GxP</div>
+      <div class="kpi-label">ANVISA · GMP · FDA</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ PAGE ═══ -->
+<main class="page">
+
+  <!-- ── WAVE 1 ── -->
+  <div class="section-heading reveal r2">
+    <span class="section-pill pill-blue">🚀 Wave 1 · RBBL</span>
+    <span class="section-title">Fluxo de Execução de Lote</span>
+    <span class="section-meta">Go Live Dezembro 2026 · 7 módulos</span>
+  </div>
+
+  <!-- ═══ DIAGRAMA OUTER: módulos + dados mestre lateral ═══ -->
+  <div class="diagram-outer reveal r3">
+
+    <!-- COLUNA ESQUERDA: fluxo de módulos -->
+    <div class="diagram-inner">
+
+      <!-- SAP — acima do Recebimento, seta aponta direto nele -->
+      <div class="sap-recebimento-wrapper">
+        <div class="sap-box">
+          <div class="sap-label-top">▶ Início do Processo</div>
+          <div class="sap-name">SAP S/4 HANA</div>
+          <div class="sap-sub">ERP Grupo NC · PP / MM</div>
+          <div class="sap-sub">CPI → SQS → EBR</div>
+        </div>
+        <div class="sap-arrow-down">
+          <div class="sap-arrow-down-line"></div>
+          <div class="sap-arrow-down-lbl">OP Aberta</div>
+        </div>
+      </div>
+
+      <!-- ── LINHA TOPO: Recebimento + Criação de Receita ── -->
+      <div class="row-top">
+
+        <!-- Recebimento -->
+        <div class="mod-card mc-blue">
+          <span class="mod-number">01</span>
+          <div class="mod-icon">📦</div>
+          <div class="mod-name">Recebimento</div>
+          <div class="mod-tagline">Ponto de entrada SAP. Cria o Registro de Lote.</div>
+          <div class="mod-features">
+            <div class="feat">Recebe Ordem de Produção via SAP CPI</div>
+            <div class="feat">Instancia o RecipeTemplate aprovado</div>
+            <div class="feat">Cria BatchRecord com dados do lote</div>
+            <div class="feat">Valida materiais e quantidades</div>
+          </div>
+          <div class="mod-chip-row">
+            <span class="mchip mchip-blue">Start SAP</span>
+            <span class="mchip mchip-ghost">BatchRecord</span>
+          </div>
+        </div>
+
+        <!-- separador central -->
+        <div class="top-sep">
+          <div class="top-sep-text">dão origem<br>à execução</div>
+        </div>
+
+        <!-- Criação de Receita -->
+        <div class="mod-card mc-purple">
+          <span class="mod-number">02</span>
+          <div class="mod-icon">⬡</div>
+          <div class="mod-name">Criação de Receita</div>
+          <div class="mod-tagline">Template aprovado que define o fluxo do lote.</div>
+          <div class="mod-features">
+            <div class="feat">Editor visual de fluxo — React Flow / DAG</div>
+            <div class="feat">Versionamento imutável após aprovação GxP</div>
+            <div class="feat">Aprovação: criação → revisão → liberação</div>
+            <div class="feat">Define steps, parâmetros e assinaturas</div>
+          </div>
+          <div class="mod-chip-row">
+            <span class="mchip mchip-purple">React Flow</span>
+            <span class="mchip mchip-ghost">Versionado</span>
+          </div>
+        </div>
+
+      </div><!-- /row-top -->
+
+      <!-- setas descendo de ambos para Execução -->
+      <div class="arrows-down">
+        <div class="arrow-down-col">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-lbl">inicia lote</div>
+        </div>
+        <div class="arrow-down-col empty"></div>
+        <div class="arrow-down-col">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-lbl">define fluxo</div>
+        </div>
+      </div>
+
+      <!-- ── LINHA MEIO: Logbook ↔ Execução ↔ Anexos ── -->
+      <div class="row-mid">
+
+        <!-- Logbook -->
+        <div class="mod-card mc-amber">
+          <div class="badge-first">1ª Entrega</div>
+          <span class="mod-number">03</span>
+          <div class="mod-icon">🏭</div>
+          <div class="mod-name">Logbook Eletrônico</div>
+          <div class="mod-tagline">Controle de equipamentos e salas por OP.</div>
+          <div class="mod-features">
+            <div class="feat">Alocação de salas e equipamentos</div>
+            <div class="feat">Registro de limpeza e sanitização</div>
+            <div class="feat">Line clearance — gate antes da execução</div>
+            <div class="feat">Histórico completo por recurso</div>
+          </div>
+          <div class="mod-chip-row">
+            <span class="mchip mchip-amber">Line Clearance</span>
+            <span class="mchip mchip-ghost">Histórico GxP</span>
+          </div>
+        </div>
+
+        <!-- conector bidirecional Logbook ↔ Execução -->
+        <div class="conn-bidir">
+          <div class="bidir-track">
+            <div class="bidir-return"></div>
+          </div>
+          <div class="bidir-lbl">status<br>recurso</div>
+        </div>
+
+        <!-- Execução de Receita — CENTRO DESTAQUE -->
+        <div class="mod-card mc-teal mc-featured">
+          <div class="badge-main">Módulo Principal</div>
+          <span class="mod-number">04</span>
+          <div class="mod-icon">▶</div>
+          <div class="mod-name">Execução de Receita</div>
+          <div class="mod-tagline">Operador executa o lote step a step.</div>
+          <div class="mod-features">
+            <div class="feat">Player do DAG aprovado em tempo real</div>
+            <div class="feat">Assinatura eletrônica em cada etapa</div>
+            <div class="feat">Bloqueio anti-concorrência (RedLock)</div>
+            <div class="feat">Interface Android tablets para operadores</div>
+            <div class="feat">Captura de parâmetros de processo</div>
+          </div>
+          <div class="mod-chip-row">
+            <span class="mchip mchip-teal">Assinatura GxP</span>
+            <span class="mchip mchip-ghost">Tablet</span>
+          </div>
+        </div>
+
+        <!-- conector bidirecional Execução ↔ Anexos -->
+        <div class="conn-bidir">
+          <div class="bidir-track">
+            <div class="bidir-return"></div>
+          </div>
+          <div class="bidir-lbl">formulários<br>evidências</div>
+        </div>
+
+        <!-- Anexos -->
+        <div class="mod-card">
+          <span class="mod-number">05</span>
+          <div class="mod-icon">📋</div>
+          <div class="mod-name">Anexos &amp; Formulários</div>
+          <div class="mod-tagline">Engine de formulários GxP reutilizável.</div>
+          <div class="mod-features">
+            <div class="feat">Formulários vinculados a steps da receita</div>
+            <div class="feat">Foto como evidência de processo</div>
+            <div class="feat">Cálculo automático de parâmetros</div>
+            <div class="feat">Versionamento por instância de lote</div>
+          </div>
+          <div class="mod-chip-row">
+            <span class="mchip mchip-blue">Formulários</span>
+            <span class="mchip mchip-ghost">Foto evidência</span>
+          </div>
+        </div>
+
+      </div><!-- /row-mid -->
+
+      <!-- seta Execução → BPR (centro) -->
+      <div class="row-bpr-wrapper">
+        <div class="bpr-col">
+          <div class="bpr-arrow-center">
+            <div class="arrow-to-bpr">
+              <div class="arrow-to-bpr-line"></div>
+              <div class="arrow-to-bpr-lbl">compila dossiê</div>
+            </div>
+          </div>
+
+          <!-- BPR -->
+          <div class="mod-card mc-gold">
+            <span class="mod-number">06</span>
+            <div class="mod-icon">📄</div>
+            <div class="mod-name">Dossiê de Lote (BPR)</div>
+            <div class="mod-tagline">PDF regulatório. Aprovação tri-etapas.</div>
+            <div class="mod-features">
+              <div class="feat">Compila automaticamente toda a execução</div>
+              <div class="feat">Gera PDF regulatório imutável no S3</div>
+              <div class="feat">Aprovação: Produção → CQ → Liberação</div>
+              <div class="feat">Monitoramento Ambiental — esterilidade</div>
+              <div class="feat">Confirmação de encerramento → SAP CPI</div>
+            </div>
+            <div class="mod-chip-row">
+              <span class="mchip mchip-gold">PDF S3</span>
+              <span class="mchip mchip-ghost">3 etapas GQ</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /row-bpr-wrapper -->
+
+    </div><!-- /diagram-inner -->
+
+    <!-- COLUNA DIREITA: Dados Mestre -->
+    <div class="dados-mestre-card">
+      <div class="dm-header">
+        <div class="dm-icon">⚙️</div>
+        <div class="dm-title">Dados Mestre</div>
+        <div class="dm-tagline">Base de informações que sustenta todos os módulos do EBR.</div>
+        <span class="dm-badge">Apoio Global</span>
+      </div>
+      <div class="dm-features">
+        <div class="dm-feat">
+          <div class="dm-feat-label">Recursos</div>
+          Equipamentos, salas e linhas de produção por site
+        </div>
+        <div class="dm-feat">
+          <div class="dm-feat-label">Materiais</div>
+          Cadastro sincronizado com SAP MM/PP
+        </div>
+        <div class="dm-feat">
+          <div class="dm-feat-label">Usuários</div>
+          Perfis e roles herdados do SSO Grupo NC
+        </div>
+        <div class="dm-feat">
+          <div class="dm-feat-label">Config GxP</div>
+          Assinaturas obrigatórias por ação e perfil
+        </div>
+        <div class="dm-feat">
+          <div class="dm-feat-label">Turnos</div>
+          Calendário operacional por planta
+        </div>
+        <div class="dm-feat">
+          <div class="dm-feat-label">Parâmetros</div>
+          Limites regulatórios por tipo de processo
+        </div>
+      </div>
+      <div class="dm-note">Sem setas — fornece dados a todos os módulos como camada de referência</div>
+    </div>
+
+  </div><!-- /diagram-outer -->
+
+  <!-- AUDIT TRAIL -->
+  <div class="audit-trail reveal r4">
+    <div class="audit-trail-icon">🔒</div>
+    <div class="audit-trail-body">
+      <div class="audit-trail-title">Audit Trail — Camada Regulatória Transversal a Todos os Módulos</div>
+      <div class="audit-trail-desc">
+        Intercepta automaticamente toda operação em todos os módulos — sem exceção e sem impacto no operador.<br>
+        Registra: o que mudou · estado anterior · estado novo · quem realizou · quando · de onde.<br>
+        Imutável por definição de arquitetura. Exigência inegociável: <strong>ANVISA RDC 301/2019 · GMP Annex 11 · FDA 21 CFR Part 11.</strong>
+      </div>
+    </div>
+    <div class="audit-trail-tags">
+      <span class="atag atag-red">GxP Crítico</span>
+      <span class="atag atag-amber">1ª Entrega</span>
+    </div>
+  </div>
+
+  <hr class="divider reveal r5">
+
+  <!-- ── INTEGRAÇÕES ── -->
+  <div class="section-heading reveal r5">
+    <span class="section-pill pill-slate">🔌 Integrações</span>
+    <span class="section-title">Contratos de Eventos &amp; Mensageria</span>
+    <span class="section-meta">Sistemas externos · Interfaces assíncronas</span>
+  </div>
+
+  <div class="integrations-grid reveal r6">
+
+    <!-- SAP CPI -->
+    <div class="int-card">
+      <div class="int-icon">🔄</div>
+      <div class="int-name">SAP CPI + S/4 HANA</div>
+      <div class="int-desc">Middleware de integração. Canal bidirecional entre EBR e ERP Grupo NC.</div>
+      <div class="int-topics">
+        <div class="int-topic">OP aberta (PP) → cria BatchRecord</div>
+        <div class="int-topic">NT Transporte (MM) → Recebimento</div>
+        <div class="int-topic">Encerramento OP → confirmação SAP</div>
+        <div class="int-topic">Protocolo: SQS / SNS + RFC</div>
+      </div>
+      <span class="int-badge ib-green">▶ Start do Processo</span>
+    </div>
+
+    <!-- SSO -->
+    <div class="int-card">
+      <div class="int-icon">🔐</div>
+      <div class="int-name">SSO / SAML</div>
+      <div class="int-desc">Identidade corporativa herdada do Grupo NC. Autenticação e autorização unificadas.</div>
+      <div class="int-topics">
+        <div class="int-topic">Autenticação de operadores e aprovadores</div>
+        <div class="int-topic">Perfis e roles por site (RBBL, EMS…)</div>
+        <div class="int-topic">Claims para assinatura eletrônica GxP</div>
+        <div class="int-topic">Protocolo: SAML 2.0 / JWT</div>
+      </div>
+      <span class="int-badge ib-slate">Identidade</span>
+    </div>
+
+    <!-- SE Suite -->
+    <div class="int-card">
+      <div class="int-icon">📚</div>
+      <div class="int-name">SE Suite — QMS / GED</div>
+      <div class="int-desc">Sistema de gestão de qualidade. Repositório de POPs e documentos controlados.</div>
+      <div class="int-topics">
+        <div class="int-topic">Consulta de POPs vinculados às etapas</div>
+        <div class="int-topic">Leitura de documentos regulatórios</div>
+        <div class="int-topic">Protocolo: SQS / SNS</div>
+      </div>
+      <span class="int-badge ib-amber">⚠ Escopo a confirmar</span>
+    </div>
+
+    <!-- IoT + Zebra -->
+    <div class="int-card">
+      <div class="int-icon">📡</div>
+      <div class="int-name">IoT &amp; Impressão</div>
+      <div class="int-desc">Sensores de processo e impressoras de etiquetas durante execução do lote.</div>
+      <div class="int-topics">
+        <div class="int-topic">IoT sensores: &gt;20k eventos/dia via Kafka MSK</div>
+        <div class="int-topic">Zebra Printers: etiquetas ZPL/TCP</div>
+        <div class="int-topic">Template ZPL persistido por etiqueta</div>
+        <div class="int-topic">Coleta automática de parâmetros de sala</div>
+      </div>
+      <span class="int-badge ib-slate">Kafka + ZPL</span>
+    </div>
+
+  </div><!-- /integrations-grid -->
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-left">NC Tech · Kronix EBR · Documento de Uso Interno · EMS Farmacêutica</div>
+  <div class="footer-right">ANVISA RDC 301/2019 · GMP Annex 11 · FDA 21 CFR Part 11 · AWS Cloud · Go Live RBBL Dez/2026</div>
+</footer>
+
+</body>
+</html>

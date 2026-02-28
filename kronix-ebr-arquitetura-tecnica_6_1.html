@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kronix EBR — Arquitetura Técnica (Validação IT)</title>
+<title>Kronix EBR — Arquitetura Técnica v6 (Validação IT)</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -85,6 +85,13 @@
   .mod-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
   .mod-desc{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;line-height:1.4}
   .mod-tag{margin-top:6px}
+  .mod-features{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;padding-top:7px;border-top:1px dashed var(--border-strong)}
+  .feat{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--text-dim);background:var(--bg2);border:1px solid var(--border-strong);white-space:nowrap}
+  .feat::before{content:'◈';font-size:8px;opacity:.6}
+  .domain-group{margin-bottom:10px}
+  .domain-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .domain-label::before{content:'';display:inline-block;width:20px;height:1px;background:var(--border-strong)}
+  .domain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 
   .ca{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
   .ca-title{padding:8px 12px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg2);font-weight:600}
@@ -283,92 +290,158 @@
         </div>
 
         <!-- WAVE 1 MODULES -->
-        <div class="mods-lbl-wave">🚀 Wave 1 — RBBL · Go Live dez/2026</div>
-        <div class="mods-grid">
-          <div class="mod">
-            <div class="mod-name">Audit Trail</div>
-            <div class="mod-desc">Rastreabilidade completa: antes, depois, por quem, por onde. Capturado via EF Core Interceptor — camada horizontal.</div>
-            <div class="mod-tag"><span class="pill p-red" style="font-size:10px">GxP CRÍTICO</span></div>
+        <div class="mods-lbl-wave">🚀 Wave 1 — RBBL · Go Live dez/2026 · 7 módulos de negócio</div>
+
+        <!-- Linha 1: 3 módulos do fluxo principal receita -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+
+          <div class="mod" style="border-color:var(--purple-border);background:var(--purple-light)">
+            <div class="mod-name" style="color:var(--purple)">Dados Mestre</div>
+            <div class="mod-desc">Cadastro e sincronização de Recursos (equipamentos, salas, linhas). Configuração regulatória por site: perfis, assinaturas, turnos. Material e Usuário sincronizados do SAP/SSO — read-only no EBR.</div>
+            <div class="mod-tag"><span class="pill p-purple" style="font-size:10px">RESOURCE · CONFIG · SYNC</span></div>
+            <div class="mod-features">
+              <span class="feat">Cadastro de equipamento/sala</span>
+              <span class="feat">Configuração de assinatura por tela</span>
+              <span class="feat">Sincronização SAP/SSO</span>
+              <span class="feat">Parâmetros por recurso</span>
+            </div>
           </div>
+
+          <div class="mod" style="border-color:var(--purple-border);background:var(--purple-light)">
+            <div class="mod-name" style="color:var(--purple)">Criação de Receita</div>
+            <div class="mod-desc">Editor visual de templates de receita usando React Flow. Grafo dirigido (DAG) — fases paralelas e sequenciais. Template aprovado e versionado antes de instanciar. Substitui SAP GUI.</div>
+            <div class="mod-tag"><span class="pill p-purple" style="font-size:10px">TEMPLATE · DAG · VERSION</span></div>
+            <div class="mod-features">
+              <span class="feat">Editor React Flow (DAG)</span>
+              <span class="feat">RecipeTemplate versionado</span>
+              <span class="feat">Fluxo aprovação GxP</span>
+              <span class="feat">graph_json JSONB</span>
+              <span class="feat">Import estrutura SAP</span>
+            </div>
+          </div>
+
           <div class="mod">
             <div class="mod-name">Recebimento</div>
-            <div class="mod-desc">Interface com sistemas de pesagem e SAP CPI para validar pallet e volumes. Consumer SQS — evento OP aberta.</div>
+            <div class="mod-desc">Consumer SQS — evento OP aberta via SAP CPI. Cria BatchRecord instanciando o RecipeTemplate aprovado para a OP. Valida pallet e volumes com sistemas de pesagem.</div>
             <div class="mod-tag"><span class="pill p-blue" style="font-size:10px">SAP CPI → EBR</span></div>
+            <div class="mod-features">
+              <span class="feat">Consumer SQS</span>
+              <span class="feat">Instancia RecipeTemplate → RecipeInstance</span>
+              <span class="feat">Validação volumes/pallet</span>
+            </div>
           </div>
-          <div class="mod">
-            <div class="mod-name">Execução de Receita</div>
-            <div class="mod-desc">Interpreta OPs do SAP, converte em telas e ações step-by-step. Assinatura eletrônica por etapa obrigatória.</div>
-            <div class="mod-tag"><span class="pill p-red" style="font-size:10px">STEP · SIGN · COMPLETE</span></div>
-          </div>
-          <div class="mod">
-            <div class="mod-name">Anexos</div>
-            <div class="mod-desc">Preenchimento de informações de processo. Foto como evidência. Perguntas (resposta, opção, busca, calculada, estatística). Controle de versão por instância. Gestão da Rotina.</div>
-            <div class="mod-tag"><span class="pill p-blue" style="font-size:10px">ATTACH · EVIDENCE · VERSION</span></div>
-          </div>
-          <div class="mod">
-            <div class="mod-name">Logbook Eletrônico</div>
-            <div class="mod-desc">Alocação, limpeza, setup de equipamentos e salas. Histórico completo de ações por recurso. Line clearance antes de cada OP.</div>
-            <div class="mod-tag"><span class="pill p-green" style="font-size:10px">EQUIPMENT · ROOM · LINE</span></div>
-          </div>
-          <div class="mod">
-            <div class="mod-name">Dossiê de Lote (BPR)</div>
-            <div class="mod-desc">Compila execução, anexos e imagens. Gera PDF regulatório. Fluxo de aprovação GQ com etapas de assinatura.</div>
-            <div class="mod-tag"><span class="pill p-gold" style="font-size:10px">COMPILE · REVIEW · RELEASE</span></div>
-          </div>
-          <div class="mod">
-            <div class="mod-name">Monitoramento Ambiental</div>
-            <div class="mod-desc">Controle de amostras de esterilidade coletadas em salas estéreis. Vinculado ao fluxo de liberação do lote GQ.</div>
-            <div class="mod-tag"><span class="pill p-teal" style="font-size:10px">SAMPLE · STERILE · GQ LINK</span></div>
-          </div>
+
         </div>
 
-        <!-- FUTURE MODULES -->
-        <div class="mods-lbl-wave" style="background:var(--slate-light);color:var(--slate)">⏱ Waves Futuras — visíveis na arquitetura, não entregues na Wave 1</div>
-        <div class="mods-grid-future">
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Forms — Setup / Checklist / Salas</div>
-            <div class="mod-desc" style="font-size:11px">Variações configuráveis do módulo de Anexos. Gestão da Rotina. Parâmetros validados.</div>
+        <!-- Linha 2: 2 módulos centrais de execução -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px">
+
+          <div class="mod">
+            <div class="mod-name">Execução de Receita</div>
+            <div class="mod-desc">Player da RecipeInstance — step-by-step sobre o DAG do template. Assinatura eletrônica por etapa obrigatória. RedLock garante execução exclusiva por step em ambiente multi-pod.</div>
+            <div class="mod-tag"><span class="pill p-red" style="font-size:10px">STEP · SIGN · COMPLETE</span></div>
+            <div class="mod-features">
+              <span class="feat">Consulta POP (SE Suite)</span>
+              <span class="feat">Impressão Zebra ZPL</span>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Checklist entre Operações</div>
-            <div class="mod-desc" style="font-size:11px">Travativas em parâmetros validados. Aprovação / Recusa / Nota Desvio SAP.</div>
+
+          <div class="mod">
+            <div class="mod-name">Anexos</div>
+            <div class="mod-desc">Engine de formulários GxP reutilizável. Serve Execução de Receita, Logbook e outros contextos. Questões de múltiplos tipos, foto como evidência, controle de versão por instância.</div>
+            <div class="mod-tag"><span class="pill p-blue" style="font-size:10px">FORMS · EVIDENCE · VERSION</span></div>
+            <div class="mod-features">
+              <span class="feat">Resposta livre / opção / busca</span>
+              <span class="feat">Questão calculada / estatística</span>
+              <span class="feat">Foto como evidência GxP</span>
+              <span class="feat">Controle de versão por instância</span>
+              <span class="feat">Gestão da Rotina</span>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Absenteísmo</div>
-            <div class="mod-desc" style="font-size:11px">Capacitação e habilidade de operadores por tecnologia de equipamento. Cards de não-conformidade.</div>
+
+        </div>
+
+        <!-- Linha 3: 2 módulos de suporte ao fluxo -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px">
+
+          <div class="mod">
+            <div class="mod-name">Logbook Eletrônico</div>
+            <div class="mod-desc">Alocação, limpeza e setup de equipamentos e salas. Histórico completo por recurso. Line clearance obrigatório antes de cada OP — gate de liberação com tempo de vida configurável.</div>
+            <div class="mod-tag"><span class="pill p-green" style="font-size:10px">EQUIPMENT · ROOM · LINE</span></div>
+            <div class="mod-features">
+              <span class="feat">Alocação de sala / equipamento</span>
+              <span class="feat">Tempo de vida por atividade</span>
+              <span class="feat">Line clearance</span>
+              <span class="feat">Histórico por recurso</span>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Controle de Amostra</div>
-            <div class="mod-desc" style="font-size:11px">Fluxo de amostras entre áreas de CQ e laboratórios durante execução da OP.</div>
+
+          <div class="mod">
+            <div class="mod-name">Dossiê de Lote (BPR)</div>
+            <div class="mod-desc">Compila RecipeInstance, formulários e imagens. Gera PDF regulatório versionado. Fluxo de aprovação tri-etapas: Produção → CQ → Liberação.</div>
+            <div class="mod-tag"><span class="pill p-gold" style="font-size:10px">COMPILE · REVIEW · RELEASE</span></div>
+            <div class="mod-features">
+              <span class="feat">Monitoramento Ambiental</span>
+              <span class="feat">Amostras de esterilidade</span>
+              <span class="feat">Gate de liberação GQ</span>
+              <span class="feat">PDF regulatório S3 (versionado)</span>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Web Manutenção</div>
-            <div class="mod-desc" style="font-size:11px">Abertura de solicitações de manutenção via SAP para qualquer recurso produtivo.</div>
+
+        </div>
+
+        <!-- AUDIT TRAIL — módulo transversal, visibilidade explícita -->
+        <div style="background:var(--red-light);border:1.5px solid var(--red-border);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:700;color:var(--red)">🔒 Audit Trail</span>
+            <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace">Camada horizontal — intercepta todos os módulos via EF Core SaveChangesInterceptor · before/after_state JSONB · INSERT-only → schema ebr_audit</span>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Ferramental</div>
-            <div class="mod-desc" style="font-size:11px">Logbook de ferramentas. Fluxo de separação por área produtiva.</div>
+          <span class="pill p-red" style="font-size:10px">GxP CRÍTICO</span>
+        </div>
+
+        <!-- FUTURE MODULES — 5 domínios -->
+        <div class="mods-lbl-wave" style="background:var(--slate-light);color:var(--slate)">⏱ Waves Futuras — 5 domínios mapeados · não entregues na Wave 1</div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;opacity:.85">
+
+          <div class="domain-group">
+            <div class="domain-label">Gestão de Recursos Produtivos</div>
+            <div class="domain-grid">
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Web Manutenção</div><div class="mod-desc" style="font-size:11px">Abertura de OS via SAP PM.</div></div>
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Ferramental</div><div class="mod-desc" style="font-size:11px">Logbook de ferramentas por área.</div></div>
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Absenteísmo</div><div class="mod-desc" style="font-size:11px">Habilidade e capacitação de operadores por linha.</div></div>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Controle de Ordens</div>
-            <div class="mod-desc" style="font-size:11px">Busca, visualização e ações sobre ordens de produção.</div>
+
+          <div class="domain-group">
+            <div class="domain-label">Forms &amp; Checklists (feature engine de Execução)</div>
+            <div class="domain-grid">
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Forms Setup / Salas</div><div class="mod-desc" style="font-size:11px">Variações configuráveis. Gestão da Rotina.</div></div>
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Checklist entre Operações</div><div class="mod-desc" style="font-size:11px">Travativas em parâmetros validados. Nota Desvio SAP.</div></div>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Abertura de Cards</div>
-            <div class="mod-desc" style="font-size:11px">Inconformidades em recursos produtivos. Direcionamento para área responsável.</div>
+
+          <div class="domain-group">
+            <div class="domain-label">Gestão de Não-Conformidades (Cards)</div>
+            <div class="domain-grid">
+              <div class="mod-future" style="grid-column:span 2"><div class="mod-name" style="font-size:12px">Cards — Abertura + Fluxo</div><div class="mod-desc" style="font-size:11px">Inconformidades em recursos. Aprovação e direcionamento para área responsável. Workflow único.</div></div>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Fluxo de Cards</div>
-            <div class="mod-desc" style="font-size:11px">Aprovação e ação dos cards abertos via genérico ou via inconformidade detectada.</div>
+
+          <div class="domain-group">
+            <div class="domain-label">Analytics &amp; Relatórios</div>
+            <div class="domain-grid">
+              <div class="mod-future" style="grid-column:span 2"><div class="mod-name" style="font-size:12px">RPP · Leadtime · Pesquisas · Controle de Ordens</div><div class="mod-desc" style="font-size:11px">Consultas e dashboards sobre dados existentes. Sem modelo de dados próprio.</div></div>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">RPP / Leadtime / Pesquisas</div>
-            <div class="mod-desc" style="font-size:11px">Extração e análise de performance. Consultas customizadas por usuário.</div>
+
+          <div class="domain-group">
+            <div class="domain-label">Integrações de Contexto Externo</div>
+            <div class="domain-grid">
+              <div class="mod-future"><div class="mod-name" style="font-size:12px">Controle de Amostra (CA)</div><div class="mod-desc" style="font-size:11px">Fluxo de amostras CQ ↔ Laboratório (LIMS). 15 tabelas legado.</div></div>
+            </div>
           </div>
-          <div class="mod-future">
-            <div class="mod-name" style="font-size:12px">Consulta POP</div>
-            <div class="mod-desc" style="font-size:11px">Integração GED via SE Suite. Documentos vinculados à pesquisa.</div>
-          </div>
+
         </div>
 
         <!-- CLEAN ARCH -->
@@ -419,12 +492,17 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
 
-      <div class="elsa">
-        <div class="elsa-title">🔄 Elsa Workflows <span class="pill p-purple" style="font-size:10px">Em avaliação</span></div>
-        <div class="elsa-desc">Engine open source .NET para orquestração de fluxos server-side. Candidato a gerenciar a lógica de execução de workflow no backend, complementando o React Flow (editor e player no frontend).</div>
-        <div class="notice n-info" style="margin-top:8px">
-          <div class="ni">ℹ️</div>
-          <div class="nt"><strong>Avaliação pendente:</strong> definir divisão de responsabilidade Elsa (backend) vs. React Flow (frontend) antes do ADR-003.</div>
+      <div class="elsa" style="background:var(--purple-light);border-color:var(--purple-border)">
+        <div class="elsa-title" style="color:var(--purple)">⬡ React Flow — Editor de Receita <span class="pill p-purple" style="font-size:10px">PoC Confirmada</span></div>
+        <div class="elsa-desc">Engine visual para editor e player de receita. PoC validada com DAG de operações (containers) e steps (nós). Grafo serializado como <code>graph_json JSONB</code> no PostgreSQL — backend armazena, frontend interpreta.</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:var(--text-mid)"><strong>Criação:</strong> editor de template — farmacêutico monta o DAG</div>
+          <div style="font-size:12px;color:var(--text-mid)"><strong>Execução:</strong> player da RecipeInstance — operador navega os steps</div>
+          <div style="font-size:12px;color:var(--text-mid)"><strong>Aprovação:</strong> fluxo GxP — DRAFT → REVIEW → APPROVED → OBSOLETE</div>
+        </div>
+        <div class="notice n-ok" style="margin-top:8px">
+          <div class="ni">✅</div>
+          <div class="nt"><strong>Decisão tomada:</strong> React Flow é o engine visual. Elsa Workflows descartado. ADR-003 pode ser escrito.</div>
         </div>
       </div>
 
@@ -973,6 +1051,9 @@
   <div class="footnote-item"><strong style="color:var(--text-mid)">Carga histórica EBR EMS:</strong> migração de dados históricos do EBR atual da EMS para o Kronix EBR está fora do escopo desta versão. Estratégia (ETL, cutover, parallel run) pendente de definição.</div>
   <div class="footnote-item"><strong style="color:var(--text-mid)">LIMS:</strong> integração com sistema de laboratório (LIMS) está no radar. Escopo e necessidade a evoluir com área de Qualidade.</div>
   <div class="footnote-item"><strong style="color:var(--text-mid)">Shared Reference Database:</strong> banco de parâmetros e cadastros universais compartilhados entre sites. Design detalhado pendente — validação regulatória com área de Qualidade necessária antes de fechar.</div>
+  <div class="footnote-item"><strong style="color:var(--text-mid)">RecipeTemplate vs. RecipeInstance:</strong> padrão de separação entre template de receita (Criação — versionado, aprovado antes de qualquer OP) e instância de execução (Execução — cópia imutável do template para uma OP específica do SAP). O BPR referencia <code>recipe_template_version</code> da instância — garante rastreabilidade GxP mesmo que o template evolua após a execução.</div>
+  <div class="footnote-item"><strong style="color:var(--text-mid)">ADR-003 — Recipe Data Model:</strong> React Flow confirmado como engine visual (PoC demonstrada). Elsa Workflows descartado. ADR-003 pode ser escrito com decisão de design: <code>graph_json JSONB</code> no PostgreSQL · template → instância · aprovação com versionamento imutável.</div>
+  <div class="footnote-item" style="margin-top:6px;padding-top:10px;border-top:2px solid var(--border-strong)"><strong style="color:var(--accent)">Definição arquitetural — Módulo vs. Feature:</strong> <span style="color:var(--text-mid)">Um <strong>módulo</strong> tem modelo de dados próprio, ciclo de vida independente e pode ser acessado fora do contexto de outro módulo. Uma <strong>feature</strong> (<span style="font-family:'JetBrains Mono',monospace;font-size:11px">◈</span>) só existe no contexto de um módulo pai — não possui entidade raiz própria nem rota de acesso autônoma.</span></div>
 </div>
 
 </div>
