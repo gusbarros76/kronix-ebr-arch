@@ -20,14 +20,15 @@
     border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
     padding: 3px 10px; font-size: 11px; margin-top: 10px; margin-right: 8px;
   }
+  header .badge.v2 { background: rgba(74,200,100,0.25); border-color: rgba(74,200,100,0.5); }
 
   nav {
     background: #fff; border-bottom: 1px solid #dde3f0;
     padding: 0 40px; display: flex; gap: 0; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-wrap: wrap;
   }
   nav a {
-    padding: 14px 20px; font-size: 13px; font-weight: 600; color: #555;
+    padding: 14px 16px; font-size: 12px; font-weight: 600; color: #555;
     text-decoration: none; border-bottom: 3px solid transparent;
     transition: all 0.2s; white-space: nowrap;
   }
@@ -48,22 +49,20 @@
     margin: 24px 0 10px; text-transform: uppercase; letter-spacing: 0.5px;
   }
 
-  /* SUMMARY CARDS */
   .summary-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px;
   }
   .summary-card {
-    background: white; border-radius: 8px; padding: 20px;
+    background: white; border-radius: 8px; padding: 18px;
     border: 1px solid #dde3f0; text-align: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
-  .summary-card .number { font-size: 36px; font-weight: 800; color: #2d4a8a; line-height: 1; }
-  .summary-card .label { font-size: 12px; color: #666; margin-top: 6px; }
+  .summary-card .number { font-size: 32px; font-weight: 800; color: #2d4a8a; line-height: 1; }
+  .summary-card .label { font-size: 11px; color: #666; margin-top: 6px; line-height: 1.4; }
   .summary-card.warn .number { color: #e07b00; }
   .summary-card.danger .number { color: #c0392b; }
   .summary-card.ok .number { color: #1a7a4a; }
 
-  /* TABLE CARD */
   .table-card {
     background: white; border-radius: 8px; padding: 20px 24px;
     border: 1px solid #dde3f0; margin-bottom: 14px;
@@ -74,9 +73,7 @@
     color: #1a2744; margin-bottom: 8px;
   }
   .table-card p { font-size: 13px; color: #444; line-height: 1.6; }
-  .table-card .cols {
-    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
-  }
+  .table-card .cols { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
   .table-card .col-tag {
     background: #f0f4ff; border: 1px solid #c8d8f0; border-radius: 3px;
     padding: 2px 7px; font-family: 'Courier New', monospace; font-size: 11px; color: #2d4a8a;
@@ -85,8 +82,8 @@
   .table-card .col-tag.fk { background: #e8f5e9; border-color: #81c784; color: #2e7d32; }
   .table-card .col-tag.audit { background: #fce4ec; border-color: #f48fb1; color: #880e4f; }
   .table-card .col-tag.key { background: #ede7f6; border-color: #b39ddb; color: #4527a0; font-weight: 700; }
+  .table-card .col-tag.new { background: #e8f5e9; border-color: #66bb6a; color: #1b5e20; font-weight: 700; }
 
-  /* RELATIONS */
   .relation-diagram {
     background: #f8f9ff; border: 1px solid #dde3f0; border-radius: 8px;
     padding: 20px 24px; margin: 16px 0; font-family: 'Courier New', monospace; font-size: 12px;
@@ -96,7 +93,6 @@
   .relation-diagram .arrow { color: #2d4a8a; }
   .relation-diagram .note { color: #888; font-style: italic; font-family: 'Segoe UI', sans-serif; }
 
-  /* INSIGHT BOXES */
   .insight {
     border-radius: 6px; padding: 14px 18px; margin: 16px 0;
     border-left: 4px solid; font-size: 13px; line-height: 1.65;
@@ -105,13 +101,12 @@
   .insight.orange { background: #fff3e0; border-color: #e07b00; color: #5a3200; }
   .insight.red { background: #fdecea; border-color: #c0392b; color: #6b1a14; }
   .insight.green { background: #e8f5e9; border-color: #1a7a4a; color: #0d3d24; }
+  .insight.purple { background: #f3e5f5; border-color: #7b1fa2; color: #3d0060; }
   .insight strong { font-weight: 700; }
 
-  /* GRID LAYOUTS */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
-  /* REFERENCE TABLE */
   .ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .ref-table th {
     background: #1a2744; color: white; padding: 10px 14px;
@@ -121,7 +116,6 @@
   .ref-table tr:hover td { background: #f5f7ff; }
   .ref-table code { font-family: 'Courier New'; font-size: 12px; background: #f0f4ff; padding: 1px 5px; border-radius: 3px; }
 
-  /* BADGE PILLS */
   .pill {
     display: inline-block; border-radius: 12px; padding: 2px 10px;
     font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
@@ -132,8 +126,8 @@
   .pill.gap { background: #fce4ec; color: #880e4f; }
   .pill.shared { background: #fff8e1; color: #f57f17; }
   .pill.risk { background: #fdecea; color: #b71c1c; }
+  .pill.updated { background: #e0f7fa; color: #006064; }
 
-  /* GAP TABLE */
   .gap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .gap-table th {
     background: #2d3748; color: white; padding: 10px 14px;
@@ -141,29 +135,56 @@
   }
   .gap-table td { padding: 9px 14px; border-bottom: 1px solid #eef0f7; vertical-align: top; line-height: 1.55; }
   .gap-table tr:hover td { background: #f9f9ff; }
+  .gap-table tr.new-row td { background: #f0faf0; }
+  .gap-table tr.new-row:hover td { background: #e4f5e4; }
+
+  .subsystem-box {
+    background: white; border: 1px solid #dde3f0; border-radius: 8px;
+    margin-bottom: 14px; overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .subsystem-header {
+    background: #f0f4ff; padding: 12px 20px; border-bottom: 1px solid #dde3f0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .subsystem-header h4 {
+    font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700; color: #1a2744;
+  }
+  .subsystem-header .count { font-size: 11px; color: #666; margin-left: auto; }
+  .subsystem-body { padding: 16px 20px; font-size: 13px; color: #444; line-height: 1.6; }
+  .subsystem-body .cols { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
 
   .section-nav { scroll-margin-top: 60px; }
 
   footer {
     background: #1a2744; color: rgba(255,255,255,0.5);
-    text-align: center; padding: 18px; font-size: 12px;
+    text-align: center; padding: 18px; font-size: 12px; line-height: 1.8;
+  }
+
+  .v2-badge {
+    display: inline-block; background: #1a7a4a; color: white;
+    border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 700;
+    vertical-align: middle; margin-left: 8px; letter-spacing: 0.5px;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Análise do Banco Legado EBR EMS — Insumos para Kronix EBR</h1>
-  <div class="meta">Fonte: FDBs.graphml — Diagrama yEd exportado do banco SAP MII | Kronix EBR Wave 1 · Go Live dez/2026</div>
-  <span class="badge">599 tabelas analisadas</span>
-  <span class="badge">3 dimensões: Modelo Core · Shared Reference · Gap Analysis</span>
+  <h1>Análise do Banco Legado EBR EMS — Insumos para Kronix EBR <span style="font-size:14px;opacity:0.7">v2.0</span></h1>
+  <div class="meta">Fonte: FDBs.graphml — Diagrama yEd exportado do banco SAP MII | Kronix EBR Wave 1 · Go Live dez/2026 | Double-check completo executado — fev/2026</div>
+  <span class="badge">598 tabelas totais no GraphML</span>
+  <span class="badge">431 tabelas FDB analisadas</span>
+  <span class="badge">128 tabelas com FK CD_ORDEM_PRODU</span>
+  <span class="badge v2">✓ v2.0 — Double-check completo · Subsistemas corrigidos</span>
   <span class="badge">⚠ Hipóteses sinalizadas — validar com Gustavo Fontes / área de Qualidade</span>
 </header>
 
 <nav>
   <a href="#resumo" class="active">Resumo</a>
   <a href="#modelo-core">Modelo Core</a>
-  <a href="#audit-legado">Audit Trail Legado</a>
+  <a href="#subsistemas">Subsistemas Completos</a>
+  <a href="#audit-legado">Audit Trail</a>
   <a href="#shared-ref">Shared Reference DB</a>
   <a href="#gap-analysis">Gap Analysis</a>
   <a href="#migracao">Migração</a>
@@ -177,16 +198,20 @@
 
   <div class="summary-grid">
     <div class="summary-card">
-      <div class="number">599</div>
-      <div class="label">Tabelas totais no legado</div>
+      <div class="number">598</div>
+      <div class="label">Tabelas totais no GraphML (FDBs.graphml)</div>
     </div>
     <div class="summary-card">
-      <div class="number">430</div>
-      <div class="label">Tabelas FDB (core EBR)</div>
+      <div class="number">431</div>
+      <div class="label">Tabelas FDB (prefixo EBR/MES)</div>
+    </div>
+    <div class="summary-card">
+      <div class="number">128</div>
+      <div class="label">Tabelas com FK CD_ORDEM_PRODU (OP-linked)</div>
     </div>
     <div class="summary-card warn">
-      <div class="number">12</div>
-      <div class="label">Gaps identificados no design atual</div>
+      <div class="number">16</div>
+      <div class="label">Gaps identificados no design atual <span style="font-size:10px;display:block;color:#e07b00">+4 vs v1</span></div>
     </div>
     <div class="summary-card ok">
       <div class="number">18</div>
@@ -195,15 +220,19 @@
   </div>
 
   <div class="insight blue">
-    <strong>O legado é uma plataforma MES completa, não um EBR simples.</strong> O prefixo FDB cobre 430 tabelas que incluem receita, execução, dossiê, logbook, Audit Trail, amostras, controle de ponto (Absenteísmo), PCO (Process Control), OEE, Plant Maintenance (PM) e módulos de controle de qualidade. A migração para o Kronix EBR é de alta complexidade — o escopo vai muito além do que está mapeado nos módulos Wave 1.
+    <strong>O legado é uma plataforma MES completa, não um EBR simples.</strong> O prefixo FDB cobre 431 tabelas incluindo receita, execução, dossiê, logbook, Audit Trail, amostras, controle de ponto (Absenteísmo), PCO (Process Control), folha de trabalho por turno, reconciliação de lote, hold time de processo, rastreabilidade de volumes e containers, e integração SAP bidirecional. A migração para o Kronix EBR é de alta complexidade — o escopo vai muito além do que está mapeado nos módulos Wave 1.
   </div>
 
   <div class="insight orange">
-    <strong>Atenção: o Audit Trail do legado tem arquitetura completamente diferente da proposta para o Kronix EBR.</strong> O legado usa <code>FDB_AUDIT</code> com granularidade de <em>campo</em> (TRAIL_ID, TABELA, CAMPO, VALOR_ANTES, VALOR_DEPOIS) — uma linha por campo alterado. O design proposto para o Kronix usa JSONB (before_state / after_state por entidade inteira). São estratégias distintas com implicações para migração histórica. Detalhe na seção Audit Trail Legado.
+    <strong>Atenção: o Audit Trail do legado tem arquitetura completamente diferente da proposta para o Kronix EBR.</strong> O legado usa <code>FDB_AUDIT</code> com granularidade de <em>campo</em> (TRAIL_ID, TABELA, CAMPO, VALOR_ANTES, VALOR_DEPOIS) — uma linha por campo alterado. O design proposto para o Kronix usa JSONB (before_state / after_state por entidade inteira). São estratégias distintas com implicações para migração histórica. Detalhe na seção Audit Trail.
   </div>
 
   <div class="insight red">
-    <strong>O PCO (Process Control / Monitoramento Ambiental) é substancialmente mais complexo do que o mapeado.</strong> Existem 15 tabelas <code>CA_AMOSTRA*</code> + 14 tabelas <code>FDB_PCO_*</code> cobrindo coletas automáticas via tags de equipamento (SAP MII tags), regras de alarme, notificações e histórico. O módulo "Monitoramento Ambiental" como descrito na Wave 1 pode estar subestimado em escopo.
+    <strong>Hold Time é um subsistema, não um campo.</strong> A análise v1 identificava apenas <code>FDB_HT_PROCESSO</code>. O GraphML revela 5+ tabelas de Hold Time com thresholds múltiplos (50%, 100%, CK) calculados por fase, por semiacabado e por volume de container. Hold Time e Reconciliação de Lote são os dois gaps com maior risco para o Go Live dez/2026 — ambos precisam de validação com Gustavo Fontes antes de fechar o escopo Wave 1.
+  </div>
+
+  <div class="insight purple">
+    <strong>Novo achado v2: Folha de Trabalho por Turno.</strong> O legado tem um subsistema completo de <code>FDB_FOLHA_TRABALHO</code> com registro de turno por operação, equipe de trabalho e ocorrências. A tabela <code>FDB_FOLHA_TRABALHO_EQUIPE</code> registra <code>HABILIDADE</code> por operador — confirmando que habilidade por operador é um campo regulatório rastreado no legado, não apenas uma feature futura.
   </div>
 </section>
 
@@ -212,67 +241,85 @@
   <h2><span class="icon">🏗️</span> Modelo de Dados Core — Receita, Execução e Dossiê</h2>
 
   <h3>1. Entidade Central: Ordem de Produção</h3>
-  <p style="margin-bottom:12px; color:#444; line-height:1.65;">Tudo no legado gira em torno de <code>CD_ORDEM_PRODU</code>. Esta é a chave universal que aparece em ~80% das tabelas FDB. Não existe um conceito de "receita" desacoplado da ordem — a receita <strong>é executada no contexto da OP</strong>.</p>
+  <p style="margin-bottom:12px; color:#444; line-height:1.65;">Tudo no legado gira em torno de <code>CD_ORDEM_PRODU</code>. Esta chave aparece em 128 das 431 tabelas FDB (~30% com FK direta; ~80% indiretamente). Não existe um conceito de "receita" desacoplado da ordem — a receita <strong>é executada no contexto da OP</strong>.</p>
 
   <div class="table-card">
-    <h4>FDB_ORDEM_PRODUCAO — Tabela raiz do modelo</h4>
-    <p>Contém a ordem de produção com dados de planejamento SAP, status de aprovação (Produção, Controle de Qualidade, Liberação), fluxo de correção GxP, campos de histórico inline e flags de ciclo de vida. É o agregado raiz — tudo se relaciona a ela via <code>CD_ORDEM_PRODU</code>.</p>
+    <h4>FDB_ORDEM_PRODUCAO — Tabela raiz do modelo (59 colunas)</h4>
+    <p>Contém a ordem de produção com dados de planejamento SAP, status de aprovação tri-etapas (Produção, Controle de Qualidade, Liberação), fluxo de correção GxP, campos de retrabalho, flags de ciclo de vida e configurações de etiqueta. É o agregado raiz — tudo se relaciona a ela via <code>CD_ORDEM_PRODU</code>.</p>
     <div class="cols">
       <span class="col-tag pk">CD_ORDEM_PRODU (PK)</span>
       <span class="col-tag key">CD_MATER</span>
       <span class="col-tag key">CD_LOTE</span>
       <span class="col-tag key">CD_STATUS</span>
       <span class="col-tag">DT_PLANE_INICI / DT_PLANE_FIM</span>
-      <span class="col-tag">DT_INICI_REAL / DT_ENCER</span>
-      <span class="col-tag audit">DATA_APROV_PRODU / USUAR_APROV_PRODU</span>
-      <span class="col-tag audit">DATA_APROV_CQ / USUAR_APROV_CQ</span>
-      <span class="col-tag audit">DATA_APROV_LIBER / USUAR_APROV_LIBER</span>
-      <span class="col-tag">FL_CORRECAO / FL_CORRIGIDO</span>
-      <span class="col-tag">CD_FLUXO_SET_CORRECAO</span>
-      <span class="col-tag">VERSAO_PROD</span>
+      <span class="col-tag">DT_INICI_REAL / DT_ENCER / CD_USER_ENCER</span>
+      <span class="col-tag audit">DATA_APROV_PRODU / USUAR_APROV_PRODU / CD_STATU_DOSSI_PRODU</span>
+      <span class="col-tag audit">DATA_APROV_CQ / USUAR_APROV_CQ / CD_STATU_DOSSI_CQ</span>
+      <span class="col-tag audit">DATA_APROV_LIBER / USUAR_APROV_LIBER / CD_STATU_DOSSI_LIBER</span>
+      <span class="col-tag">FL_CORRECAO / FL_CORRIGIDO / CD_FLUXO_SET_CORRECAO</span>
+      <span class="col-tag">VERSAO_PROD / NUM_GRP / ULT_NR_ECM</span>
+      <span class="col-tag">FL_CANCELADA / CD_LOTE_CANCELADA</span>
+      <span class="col-tag new">CD_STATUS_RETRABALHO / DT_STATUS_RETRABALHO / CD_USER_RETRABALHO</span>
+      <span class="col-tag new">CK_GRP_SBGRP_DESATIVADO / FL_FINALIZADA / CD_FASE_FINALIZADA</span>
+      <span class="col-tag new">CD_USER_CONFE_PRD / TP_CONFE_PRD</span>
+      <span class="col-tag new">FL_ETIQ_ENT_OPER_DESAT / USER_ETIQ_ENT_OPER_DESAT / DT_ETIQ_ENT_OPER_DESAT</span>
+      <span class="col-tag new">FL_USAR_LT_DM</span>
       <span class="col-tag audit">INSERT_USER / UPDATE_USER / INSERT_TIMESTAMP / UPDATE_TIMESTAMP</span>
     </div>
   </div>
 
   <div class="insight blue">
-    <strong>Insight arquitetural:</strong> O legado tem 3 estágios de aprovação embutidos na própria tabela da OP (PRODU, CQ, LIBER) — cada um com data e usuário inline. No Kronix EBR, o design do BPR (Dossiê) precisa refletir esse fluxo tri-etapas. Não é apenas "aprovação GQ" — são três assinaturas distintas com papéis e timestamps separados.
+    <strong>Insight arquitetural:</strong> O legado tem 3 estágios de aprovação embutidos na própria tabela da OP (PRODU, CQ, LIBER) — cada um com data, usuário e status de dossiê inline. No Kronix EBR, o design do BPR (Dossiê) precisa refletir esse fluxo tri-etapas. Não é apenas "aprovação GQ" — são três assinaturas distintas com papéis, timestamps e status de dossiê separados.
   </div>
 
-  <h3>2. Estrutura da Receita e Execução</h3>
+  <div class="insight orange">
+    <strong>Novo achado v2 — Retrabalho inline:</strong> <code>CD_STATUS_RETRABALHO</code>, <code>DT_STATUS_RETRABALHO</code> e <code>CD_USER_RETRABALHO</code> estão inline na OP. Reprocessamento de lote tem requisitos GxP específicos — nova OP, novo dossiê, rastreabilidade do lote original. O Kronix EBR precisa modelar esse fluxo. Não está no design atual.
+  </div>
+
+  <h3>2. Hierarquia da Receita e Execução — Relações Completas</h3>
 
   <div class="relation-diagram">
-    <span class="entity">FDB_ORDEM_PRODUCAO</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_ORDEM_OPERACAO</span> <span class="note">(operações / fases macro)</span><br>
-    <span class="entity">FDB_ORDEM_OPERACAO</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_FASE</span> <span class="note">(steps da execução, com início/fim real, responsável, status)</span><br>
-    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_INSTRUCAO</span> <span class="note">(instruções textuais da fase)</span><br>
-    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_CARACTERISTICA</span> <span class="note">(parâmetros capturados: peso, temperatura, pressão)</span><br>
+    <span class="entity">FDB_ORDEM_PRODUCAO</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_ORDEM_OPERACAO</span> <span class="note">(operações / fases macro — centro de trabalho, datas reais)</span><br>
+    <span class="entity">FDB_ORDEM_PRODUCAO</span> <span class="arrow">──1:1──▶</span> <span class="entity">FDB_RECEITA_CABECALHO</span> <span class="note">(status da receita, lote de inspeção, data de início programado)</span><br>
+    <span class="entity">FDB_ORDEM_OPERACAO</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_FASE</span> <span class="note">(steps da execução com início/fim real, responsável, status, checklist, nota GQ)</span><br>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_INSTRUCAO</span> <span class="note">(instruções textuais por fase)</span><br>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_TEXTO</span> <span class="note">(textos longos complementares por instrução)</span><br>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_CARACTERISTICA</span> <span class="note">(parâmetros capturados: valor, usuário, controle CQ)</span><br>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_RECEITA_CAPTURA_FASE</span> <span class="note">(captura de fotos por fase: máx. fotos, texto informativo)</span><br>
     <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_ORDEM_BOM</span> <span class="note">(componentes consumidos por fase)</span><br>
-    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_ORDEM_ETIQUETA</span> <span class="note">(etiquetas geradas e impressas — campo ZPL presente)</span><br>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──1:N──▶</span> <span class="entity">FDB_ORDEM_ETIQUETA</span> <span class="note">(etiquetas geradas e impressas — ZPL armazenado por etiqueta)</span><br>
     <span class="entity">FDB_FASE</span> <span class="arrow">──N:M──▶</span> <span class="entity">FDB_RECURSO</span> <span class="note">via FDB_RECURSO_ATIVIDADE (alocação de equipamento/sala/linha)</span><br>
-    <span class="entity">FDB_FASE_HIERARQUIA</span> <span class="arrow">── grafo dirigido ──▶</span> <span class="note">(predecessores — a receita JÁ É um grafo, não uma lista linear)</span>
+    <span class="entity">FDB_FASE</span> <span class="arrow">──N:M──▶</span> <span class="entity">FDB_RECEITA_BIN_ITENS</span> <span class="note">via FDB_RECEITA_BIN (leitura barcode de materiais por fase)</span><br>
+    <span class="entity">FDB_FASE_HIERARQUIA</span> <span class="arrow">── grafo dirigido ──▶</span> <span class="note">(CD_FASE → CD_FASE_ANTEC — a receita JÁ É um DAG, não lista linear)</span><br>
+    <span class="entity">FDB_FASE_HIERARQUIA2</span> <span class="arrow">── grafo alternativo ──▶</span> <span class="note">(segunda representação hierárquica — propósito a confirmar com Gustavo Fontes)</span>
   </div>
 
   <div class="insight green">
-    <strong>Confirmação arquitetural importante:</strong> A tabela <code>FDB_FASE_HIERARQUIA</code> (CD_FASE → CD_FASE_ANTEC) confirma que o legado já modela a receita como um <strong>grafo dirigido</strong> (DAG). O React Flow como engine visual para o Kronix EBR está alinhado com o modelo mental do legado — não é uma inovação de ruptura, é uma modernização da representação.
+    <strong>Confirmação arquitetural:</strong> A tabela <code>FDB_FASE_HIERARQUIA</code> (CD_FASE → CD_FASE_ANTEC) confirma que o legado já modela a receita como um <strong>grafo dirigido</strong> (DAG). O React Flow como engine visual para o Kronix EBR está alinhado com o modelo mental do legado. Novo achado: existe <code>FDB_FASE_HIERARQUIA2</code> com a mesma estrutura — confirmar com Gustavo Fontes se é uma versão alternativa em uso ou legado de refatoração.
   </div>
 
   <div class="two-col">
     <div class="table-card">
-      <h4>FDB_FASE — Step da execução</h4>
-      <p>Granularidade real de execução. Cada fase tem início e fim real, usuário de início/fim, status, centro de trabalho, flag de confirmação SAP e flag de correção GxP.</p>
+      <h4>FDB_FASE — Step da execução (40 colunas)</h4>
+      <p>Granularidade real de execução. Cada fase tem início e fim real, usuário de início/fim, status, centro de trabalho, flag de confirmação SAP, correção GxP, nota GQ e flag de checklist.</p>
       <div class="cols">
         <span class="col-tag pk">CD_FASE + CD_ORDEM_PRODU</span>
         <span class="col-tag fk">CD_OPERA</span>
         <span class="col-tag key">CD_STATUS</span>
         <span class="col-tag audit">DT_INICI / CD_USER_INICI</span>
         <span class="col-tag audit">DT_FINAL / CD_USER_FINAL</span>
-        <span class="col-tag">FL_CORRECAO / FL_CHECKLIST</span>
-        <span class="col-tag">FL_CONSUMO_SAP</span>
-        <span class="col-tag">CD_USER_NOTA_D_GQ / DT_USER_NOTA_D_GQ</span>
+        <span class="col-tag">FL_CORRECAO / CD_FLUXO_SET_CORRECAO</span>
+        <span class="col-tag">FL_CHECKLIST / FL_CONSUMO_SAP / FL_CONFIR</span>
+        <span class="col-tag audit">CD_USER_NOTA_D_GQ / DT_USER_NOTA_D_GQ / FL_NOTA_D</span>
+        <span class="col-tag new">CD_STATUS_RETRABALHO / FL_FINALIZADA</span>
+        <span class="col-tag new">CD_USUAR_JUST_ZAMAT / DT_ASSIN_JUST_ZAMAT</span>
+        <span class="col-tag">CD_CENTR_TRABA / CD_CENTR_TRABA_REAL / QT_COLAB</span>
+        <span class="col-tag audit">INSERT_USER / UPDATE_USER / INSERT_TIMESTAMP / UPDATE_TIMESTAMP</span>
       </div>
     </div>
     <div class="table-card">
-      <h4>FDB_RECEITA_CARACTERISTICA — Parâmetros capturados</h4>
-      <p>Captura de parâmetros por instrução: valor, forma de captura, data de execução, usuário e flag de controle (CQ validou). Este é o coração do "formulário de execução" do legado.</p>
+      <h4>FDB_RECEITA_CARACTERISTICA — Parâmetros capturados (21 colunas)</h4>
+      <p>Captura de parâmetros por instrução: valor, forma de captura, data de execução, usuário e flag de controle CQ. É o coração do "formulário de execução" do legado.</p>
       <div class="cols">
         <span class="col-tag pk">CD_ORDEM_PRODU + CD_INSTR + CD_SEQUE</span>
         <span class="col-tag key">CD_CARAC</span>
@@ -284,11 +331,77 @@
     </div>
   </div>
 
-  <h3>3. Dossiê de Lote (BPR)</h3>
+  <div class="two-col">
+    <div class="table-card">
+      <h4>FDB_RECEITA_CABECALHO — Cabeçalho da receita por OP (14 colunas) <span class="v2-badge">NOVO v2</span></h4>
+      <p>Tabela separada que controla o status da receita dentro da OP, lote de inspeção e datas de encerramento. É o header da receita instanciada — separado da OP raiz.</p>
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU</span>
+        <span class="col-tag key">CD_STATUS / CD_STATUS_BKP</span>
+        <span class="col-tag">CD_LOTE_INSPE</span>
+        <span class="col-tag audit">DT_INICI_PROGR / CD_USER_ENCER / DT_ENCER</span>
+      </div>
+    </div>
+    <div class="table-card">
+      <h4>FDB_RECEITA_TEXTO — Textos longos por instrução (11 colunas) <span class="v2-badge">NOVO v2</span></h4>
+      <p>Textos longos complementares vinculados à instrução por número de sequência. Separado da instrução principal — indica que instruções podem ter múltiplos blocos de texto.</p>
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_INSTR + NR_SEQUE</span>
+        <span class="col-tag key">DS_TEXTO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="table-card">
+      <h4>FDB_RECEITA_CAPTURA / FDB_RECEITA_CAPTURA_FASE — Templates de foto <span class="v2-badge">NOVO v2</span></h4>
+      <p><code>FDB_RECEITA_CAPTURA</code> (21 cols) é o template de captura de imagem definido por material/fase/instrução no template de receita (não por OP). <code>FDB_RECEITA_CAPTURA_FASE</code> (14 cols) é a instância por OP, com número máximo de fotos e textos informativos. O legado controla captura fotográfica por fase — o Kronix EBR precisa modelar isso.</p>
+      <div class="cols">
+        <span class="col-tag">CD_MATER_REF / CD_FASE_REF / CD_INSTR_REF (template)</span>
+        <span class="col-tag">VERSAO_PROD / DOC_PARCIAL / REVISAO / ECM</span>
+        <span class="col-tag key">NR_MAX_FOTO / TEXTO_INF / TEXTO_PARAM</span>
+        <span class="col-tag">FL_ATIVO / EXCLUIDO</span>
+      </div>
+    </div>
+    <div class="table-card">
+      <h4>FDB_RECEITA_BIN / FDB_RECEITA_BIN_ITENS — Leitura barcode por fase <span class="v2-badge">NOVO v2</span></h4>
+      <p>Rastreabilidade de leitura de código de barras de materiais durante a execução da fase. Confirma que o legado tem verificação de material via scan durante a execução — não apenas digitação de lote.</p>
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_RECUR</span>
+        <span class="col-tag key">CD_CODIG_BARRA / CD_MATER / CD_LOTE</span>
+        <span class="col-tag audit">DT_LEITURA / CD_USUAR_LEITURA</span>
+        <span class="col-tag key">CD_STATU</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>3. BOM da Receita — Lista Técnica Instanciada</h3>
+  <div class="two-col">
+    <div class="table-card">
+      <h4>FDB_RECEITA_LT — Lista Técnica por OP (13 colunas) <span class="v2-badge">NOVO v2</span></h4>
+      <p>Lista técnica (BOM) instanciada para a OP, por material e unidade de medida. Separa o BOM do SAP do BOM executado pelo EBR — importante para reconciliação.</p>
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_LISTA_TECNI</span>
+        <span class="col-tag key">CD_MATER / CD_UM / QT_PLANE</span>
+        <span class="col-tag fk">CD_CENTR</span>
+      </div>
+    </div>
+    <div class="table-card">
+      <h4>FDB_RECEITA_LTC — Componentes da Lista Técnica (17 colunas) <span class="v2-badge">NOVO v2</span></h4>
+      <p>Detalhe de componentes: posição, unidade de medida, quantidade utilizada, flag de cálculo automático, alternativas de item com agrupamento e sequência.</p>
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_LISTA_TECNI + NR_POSIC</span>
+        <span class="col-tag key">CD_MATER / CD_UM / QT_UTILI</span>
+        <span class="col-tag">FL_CALCU / CD_ITEM_ALTER_AGRUP / CD_ITEM_ALTER_SEQUE / FL_CLASS</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>4. Dossiê de Lote (BPR)</h3>
 
   <div class="table-card">
-    <h4>FDB_DOSSIE — Registro de Dossiê por OP</h4>
-    <p>O dossiê é gerado como arquivo (provavelmente PDF/XML) e referenciado aqui com categoria, subcategoria, status e caminho de arquivo. O campo <code>CD_FLUXO_SET_CORRECAO</code> indica que existe um fluxo de correção regulatória com workflow próprio.</p>
+    <h4>FDB_DOSSIE — Registro de Dossiê por OP (18 colunas)</h4>
+    <p>O dossiê é gerado como arquivo (PDF/XML) e referenciado aqui com categoria, subcategoria, status e caminho de arquivo. O campo <code>CD_FLUXO_SET_CORRECAO</code> indica fluxo de correção regulatória com workflow próprio. A tabela <code>FDB_DOSSIE_AUDIT</code> rastreia o histórico de arquivos do dossiê separadamente.</p>
     <div class="cols">
       <span class="col-tag pk">CD_DOSSI</span>
       <span class="col-tag fk">CD_ORDEM_PRODU</span>
@@ -296,6 +409,7 @@
       <span class="col-tag">CD_CATEG / CD_SUBCA</span>
       <span class="col-tag">NM_ARQUI / DS_PATCH</span>
       <span class="col-tag">FL_CORRECAO / CD_FLUXO_SET_CORRECAO</span>
+      <span class="col-tag new">FDB_DOSSIE_AUDIT → rastreia arquivos do dossiê por OP</span>
     </div>
   </div>
 
@@ -303,9 +417,9 @@
     <strong>Gap de design:</strong> O legado tem <code>FDB_XML_DOSSIE</code>, <code>FDB_XML_DOSSIE_ORIGINAL</code> e <code>FDB_XML_DOSSIE_REPLACES</code> — três tabelas que armazenam o XML do dossiê com histórico de substituições. Isso indica que o dossiê pode ser <em>re-gerado e substituído</em> durante o fluxo de correção GxP. O Kronix EBR precisa modelar esse ciclo: geração → revisão → substituição → versão final. Apenas armazenar o PDF no S3 sem versionamento pode ser insuficiente.
   </div>
 
-  <h3>4. Etiquetas e Rastreabilidade de Volume</h3>
+  <h3>5. Etiquetas e Rastreabilidade de Volume</h3>
   <div class="table-card">
-    <h4>FDB_ORDEM_ETIQUETA — Ciclo de vida completo da etiqueta</h4>
+    <h4>FDB_ORDEM_ETIQUETA — Ciclo de vida completo da etiqueta (40 colunas)</h4>
     <p>Gerencia todo o ciclo: criação → impressão → reimpressão → cancelamento → leitura (scan) → consumo. O campo <strong>ZPL</strong> está presente diretamente na tabela — o template ZPL é armazenado por etiqueta. Inclui histórico em <code>FDB_ORDEM_ETIQUETA_HISTO</code> e tabela de motivo de cancelamento.</p>
     <div class="cols">
       <span class="col-tag pk">CD_ETIQUETA</span>
@@ -318,26 +432,334 @@
       <span class="col-tag key">ZPL</span>
     </div>
   </div>
-  <div class="insight blue">
-    <strong>Insight Zebra ZPL:</strong> O template ZPL é persistido por etiqueta no legado — não é apenas gerado no momento da impressão. Isso significa que o Kronix EBR precisa: (1) armazenar o template ZPL da etiqueta como parte do registro; (2) o ciclo de reimpressão deve recuperar o ZPL original (não remontar); (3) cancelamento e motivo precisam estar no Audit Trail GxP.
-  </div>
 
-  <h3>5. Recurso — Equipamentos e Salas</h3>
+  <h3>6. Recurso — Equipamentos e Salas</h3>
   <div class="table-card">
-    <h4>FDB_RECURSO — Equipamento / Sala / Linha</h4>
-    <p>Recurso é o conceito unificado para equipamentos, salas limpas e linhas de produção. Tem tipo (<code>CD_TIPO_RECUR</code>), status operacional, centro de trabalho SAP, setor e flags de OEE. Relacionado ao Logbook via <code>FDB_RECURSO_ATIVIDADE</code> (limpeza, setup, uso por OP).</p>
+    <h4>FDB_RECURSO — Equipamento / Sala / Linha (28 colunas)</h4>
+    <p>Recurso é o conceito unificado para equipamentos, salas limpas e linhas de produção. Tem tipo, status operacional, centro de trabalho SAP, setor, tag IoT e flags de OEE. Relacionado ao Logbook via <code>FDB_RECURSO_ATIVIDADE</code>.</p>
     <div class="cols">
       <span class="col-tag pk">CD_RECUR</span>
       <span class="col-tag fk">CD_CENTR_TRABA / CD_CENTR</span>
       <span class="col-tag key">CD_TIPO_RECUR / CD_STATU</span>
       <span class="col-tag">CD_TAG (tag IoT SAP MII)</span>
-      <span class="col-tag">OEE (flag vinculação OEE)</span>
       <span class="col-tag">CD_GRUPO / CD_SUBGRUPO / CD_AREA</span>
       <span class="col-tag">FL_INATIVO</span>
     </div>
   </div>
   <div class="insight blue">
     <strong>Insight Logbook:</strong> O Logbook no legado é centrado no <em>Recurso</em>, não na OP. <code>FDB_RECURSO_ATIVIDADE</code> registra: tipo de atividade (limpeza, sanitização, calibração), início/fim, usuários de início e fim/supervisor, validade da atividade e vinculação à OP. O <code>FL_ENCERRADO</code> em <code>FDB_LOGBOOK_COLETIVO</code> e o conceito de "tempo de vida" (<code>FDB_FR_TEMPODEVIDA</code>) indicam que o logbook controla a validade do recurso para uso — isso é line clearance.
+  </div>
+</section>
+
+<!-- SUBSISTEMAS COMPLETOS -->
+<section id="subsistemas" class="section-nav">
+  <h2><span class="icon">🔩</span> Subsistemas Completos <span class="v2-badge">NOVO v2 — Análise aprofundada</span></h2>
+
+  <p style="margin-bottom:20px;color:#444;line-height:1.65;">A análise v1 identificava esses módulos com 1-2 tabelas cada. O double-check sobre o GraphML revelou que são subsistemas completos com múltiplas tabelas, fluxos de integração SAP e impactos de escopo significativos.</p>
+
+  <h3>Hold Time de Processo — 5 tabelas (subanalisado na v1)</h3>
+  <div class="insight red">
+    <strong>Hold Time não é um campo — é um subsistema.</strong> Possui thresholds múltiplos (base, 50%, 100%, CK), calculados independentemente para fases da OP, semiacabados e volumes de container. Se o RBBL usa Hold Time, o Kronix EBR precisa modelar todo esse subsistema para Wave 1.
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_HT_PROCESSO</h4><span class="count">36 colunas</span></div>
+    <div class="subsystem-body">
+      Cabeçalho de Hold Time por OP. Controla status da OP e do processo, flag de fertilidade (FL_FERT), peso de referência, e quatro conjuntos de thresholds com datas de validade calculadas: base, 50%, 100% e CK.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU</span>
+        <span class="col-tag key">CD_STATUS_OP / CD_STATUS_PROC</span>
+        <span class="col-tag">FL_FERT / VL_PESAGEM / HT_PESAGEM_DT / HT_PESAGEM_DT_CALC</span>
+        <span class="col-tag key">HT_DT_VAL / HT_ORDEM / HT_ORDEM_SEMI (threshold base)</span>
+        <span class="col-tag key">HT_DT_VAL_50 / HT_ORDEM_50 / HT_ORDEM_SEMI_50 (threshold 50%)</span>
+        <span class="col-tag key">HT_DT_VAL_100 / HT_ORDEM_100 / HT_ORDEM_SEMI_100 (threshold 100%)</span>
+        <span class="col-tag key">HT_DT_VAL_CK / HT_ORDEM_CK / HT_ORDEM_SEMI_CK (threshold CK)</span>
+        <span class="col-tag">FF_CODIGO / FF_GRUPO / FF_SUBGRUPO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_HT_PROCESSO_ORDEM</h4><span class="count">27 colunas — Hold Time por instrução/fase</span></div>
+    <div class="subsystem-body">
+      Hold Time calculado por instrução e fase da OP. Cada instrução tem sua própria base de cálculo de Hold Time (fase base, operação base) e os thresholds resultantes.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_INSTR + CD_FASE</span>
+        <span class="col-tag fk">CD_OPERA / CD_OPERA_BASE / CD_FASE_BASE</span>
+        <span class="col-tag">CD_DATA_BASE / CD_DATA_BASE_CALC</span>
+        <span class="col-tag key">HT_BASE_DIAS / HT_BASE_HHMMSS</span>
+        <span class="col-tag key">HT_ORDEM / HT_ORDEM_50 / HT_ORDEM_100 / HT_ORDEM_CK</span>
+        <span class="col-tag">PROCES_MSG (status de processamento)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_HT_PROCESSO_ORDEM_SEMI</h4><span class="count">18 colunas — Hold Time de semiacabados</span></div>
+    <div class="subsystem-body">
+      Hold Time específico para semiacabados (matérias-primas intermediárias) da OP. Tem thresholds próprios independentes das fases.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_SEMI</span>
+        <span class="col-tag">CD_DATA_BASE / CD_DATA_BASE_CALC / HT_BASE_DIAS / HT_BASE_HHMMSS</span>
+        <span class="col-tag key">HT_SEMI / HT_SEMI_50 / HT_SEMI_100 / HT_SEMI_CK</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_HT_PROCESSO_VOLUMES</h4><span class="count">14 colunas — Hold Time por volume/container</span></div>
+    <div class="subsystem-body">
+      Hold Time calculado no nível de lote e container de material, com datas de validade por nível de threshold. Confirma que o Hold Time pode ter granularidade de container físico.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_MATER + CD_LOTE</span>
+        <span class="col-tag key">HT_DT_VAL / HT_DT_VAL_50 / HT_DT_VAL_100 / HT_DT_VAL_CK</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_ORDEM_HOLDTIME_DATA + FDB_ORDEM_BOM_HOLDTIME</h4><span class="count">13 + 12 colunas</span></div>
+    <div class="subsystem-body">
+      <code>FDB_ORDEM_HOLDTIME_DATA</code> captura dados de Hold Time por lote e característica durante a execução. <code>FDB_ORDEM_BOM_HOLDTIME</code> registra Hold Time no nível de container do BOM com nota SAP.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_LOTE + CD_CARAC</span>
+        <span class="col-tag key">VL_CARAC</span>
+        <span class="col-tag audit">DT_INSERT</span>
+        <span class="col-tag">CD_CONTA / NOTA_SAP (BOM_HOLDTIME)</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Reconciliação de Lote — 5 tabelas (subanalisado na v1)</h3>
+  <div class="insight red">
+    <strong>Reconciliação tem fluxo SAP bidirecional com suporte a estorno.</strong> Não é apenas balanço de massa — gera documentos SAP (MM) de devolução, perda e perda de desvio. Tem histórico auditável com suporte a estorno, obrigatório para rastreabilidade GxP.
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_ORDEM_RECON</h4><span class="count">15 colunas — Cabeçalho de reconciliação</span></div>
+    <div class="subsystem-body">
+      Status de reconciliação da OP, documentos SAP gerados (devolução, perda, perda de desvio), timestamp e usuário de sincronização com SAP.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU</span>
+        <span class="col-tag key">FL_STATU</span>
+        <span class="col-tag">CD_DOCUM_DEVOL / CD_DOCUM_PERDA / CD_DOCUM_PERDA_D (docs SAP MM)</span>
+        <span class="col-tag audit">DT_SINC / USR_SINC / DT_ULT_ALTER</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_ORDEM_RECON_COMPONENTE</h4><span class="count">20 colunas — Detalhe por material/lote</span></div>
+    <div class="subsystem-body">
+      Balanço de massa por componente: quantidade consumida, devolvida e perdida por material/lote/depósito, com documentos SAP gerados para cada movimento.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_MATER + CD_LOTE</span>
+        <span class="col-tag key">QT_CONSU / QT_DEVOL / QT_PERDA</span>
+        <span class="col-tag fk">CD_DEPOS / CD_CONTA_VOLUM</span>
+        <span class="col-tag audit">CD_DOCUM_DEVOL / CD_DOCUM_PERDA / CD_DOCUM_PERDA_D / DT_CRIACAO_DOC / USUARIO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_ORDEM_RECON_HISTORICO</h4><span class="count">23 colunas — Histórico com suporte a estorno</span></div>
+    <div class="subsystem-body">
+      Histórico auditável de reconciliação com suporte a estorno completo: flag de estorno, usuário e data de estorno. Isso indica que movimentos de reconciliação podem ser desfeitos — fluxo regulatório crítico.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_MATER + CD_LOTE + DT_CRIACAO</span>
+        <span class="col-tag key">QT_CONSU / QT_DEVOL / QT_PERDA</span>
+        <span class="col-tag audit">FL_ESTORNO / USUAR_ESTORNO / DT_ESTORNO</span>
+        <span class="col-tag">CD_DOCUM_DEVOL / CD_DOCUM_PERDA / CD_DOCUM_PERDA_D</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_ORDEM_PERDA + FDB_ORDEM_PERDA_VOLUME</h4><span class="count">16 + 19 colunas</span></div>
+      <div class="subsystem-body">
+        Registro de perdas com envio SAP MM. <code>FDB_ORDEM_PERDA_VOLUME</code> detalha a perda no nível de container/volume com flags de perda e envio SAP.
+        <div class="cols">
+          <span class="col-tag pk">CD_PERDA / CD_PERDA_VOLUME</span>
+          <span class="col-tag fk">CD_ORDEM_PRODU / CD_CONTA_VOLUM</span>
+          <span class="col-tag key">CD_STATUS / FL_ENVIO_SAP / DOC_SAP</span>
+          <span class="col-tag audit">DT_INICIO / DT_FIM / CD_USUARIO</span>
+        </div>
+      </div>
+    </div>
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_ORDEM_DEVOLUCAO + FDB_ORDEM_DEVOLUCAO_VOLUME</h4><span class="count">24 + 21 colunas</span></div>
+      <div class="subsystem-body">
+        Registro de devoluções ao almoxarifado com origem e destino de depósito, envio SAP MM. Rastreia de qual posição de estoque o material saiu e para onde volta.
+        <div class="cols">
+          <span class="col-tag pk">CD_DEVOL / CD_DEVOL_VOLUME</span>
+          <span class="col-tag fk">CD_ORDEM_PRODU / CD_CONTA_VOLUM</span>
+          <span class="col-tag key">CD_STATUS / FL_ENVIO_SAP / DOC_SAP</span>
+          <span class="col-tag">ORIGEM_DEPOS / DESTINO_DEPOS / DESTINO_IMPRESSORA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Folha de Trabalho por Turno — 3 tabelas (ausente na v1) <span class="v2-badge">NOVO v2</span></h3>
+  <div class="insight purple">
+    <strong>Subsistema de turno completamente ausente da análise v1.</strong> O legado registra o trabalho por turno por operação, com equipe alocada (incluindo habilidade), ocorrências do turno e apontamento final para SAP. A presença de <code>HABILIDADE</code> na <code>FDB_FOLHA_TRABALHO_EQUIPE</code> confirma que habilidade por operador é rastreada no legado como dado operacional, não apenas cadastral.
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_FOLHA_TRABALHO</h4><span class="count">21 colunas — Turno por operação</span></div>
+    <div class="subsystem-body">
+      Cabeçalho do turno de trabalho: período, operação, status, apontamento final SAP e flag de origem. Cada turno gera um documento SAP de apontamento.
+      <div class="cols">
+        <span class="col-tag pk">CD_SEQUE_FOLHA</span>
+        <span class="col-tag fk">CD_ORDEM_PRODU / CD_OPERA</span>
+        <span class="col-tag key">CD_TURNO / CD_STATU_FOLHA</span>
+        <span class="col-tag audit">DT_INICI / DT_FINAL / CD_USUAR_ABERT / CD_USUAR_FECHA</span>
+        <span class="col-tag">FL_APONT_FINAL / CD_DOCUM_SAP / FL_ORIGE</span>
+        <span class="col-tag new">CD_RECUR_PROD</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_FOLHA_TRABALHO_EQUIPE</h4><span class="count">15 colunas — Operadores do turno</span></div>
+    <div class="subsystem-body">
+      Registro de cada operador no turno: login, início e fim de trabalho, habilidade exercida e grupo de linha. Confirma que habilidade é rastreada no nível da atividade executada.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_OPERA + CD_SEQUE_FOLHA + CD_LOGIN</span>
+        <span class="col-tag audit">DT_INICI_TRABA / DT_FINAL_TRABA</span>
+        <span class="col-tag key">HABILIDADE</span>
+        <span class="col-tag">CD_GRUPO_LINHA</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_FOLHA_TRABALHO_OCORRENCIA</h4><span class="count">20 colunas — Ocorrências do turno</span></div>
+    <div class="subsystem-body">
+      Ocorrências registradas durante o turno: tipo, período, colaboradores envolvidos, capacidade da linha durante a ocorrência. Inclui campos de integração com módulo de Absenteísmo.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + CD_OPERA + CD_SEQUE_FOLHA + ID_FOLHA_OCORR</span>
+        <span class="col-tag key">CD_TIPO_OCORR / CD_STATU_FOLHA</span>
+        <span class="col-tag audit">DT_INICI_OCORR / DT_FINAL_OCORR / CD_USER_ABERT</span>
+        <span class="col-tag">QTD_COLAB / ABS_CD_RECUR / ABS_AVG_CAPAC / ABS_QT_COLAB</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Material Container e Volume — Rastreabilidade Física <span class="v2-badge">NOVO v2</span></h3>
+  <div class="insight blue">
+    <strong>O legado rastreia containers físicos de material com granularidade de volume.</strong> Este subsistema é a base para reconciliação de lote e pesagem — cada container tem posição no armazém SAP WM, lote, quantidade líquida e status. Ausente da análise v1.
+  </div>
+
+  <div class="two-col">
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_MATERIAL_CONTAINER</h4><span class="count">33 colunas</span></div>
+      <div class="subsystem-body">
+        Rastreamento de container físico por OP: número de container, status, OT (Ordem de Transferência) SAP WM, posição no armazém, dupla conferência com usuários e timestamps.
+        <div class="cols">
+          <span class="col-tag pk">CD_CONTA + CD_ORDEM_PRODU</span>
+          <span class="col-tag key">NR_CONTA / CD_STATU</span>
+          <span class="col-tag">CD_OT / CD_WHSE / CD_LETYP / CD_LGPLA (SAP WM)</span>
+          <span class="col-tag audit">DT_RECEB / CD_USUAR_RECEB</span>
+          <span class="col-tag audit">DT_CONFE / CD_USUAR_CONFE / DT_CONFE2 / CD_USUAR_CONFE2</span>
+          <span class="col-tag">NOTA_SAP / CD_NOTA_SAP_USER / DT_NOTA_SAP</span>
+        </div>
+      </div>
+    </div>
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_MATERIAL_CONTAINER_VOLUME</h4><span class="count">34 colunas</span></div>
+      <div class="subsystem-body">
+        Detalhe de volume dentro do container: material, lote, quantidade líquida, código de barras, depósito de origem, reserva SAP MM, data de pesagem.
+        <div class="cols">
+          <span class="col-tag pk">CD_CONTA_VOLUM + CD_VOLUM</span>
+          <span class="col-tag fk">CD_CONTA / CD_ORDEM_PRODU / CD_FASE</span>
+          <span class="col-tag key">CD_MATER / CD_LOTE / CD_STATU</span>
+          <span class="col-tag key">CD_CODIG_BARRA / QT_LIQUI / CD_UM</span>
+          <span class="col-tag">CD_DEPOS_ORIGE / CD_RESER / CD_RESER_ITEM</span>
+          <span class="col-tag audit">DT_PESAGEM / DT_PESAGEM_FIM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Pesagem e Volumes de Produção <span class="v2-badge">NOVO v2</span></h3>
+  <div class="two-col">
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_VOLUME_PESAGEM</h4><span class="count">22 colunas</span></div>
+      <div class="subsystem-body">
+        Pesagem por fase: fase de pesagem e de cálculo, recurso, quantidade líquida, tara, usuários de descida e pesagem, fator de conversão.
+        <div class="cols">
+          <span class="col-tag pk">CD_ORDEM_PRODU + CD_FASE_PESSA + CD_SEQUE</span>
+          <span class="col-tag key">CD_RECUR / CD_UM / QT_LIQUI / QT_TARA</span>
+          <span class="col-tag audit">DT_DESCA / CD_USUAR_DESCA / DT_PESAG / CD_USUAR_PESAG</span>
+          <span class="col-tag">VL_FATOR_CONVER / CD_FASE_PESAG / CD_FASE_DEST_REV</span>
+        </div>
+      </div>
+    </div>
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_VOLUME_PRODUCAO</h4><span class="count">38 colunas</span></div>
+      <div class="subsystem-body">
+        Produção por sequência e recurso: caixas completas, incompletas, quantidade líquida, turno, documento SAP de material, flag de estorno e apontamento final.
+        <div class="cols">
+          <span class="col-tag pk">CD_ORDEM_PRODU + NR_SEQUE</span>
+          <span class="col-tag key">CD_RECUR / QT_LIQUI / CD_LOTE</span>
+          <span class="col-tag key">QT_CAIXA_COMPL / QT_CAIXA_INCOM / QT_INCOM / QT_TOTAL</span>
+          <span class="col-tag">CD_DOCUM_MATER / FL_SAP / FL_ESTOR</span>
+          <span class="col-tag audit">DT_PESAG / CD_USUAR_PESAG / DT_APONT_FINAL / CD_USUAR_APONT_FINAL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Checklist de Liderança por Operação <span class="v2-badge">NOVO v2</span></h3>
+  <div class="insight orange">
+    <strong>Checklist de liderança com detecção de desvio paramétrico e multi-assinatura.</strong> A <code>FDB_ORDEM_CHECKLIST_ITENS</code> (32 colunas) tem 5 campos de assinatura distintos por item (LIDER, GQ, LOG, SIGN1, SIGN2) e controle de desvio com range e valor fora de especificação. Este subsistema não estava na análise v1.
+  </div>
+
+  <div class="two-col">
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_ORDEM_CHECKLIST_CAB</h4><span class="count">15 colunas — Cabeçalho</span></div>
+      <div class="subsystem-body">
+        Cabeçalho do checklist por operação: assinatura e data do líder, flag de divergência e quantidade de divergências encontradas.
+        <div class="cols">
+          <span class="col-tag pk">CD_ORDEM_PRODU + CD_OPERA</span>
+          <span class="col-tag audit">LIDER_ASS / LIDER_DT</span>
+          <span class="col-tag key">FL_DIVERGENCIA / QT_DIVERGENCIA</span>
+        </div>
+      </div>
+    </div>
+    <div class="subsystem-box">
+      <div class="subsystem-header"><h4>FDB_ORDEM_CHECKLIST_ITENS</h4><span class="count">32 colunas — Itens com multi-assinatura</span></div>
+      <div class="subsystem-body">
+        Item de checklist com controle de desvio paramétrico: range, valor real, flag fora de parâmetro, mensagem e justificativa. Múltiplas assinaturas por item.
+        <div class="cols">
+          <span class="col-tag pk">CD_ORDEM_PRODU + CD_OPERA + CD_INSTR + CD_QUEST</span>
+          <span class="col-tag audit">USER_LIDER / USER_GQ / USER_LOG / USER_SIGN1 / USER_SIGN2</span>
+          <span class="col-tag key">OCOR_RANGE / OCOR_VALOR / OCOR_FORA / OCOR_FORA_MSG</span>
+          <span class="col-tag">DS_JUSTIFICATIVA / NOTA_DESVIO</span>
+          <span class="col-tag">ID_ANEXO_ENDERECAMENTO / ID_ANEXO_ANOMALIA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>PCO — Process Control / Coletas Manuais <span class="v2-badge">Detalhado v2</span></h3>
+  <div class="subsystem-box">
+    <div class="subsystem-header"><h4>FDB_PCO_COLETAS_MANUAIS</h4><span class="count">24 colunas — Coleta manual de parâmetros físicos</span></div>
+    <div class="subsystem-body">
+      Captura manual de parâmetros físicos por coleta: aspecto visual, quantidade teórica, faixas de aceitação e alarme para peso, espessura e dureza. É o módulo de controle de processo manual que complementa as coletas automáticas via tags SAP MII.
+      <div class="cols">
+        <span class="col-tag pk">CD_ORDEM_PRODU + DT_COLETA + CD_LADO</span>
+        <span class="col-tag">CD_BARRICA / FREQUENCIA / ASPECTO / OBS</span>
+        <span class="col-tag key">QT_PM_TEORICO</span>
+        <span class="col-tag key">QT_PESO_AL_MIN / QT_PESO_AL_MAX (alarme peso)</span>
+        <span class="col-tag key">QT_PESO_AC_MIN / QT_PESO_AC_MAX (aceite peso)</span>
+        <span class="col-tag key">QT_ESPESSURA_MIN / QT_ESPESSURA_MAX</span>
+        <span class="col-tag key">QT_DUREZA_MIN / QT_DUREZA_MAX</span>
+        <span class="col-tag audit">CD_USER</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -349,8 +771,8 @@
     <div>
       <h3>Legado: FDB_AUDIT</h3>
       <div class="table-card">
-        <h4>Granularidade: por campo alterado</h4>
-        <p>Uma linha por campo modificado. Captura tabela, campo, valor antes e depois como texto simples. Sem contexto de entidade agregada.</p>
+        <h4>Granularidade: por campo alterado (field-level)</h4>
+        <p>Uma linha por campo modificado. Captura tabela, campo, valor antes e depois como texto simples. Sem contexto de entidade agregada. Controla quais campos auditar via <code>FDB_AUDIT_CONDICOES</code>.</p>
         <div class="cols">
           <span class="col-tag pk">TRAIL_ID</span>
           <span class="col-tag">ROW_ID (linha da tabela auditada)</span>
@@ -365,7 +787,12 @@
         </div>
       </div>
       <div class="insight orange" style="margin-top:8px;">
-        <strong>Modelo field-level:</strong> Controla quais campos auditar via <code>FDB_AUDIT_CONDICOES</code> (TABELA + CAMPO + XPATH). Deleções rastreadas em tabela separada <code>FDB_AUDIT_DELETE</code>. Existe também <code>FDB_AUDIT_LOCAL</code> para rastrear o terminal de origem.
+        <strong>Tabelas satélite do Audit Trail:</strong>
+        <br>• <code>FDB_AUDIT_CONDICOES</code> — define quais TABELA+CAMPO são auditados (com XPATH)
+        <br>• <code>FDB_AUDIT_CONDICOES_DELETE</code> — condições para audit de deleções
+        <br>• <code>FDB_AUDIT_DELETE</code> (4 cols: TABELA, CAMPOS_CHAVE, VALORES_CHAVE, ROW_ID) — rastreia deleções
+        <br>• <code>FDB_AUDIT_LOCAL</code> — rastreia terminal de origem (CD_DE → CD_PARA)
+        <br>• <code>FDB_AUDIT_PROCESSO</code> — controla auditoria por processo de negócio
       </div>
     </div>
     <div>
@@ -385,18 +812,18 @@
         </div>
       </div>
       <div class="insight green" style="margin-top:8px;">
-        <strong>Modelo entity-level:</strong> Mais fácil de reconstruir o histórico de uma entidade. Melhor para queries GxP "mostre o histórico desta OP". Mais volume por evento, mas menor número de linhas.
+        <strong>Modelo entity-level:</strong> Mais fácil de reconstruir o histórico de uma entidade. Melhor para queries GxP "mostre o histórico desta OP". Mais volume por evento, mas menor número de linhas. Requer estratégia explícita para deleções (equivalente ao FDB_AUDIT_DELETE).
       </div>
     </div>
   </div>
 
   <h3>Implicações para Migração Histórica</h3>
   <div class="insight red">
-    <strong>Problema de migração:</strong> Os dois modelos <em>não são diretamente compatíveis</em>. O legado tem audit por campo (N linhas por transação); o Kronix terá audit por entidade (1 linha por transação com JSONB). Para migrar o histórico do audit trail legado, seria necessário: agrupar as linhas do <code>FDB_AUDIT</code> por (ROW_ID, DATAHORA, USUARIO) e reconstruir o JSONB before/after por transação — complexidade de ETL não trivial. <strong>Confirmar com área de Qualidade: o histórico do audit trail legado precisa ser migrado ou apenas preservado em read-only?</strong> Se read-only, pode ficar em um schema separado de arquivamento sem conversão de formato.
+    <strong>Problema de migração:</strong> Os dois modelos <em>não são diretamente compatíveis</em>. O legado tem audit por campo (N linhas por transação); o Kronix terá audit por entidade (1 linha por transação com JSONB). Para migrar o histórico seria necessário agrupar as linhas do <code>FDB_AUDIT</code> por (ROW_ID, DATAHORA, USUARIO) e reconstruir o JSONB before/after por transação — ETL não trivial. <strong>Confirmar com área de Qualidade: o histórico do audit trail legado precisa ser migrado ou apenas preservado em read-only?</strong> Se read-only, pode ficar em schema de arquivamento sem conversão.
   </div>
 
   <div class="insight orange">
-    <strong>LOCAL_ID — campo ausente no design Kronix:</strong> O legado rastreia <code>LOCAL_ID</code> (terminal/estação de trabalho) em praticamente todas as tabelas, inclusive no Audit Trail. Em ambiente regulatório farmacêutico isso tem relevância: a FDA pode questionar "de qual terminal essa assinatura foi feita". O Kronix EBR precisa capturar pelo menos o IP/device-id da requisição e incluir no registro de assinatura eletrônica. <strong>Validar com área de Qualidade se LOCAL_ID é exigência regulatória no contexto atual.</strong>
+    <strong>LOCAL_ID — campo ausente no design Kronix:</strong> O legado rastreia <code>LOCAL_ID</code> (terminal/estação de trabalho) em praticamente todas as tabelas, inclusive no Audit Trail. Em ambiente regulatório farmacêutico isso tem relevância: a FDA pode questionar "de qual terminal essa assinatura foi feita". O Kronix EBR precisa capturar pelo menos o IP/device-id da requisição no registro de assinatura eletrônica. <strong>Validar com área de Qualidade se LOCAL_ID é exigência regulatória no contexto atual.</strong>
   </div>
 </section>
 
@@ -418,7 +845,7 @@
     <tbody>
       <tr>
         <td><code>FDB_UNIDADE_MEDIDA</code></td>
-        <td>CD_UM, DS_UM</td>
+        <td>CD_UM, DS_UM, CD_ISO</td>
         <td><span class="pill shared">Shared — forte candidato</span></td>
         <td>Referenciada em BOM, volumes, receita. Padrão universal.</td>
       </tr>
@@ -430,7 +857,7 @@
       </tr>
       <tr>
         <td><code>FDB_STATUS_RECURSO</code></td>
-        <td>CD_STATU, NM_STATU, NM_STATU2</td>
+        <td>CD_STATU, NM_STATU</td>
         <td><span class="pill shared">Shared — forte candidato</span></td>
         <td>Status do equipamento: disponível, em limpeza, em manutenção. Universal.</td>
       </tr>
@@ -448,7 +875,7 @@
       </tr>
       <tr>
         <td><code>FDB_TURNO</code></td>
-        <td>Turno, descrição, horários</td>
+        <td>CD_TURNO, DS_TURNO, DT_INICIO, DT_FIM</td>
         <td><span class="pill shared">Shared — avaliar</span></td>
         <td>Turnos de produção podem variar por site/fábrica. <strong>Hipótese:</strong> se os turnos são padronizados no Grupo NC, é shared. Confirmar.</td>
       </tr>
@@ -492,7 +919,7 @@
         <td><code>FDB_DOSSIE_STATUS</code></td>
         <td>CD_STATU, DS_STATU</td>
         <td><span class="pill shared">Shared — forte candidato</span></td>
-        <td>Status do dossiê: Em elaboração, Aguardando GQ, Aprovado, etc. Universal.</td>
+        <td>Status do dossiê. Universal.</td>
       </tr>
       <tr>
         <td><code>FDB_ORDEM_RECON_STATUS</code></td>
@@ -519,16 +946,22 @@
         <td>Tipos de questão do formulário: resposta livre, opção, calculada, estatística. Universal.</td>
       </tr>
       <tr>
-        <td><code>FDB_TIPO_STATUS_AMOSTRA / CA_AMOSTRA_STATUS</code></td>
+        <td><code>FDB_TIPO_STATUS_AMOSTRA</code></td>
         <td>CD_STATUS_AMOST, DS_STATUS_AMOST</td>
         <td><span class="pill shared">Shared — avaliar</span></td>
         <td>Status de amostras. Pode ser universal ou variar por processo analítico do site.</td>
+      </tr>
+      <tr>
+        <td><code>FDB_FOLHA_TRABALHO_STATUS</code></td>
+        <td>CD_STATU_FOLHA, DS_STATU_FOLHA</td>
+        <td><span class="pill shared">Shared — forte candidato</span></td>
+        <td><span class="v2-badge">NOVO v2</span> Status da folha de trabalho por turno. Lookup universal.</td>
       </tr>
     </tbody>
   </table>
 
   <div class="insight orange" style="margin-top: 20px;">
-    <strong>Recomendação:</strong> Tabelas de <em>configuração regulatória</em> — <code>FDB_ASSINATURA_CONTROLE</code>, <code>FDB_TELAS_ASSINATURA</code>, <code>FDB_PERFIS</code> e <code>FDB_AUDIT_CONDICOES</code> — <strong>não devem ir para o Shared Reference DB</strong>. Qualquer mudança nelas tem impacto no sistema validado e requer controle de mudança GxP por site. Mantê-las no banco de cada site preserva o isolamento de validação. Colocá-las no banco compartilhado aumenta o risco regulatório.
+    <strong>Recomendação:</strong> Tabelas de <em>configuração regulatória</em> — <code>FDB_ASSINATURA_CONTROLE</code>, <code>FDB_TELAS_ASSINATURA</code>, <code>FDB_PERFIS</code> e <code>FDB_AUDIT_CONDICOES</code> — <strong>não devem ir para o Shared Reference DB</strong>. Qualquer mudança nelas tem impacto no sistema validado e requer controle de mudança GxP por site. Mantê-las no banco de cada site preserva o isolamento de validação.
   </div>
 </section>
 
@@ -550,79 +983,113 @@
         <td><strong>Controle de Ponto / Absenteísmo detalhado</strong></td>
         <td><code>FDB_ABS_CONTROLE_PONTO</code><br><code>FDB_ABS_CONTROLE_PONTO_HISTORICO</code><br><code>FDB_ABS_VIEW_CONTROLE_PONTO_CATRACA</code></td>
         <td><span class="pill future">Wave futura</span></td>
-        <td>O legado tem integração com catraca e relógio de ponto (3 views separadas). O módulo de Absenteísmo no Kronix é listado como wave futura, mas o legado sugere que é mais complexo do que simplesmente registrar ausência — há controle de jornada com integração de hardware de acesso físico.</td>
+        <td>O legado tem integração com catraca e relógio de ponto (3 views separadas). O módulo de Absenteísmo no Kronix é wave futura, mas o legado sugere que é mais complexo do que registrar ausência — há controle de jornada com integração de hardware de acesso físico.</td>
       </tr>
       <tr>
         <td><strong>Habilidade por usuário/linha</strong></td>
-        <td><code>FDB_ABS_HABILIDADE</code><br><code>FDB_ABS_USUARIO_LINHA_HABILIDADE</code></td>
+        <td><code>FDB_ABS_HABILIDADE</code><br><code>FDB_ABS_USUARIO_LINHA_HABILIDADE</code><br><code>FDB_FOLHA_TRABALHO_EQUIPE.HABILIDADE</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Controla quais habilidades um operador tem por linha de produção. É GxP — um operador sem habilidade certificada para aquela linha não deveria poder iniciar uma fase. Impacto: módulo de Execução pode precisar de verificação de habilidade no momento do início da fase. <strong>Validar com área de Qualidade.</strong></td>
+        <td>Controla quais habilidades um operador tem por linha de produção. <strong>Confirmado como campo operacional no legado</strong> — a <code>FDB_FOLHA_TRABALHO_EQUIPE</code> rastreia a habilidade exercida por operador em cada turno. É GxP — um operador sem habilidade certificada não deveria iniciar a fase. <strong>Validar com área de Qualidade.</strong></td>
       </tr>
       <tr>
         <td><strong>Não-Conformidade de Alocação</strong></td>
         <td><code>FDB_ABS_AUTORIZA_NAO_CONFORME</code><br><code>FDB_ABS_AUTORIZA_NAO_CONFORME_RECURSO</code><br><code>FDB_ABS_AUTORIZA_NAO_CONFORME_EQUIPE</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Autorização explícita para alocar operador "não conforme" (fora de habilidade, com restrição). Requer aprovação de supervisor. É um fluxo GxP relevante — contorna uma barreira de segurança com rastreabilidade. Não está no design atual do Kronix EBR.</td>
+        <td>Autorização explícita para alocar operador "não conforme" (fora de habilidade, com restrição). Requer aprovação de supervisor com justificativa. Fluxo GxP relevante — contorna uma barreira de segurança com rastreabilidade completa.</td>
       </tr>
       <tr>
         <td><strong>PCO — Coletas automáticas via tag SAP MII</strong></td>
         <td><code>FDB_PCO_TAGS</code><br><code>FDB_PCO_TAG_VAL</code><br><code>FDB_PCO_GRUPO_REGRA</code><br><code>FDB_PCO_COLETAS_CHECKMASTER</code></td>
         <td><span class="pill wave1">Wave 1 — escopo menor</span></td>
-        <td>O PCO atual usa tags do SAP MII para leitura automática de parâmetros (temperatura, peso, pressão) com regras de alarme por fórmula. O design atual do Kronix EBR menciona "Monitoramento Ambiental" com amostras manuais. A coleta automática via Kafka/IoT pode ser o substituto — mas o modelo de regras de alarme (<code>FDB_PCO_TP_REGRA</code>, <code>FDB_PCO_GRUPO_REGRA</code>) não está no design. <strong>Risco de escopo subestimado.</strong></td>
+        <td>O PCO atual usa tags do SAP MII para leitura automática de parâmetros com regras de alarme por fórmula. O design atual menciona amostras manuais. A coleta automática via Kafka/IoT pode ser o substituto — mas o modelo de regras de alarme não está no design. <strong>Risco de escopo subestimado.</strong></td>
       </tr>
       <tr>
-        <td><strong>Controle de Amostras (CA)</strong></td>
-        <td><code>CA_AMOSTRA</code> (36 cols)<br><code>CA_AMOSTRA_H</code><br><code>CA_AMOSTRA_CAIXA / PALETE / PRO</code></td>
-        <td><span class="pill future">Wave futura</span></td>
-        <td>O módulo CA é uma sub-plataforma completa com rastreabilidade de amostras por caixa, palete e PRO (processo). 15 tabelas com histórico próprio (<code>_H</code>). Muito mais complexo que "Controle de Amostra" como item de lista. Sugere integração com laboratório (LIMS) — confirmar.</td>
+        <td><strong>PCO — Coleta Manual de Parâmetros Físicos</strong></td>
+        <td><code>FDB_PCO_COLETAS_MANUAIS</code></td>
+        <td><span class="pill wave1">Wave 1 — parcial</span></td>
+        <td>Coleta manual estruturada com faixas de alarme e aceitação para peso, espessura e dureza. O Kronix EBR prevê captura de parâmetros, mas o modelo de faixas duplas (alarme + aceite) por parâmetro não está explícito no design.</td>
+      </tr>
+      <tr class="new-row">
+        <td><strong>Folha de Trabalho por Turno</strong> <span class="v2-badge">NOVO v2</span></td>
+        <td><code>FDB_FOLHA_TRABALHO</code><br><code>FDB_FOLHA_TRABALHO_EQUIPE</code><br><code>FDB_FOLHA_TRABALHO_OCORRENCIA</code></td>
+        <td><span class="pill gap">Não mapeado</span></td>
+        <td>Subsistema de turno por operação com equipe, ocorrências e apontamento final SAP. Inclui rastreamento de habilidade por operador/turno. <strong>Confirmar com Gustavo Fontes se o Kronix EBR precisa substituir esse módulo ou se o apontamento SAP via CPI cobre o caso.</strong></td>
+      </tr>
+      <tr class="new-row">
+        <td><strong>Checklist de Liderança por Operação</strong> <span class="v2-badge">NOVO v2</span></td>
+        <td><code>FDB_ORDEM_CHECKLIST_CAB</code><br><code>FDB_ORDEM_CHECKLIST_ITENS</code><br><code>FDB_ORDEM_CHECKLIST_OUTROS</code></td>
+        <td><span class="pill gap">Não mapeado</span></td>
+        <td>Checklist por operação com 5 tipos de assinatura distintas por item (LIDER, GQ, LOG, SIGN1, SIGN2), detecção de desvio paramétrico com range e valor real, e justificativa obrigatória para desvios. Substancialmente mais rico que um checklist genérico. <strong>Confirmar com área de Qualidade se é requisito Wave 1.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Dossiê com versionamento</strong></td>
+        <td><code>FDB_XML_DOSSIE_ORIGINAL</code><br><code>FDB_XML_DOSSIE_REPLACES</code><br><code>FDB_DOSSIE_AUDIT</code></td>
+        <td><span class="pill gap">Parcial</span></td>
+        <td>O legado armazena original + substituições do dossiê. Apenas PDF no S3 pode ser insuficiente para o fluxo de correção GxP. O Kronix EBR precisa versionar o dossiê.</td>
+      </tr>
+      <tr class="new-row">
+        <td><strong>Rastreabilidade Barcode durante Execução</strong> <span class="v2-badge">NOVO v2</span></td>
+        <td><code>FDB_RECEITA_BIN</code><br><code>FDB_RECEITA_BIN_ITENS</code></td>
+        <td><span class="pill gap">Não mapeado</span></td>
+        <td>O legado registra leitura de código de barras de materiais durante execução da fase — não apenas digitação de lote. O Kronix EBR precisa definir se usará scan de barcode e como rastrear isso no registro de execução. Relevante para anti-erro de material.</td>
+      </tr>
+      <tr class="new-row">
+        <td><strong>Captura Fotográfica por Fase</strong> <span class="v2-badge">NOVO v2</span></td>
+        <td><code>FDB_RECEITA_CAPTURA</code><br><code>FDB_RECEITA_CAPTURA_FASE</code><br><code>FDB_RECEITA_FASE_PHOTOS</code><br><code>FDB_RECEITA_CAPTURA_IMAGEM</code></td>
+        <td><span class="pill gap">Não mapeado</span></td>
+        <td>O legado tem controle de captura fotográfica por fase com número máximo de fotos configurável no template. Fotos armazenadas com GUID e path por OP/instrução. Requisito relevante para evidência visual em GxP — confirmar com área de Qualidade se é exigência no RBBL.</td>
       </tr>
       <tr>
         <td><strong>Hold Time de Processo</strong></td>
-        <td><code>FDB_HT_PROCESSO</code><br><code>FDB_HT_PROCESSO_ORDEM</code><br><code>FDB_ORDEM_HOLDTIME_DATA</code></td>
+        <td><code>FDB_HT_PROCESSO</code><br><code>FDB_HT_PROCESSO_ORDEM</code><br><code>FDB_HT_PROCESSO_ORDEM_SEMI</code><br><code>FDB_HT_PROCESSO_VOLUMES</code><br><code>FDB_ORDEM_HOLDTIME_DATA</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Hold Time é o tempo máximo permitido entre fases farmacêuticas (ex: pesagem → granulação deve ocorrer em até X horas). É um requisito GxP crítico — se o hold time vence, o lote é reprovado. Não está no design atual do Kronix EBR. <strong>Confirmar com área de Qualidade se é exigência para Wave 1 RBBL.</strong></td>
+        <td><strong>Subsistema completo — 5+ tabelas.</strong> Hold Time é o tempo máximo permitido entre fases farmacêuticas. O legado tem thresholds múltiplos (50%, 100%, CK) calculados por fase, por semiacabado e por volume de container. Não está no design atual. <strong>Confirmar com Gustavo Fontes se é pré-requisito para fechamento do BPR no RBBL.</strong></td>
       </tr>
       <tr>
         <td><strong>Reconciliação de Lote</strong></td>
-        <td><code>FDB_ORDEM_RECON</code><br><code>FDB_ORDEM_RECON_COMPONENTE</code><br><code>FDB_ORDEM_RECON_HISTORICO</code></td>
+        <td><code>FDB_ORDEM_RECON</code><br><code>FDB_ORDEM_RECON_COMPONENTE</code><br><code>FDB_ORDEM_RECON_HISTORICO</code><br><code>FDB_ORDEM_PERDA</code><br><code>FDB_ORDEM_DEVOLUCAO</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Reconciliação é o processo GxP de fechar o balanço de massa: quantidade consumida + devolvida + perdida = quantidade recebida. Necessário para fechamento da OP e geração do BPR. O design atual do Kronix menciona BPR mas não inclui o módulo de reconciliação como entidade explícita.</td>
+        <td><strong>Subsistema completo — 5+ tabelas.</strong> Balanço de massa: consumido + devolvido + perdido = recebido. Integração SAP MM bidirecional com documentos gerados por movimento. Suporte a estorno de movimentos. Necessário para fechamento da OP e geração do BPR. Não está no design atual.</td>
       </tr>
       <tr>
         <td><strong>Integridade de Dados da OP</strong></td>
         <td><code>FDB_ORDEM_INTEGRIDADE_DADOS</code><br><code>FDB_ORDEM_INTEG_DADOS_ITENS</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Checklist de integridade de dados antes do fechamento da OP — verifica se todos os campos obrigatórios foram preenchidos, assinaturas realizadas, reconciliação fechada. É o "gate de qualidade" antes de gerar o dossiê final. Não está explícito no design atual.</td>
-      </tr>
-      <tr>
-        <td><strong>Checklist entre Operações</strong></td>
-        <td><code>FDB_ORDEM_CHECKLIST_CAB</code><br><code>FDB_ORDEM_CHECKLIST_ITENS</code><br><code>FDB_ORDEM_CHECKLIST_OUTROS</code></td>
-        <td><span class="pill future">Wave futura</span></td>
-        <td>O legado tem checklist por operação com aprovação de líder e GQ, detecção de divergências e campo de justificativa. É substancialmente mais rico que um "Forms Checklist" genérico. O <code>FDB_ORDEM_CHECKLIST_ITENS</code> tem 32 colunas incluindo multi-assinatura (LIDER, GQ, LOG, SIGN1, SIGN2).</td>
+        <td>Checklist de gate antes de fechar a OP — verifica campos obrigatórios, assinaturas e reconciliação. Flag de NOK por item com justificativa. É o "gate de qualidade" antes de gerar o dossiê final.</td>
       </tr>
       <tr>
         <td><strong>Filtros de Processo</strong></td>
         <td><code>FDB_ORDEM_INTEG_FILTRO</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Controle de integridade de filtros usados no processo farmacêutico: número de série, tipo, teste antes/depois do uso, parâmetros de fora-de-especificação. É um controle GxP regulatório específico para formas farmacêuticas estéreis. Confirmar com área de Qualidade se aplica a RBBL.</td>
+        <td>Controle GxP de filtros: número de série, tipo, teste antes/depois do uso, parâmetros fora de especificação. Específico para formas farmacêuticas estéreis. Confirmar se aplica ao RBBL.</td>
       </tr>
       <tr>
         <td><strong>Retrabalho de Lote</strong></td>
-        <td><code>FDB_ORDEM_PRODUCAO.CD_STATUS_RETRABALHO</code><br><code>FDB_ORDEM_PRODUCAO.DT_STATUS_RETRABALHO</code></td>
+        <td><code>FDB_ORDEM_PRODUCAO.CD_STATUS_RETRABALHO</code><br><code>FDB_ORDEM_PRODUCAO.DT_STATUS_RETRABALHO</code><br><code>FDB_FASE.CD_STATUS_RETRABALHO</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Status de retrabalho com data e usuário inline na OP. Reprocessamento de lote tem requisitos GxP específicos — nova OP, novo dossiê, rastreabilidade do lote original. Não está no design atual.</td>
+        <td>Status de retrabalho inline na OP e nas fases. O retrabalho tem campo de status, data e usuário tanto na OP quanto em cada fase. Reprocessamento de lote requer nova OP, novo dossiê, rastreabilidade do lote original.</td>
       </tr>
       <tr>
         <td><strong>Rastreabilidade de Transferência de Volume</strong></td>
-        <td><code>FDB_ORDEM_TRANSFERENCIA</code><br><code>FDB_ORDEM_TRANSFERENCIA_VOLUME</code><br><code>FDB_ORDEM_DEVOLUCAO</code></td>
+        <td><code>FDB_ORDEM_TRANSFERENCIA</code><br><code>FDB_ORDEM_TRANSFERENCIA_VOLUME</code></td>
         <td><span class="pill gap">Não mapeado</span></td>
-        <td>Transferência de volume entre ordens (semi-acabado para acabado) e devolução ao almoxarifado com envio SAP. Fluxos de logística interna farmacêutica com rastreabilidade de lote. Pode ser parte do escopo da NT (Necessidade de Transporte) integrado via SAP CPI.</td>
+        <td>Transferência de volume entre ordens (semi-acabado → acabado) com envio SAP. Pode ser parte do escopo da NT (Necessidade de Transporte) integrado via SAP CPI.</td>
+      </tr>
+      <tr>
+        <td><strong>Controle de Amostras (CA)</strong></td>
+        <td><code>CA_AMOSTRA</code> (36 cols)<br><code>CA_AMOSTRA_H</code><br><code>CA_AMOSTRA_CAIXA / PALETE / PRO</code></td>
+        <td><span class="pill future">Wave futura</span></td>
+        <td>O módulo CA é uma sub-plataforma completa com rastreabilidade de amostras por caixa, palete e PRO. 15 tabelas com histórico próprio. Muito mais complexo que "Controle de Amostra" como item de lista. Sugere integração com laboratório (LIMS).</td>
       </tr>
     </tbody>
   </table>
 
   <div class="insight red" style="margin-top: 20px;">
-    <strong>Gap prioritário para validação antes de fechar o escopo Wave 1:</strong> <strong>Hold Time</strong> e <strong>Reconciliação de Lote</strong> são processos GxP fundamentais que provavelmente existem no RBBL. Se forem exigidos para fechamento do BPR no Go Live dez/2026 e não estiverem no escopo, o risco de atraso é alto. Confirmar com Gustavo Fontes (Tech Lead EBR legado) se esses módulos são pré-requisito para geração do dossiê de lote no RBBL.
+    <strong>Gaps prioritários para validação antes de fechar o escopo Wave 1:</strong> <strong>Hold Time</strong> (subsistema de 5 tabelas com thresholds múltiplos) e <strong>Reconciliação de Lote</strong> (subsistema de 5 tabelas com integração SAP MM bidirecional) são processos GxP fundamentais que provavelmente existem no RBBL. Se forem exigidos para fechamento do BPR no Go Live dez/2026 e não estiverem no escopo, o risco de atraso é alto. <strong>Confirmar com Gustavo Fontes (Tech Lead EBR legado) como prioridade máxima.</strong>
+  </div>
+
+  <div class="insight orange" style="margin-top: 12px;">
+    <strong>Novos gaps identificados no double-check v2:</strong> Folha de Trabalho por Turno, Checklist de Liderança, Rastreabilidade Barcode durante Execução e Captura Fotográfica por Fase são subsistemas com impacto regulatório que não estavam no radar. Habilidade por operador foi confirmada como dado operacional rastreado no legado — não apenas um requisito futuro.
   </div>
 </section>
 
@@ -642,6 +1109,8 @@
         <span class="col-tag">FDB_DOSSIE_STATUS</span>
         <span class="col-tag">FDB_TURNO</span>
         <span class="col-tag">FDB_DISCIPLINA</span>
+        <span class="col-tag">FDB_FOLHA_TRABALHO_STATUS</span>
+        <span class="col-tag">FDB_ORDEM_RECON_STATUS</span>
       </div>
     </div>
     <div class="table-card">
@@ -653,28 +1122,36 @@
         <span class="col-tag">FDB_USUARIOS</span>
         <span class="col-tag">FDB_PERFIS + FDB_USUARIO_PERFIL</span>
         <span class="col-tag">FDB_RECEITA_CABECALHO</span>
+        <span class="col-tag">FDB_ABS_HABILIDADE (+ FDB_ABS_USUARIO_LINHA_HABILIDADE)</span>
       </div>
     </div>
     <div class="table-card">
       <h4>🔴 Alta complexidade</h4>
-      <p>Dados de processo — OP, execução, audit trail, dossiê. Volume alto, dependências cruzadas, requisitos regulatórios.</p>
+      <p>Dados de processo — OP, execução, audit trail, dossiê, reconciliação, hold time. Volume alto, dependências cruzadas, requisitos regulatórios, integração SAP bidirecional.</p>
       <div class="cols">
         <span class="col-tag">FDB_ORDEM_PRODUCAO (~histórico completo)</span>
         <span class="col-tag">FDB_FASE + FDB_FASE_HIERARQUIA</span>
         <span class="col-tag">FDB_AUDIT (campo a campo)</span>
         <span class="col-tag">FDB_DOSSIE + FDB_XML_DOSSIE*</span>
         <span class="col-tag">FDB_RECURSO_ATIVIDADE (logbook)</span>
+        <span class="col-tag">FDB_HT_PROCESSO* (5 tabelas)</span>
+        <span class="col-tag">FDB_ORDEM_RECON* (5 tabelas + docs SAP)</span>
         <span class="col-tag">CA_AMOSTRA* (15 tabelas)</span>
       </div>
     </div>
   </div>
 
+  <h3>Tabelas de histórico — não migrar, preservar em read-only</h3>
+  <div class="insight blue">
+    <strong>O legado mantém tabelas *_HISTO para todas as entidades principais.</strong> Estas tabelas foram identificadas explicitamente no GraphML: <code>FDB_ORDEM_PRODUCAO_HISTO</code> (28 cols), <code>FDB_FASE_HISTO</code> (31 cols — inclui campos de auditoria H_USUARIO, H_DATA, H_HORA), <code>FDB_ORDEM_OPERACAO_HISTO</code>, <code>FDB_ORDEM_BOM_HISTO</code>, <code>FDB_RECURSO_ATIVIDADE_LOG</code> (39 cols). Estas tabelas provavelmente alimentam relatórios regulatórios e devem ser preservadas em schema read-only, não descartadas.
+  </div>
+
   <h3>Pontos críticos para decisão de cutover</h3>
   <div class="insight orange">
-    <strong>Dois schemas de Audit Trail incompatíveis.</strong> Migrar o histórico de <code>FDB_AUDIT</code> (field-level) para o formato JSONB do Kronix requer ETL complexo. Alternativa mais pragmática: manter <code>FDB_AUDIT</code> legado em um schema <code>ebr_legacy_audit</code> somente leitura por 5 anos, com acesso via Kibana ou query direta. Isso evita conversão e garante imutabilidade do histórico regulatório sem custo de desenvolvimento.
+    <strong>Dois modelos de Audit Trail incompatíveis.</strong> Migrar o histórico de <code>FDB_AUDIT</code> (field-level) para o formato JSONB do Kronix requer ETL complexo. Alternativa mais pragmática: manter <code>FDB_AUDIT</code> legado em schema <code>ebr_legacy_audit</code> somente leitura por 5 anos, com acesso via Kibana ou query direta. Isso evita conversão e garante imutabilidade do histórico regulatório.
   </div>
   <div class="insight blue">
-    <strong>Dossiês XML históricos.</strong> O legado armazena o dossiê como XML em banco de dados (<code>FDB_XML_DOSSIE</code>). A estratégia mais simples para preservação regulatória é exportar esses XMLs para S3 Object Lock (WORM) durante o cutover — sem conversão, apenas arquivamento com retenção 5 anos. Acesso posterior via pre-signed URL para auditorias.
+    <strong>Dossiês XML históricos.</strong> O legado armazena o dossiê como XML em banco de dados (<code>FDB_XML_DOSSIE</code>). A estratégia mais simples é exportar esses XMLs para S3 Object Lock (WORM) durante o cutover — sem conversão, apenas arquivamento com retenção 5 anos. Acesso posterior via pre-signed URL para auditorias.
   </div>
   <div class="insight blue">
     <strong>Paralelo de operação (parallel run).</strong> Dado que o legado usa SAP MII como plataforma (com tags de equipamento, integrações de IDoc), o parallel run vai gerar dados duplicados em dois sistemas. Definir claramente: (1) qual sistema é source of truth durante o paralelo; (2) como reconciliar divergências; (3) critério de cut off por lote ou por data.
@@ -682,7 +1159,7 @@
 
   <h3>Pergunta de negócio para validar com Gustavo Fontes</h3>
   <div class="insight red">
-    <strong>A migração histórica de lotes está mesmo fora do escopo?</strong> O modelo legado tem <code>FDB_ORDEM_PRODUCAO_HISTO</code>, <code>FDB_FASE_HISTO</code>, <code>FDB_ORDEM_BOM_HISTO</code> — tabelas de histórico de todas as entidades principais. Regulatoriamente, se um inspetor da ANVISA pede o histórico de um lote de 2 anos atrás após o Go Live, onde ele vai buscar? Se a resposta for "no sistema legado que ainda estará rodando em modo read-only", isso precisa estar documentado no plano de validação (VSC). Se a resposta for "no Kronix EBR", a migração histórica <em>não pode ser out-of-scope</em>.
+    <strong>A migração histórica de lotes está mesmo fora do escopo?</strong> O modelo legado tem <code>FDB_ORDEM_PRODUCAO_HISTO</code>, <code>FDB_FASE_HISTO</code>, <code>FDB_ORDEM_BOM_HISTO</code> — tabelas de histórico de todas as entidades principais. Regulatoriamente, se um inspetor da ANVISA pede o histórico de um lote de 2 anos atrás após o Go Live, onde ele vai buscar? Se a resposta for "no sistema legado em modo read-only", isso precisa estar documentado no plano de validação (VSC). Se a resposta for "no Kronix EBR", a migração histórica <em>não pode ser out-of-scope</em>.
   </div>
 </section>
 
@@ -690,11 +1167,11 @@
 
 <footer>
   Análise gerada a partir de FDBs.graphml — Banco Legado EBR EMS · Kronix EBR · NC Tech<br>
+  v2.0 — Double-check completo executado sobre GraphML com 598 tabelas · fev/2026<br>
   ⚠ Hipóteses sinalizadas devem ser validadas com Gustavo Fontes, área de Qualidade e Consultoria GxP antes de qualquer decisão arquitetural.
 </footer>
 
 <script>
-  // Nav active state on scroll
   const sections = document.querySelectorAll('.section-nav');
   const navLinks = document.querySelectorAll('nav a');
   window.addEventListener('scroll', () => {
