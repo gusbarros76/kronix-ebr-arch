@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kronix EBR — Audit Trail · Arquitetura Técnica</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f6f9; --bg2:#fff; --bg3:#eef1f6;
+    --border:#d0d9e8; --border-strong:#a8b8d0;
+    --text:#1a2535; --text-mid:#3d5066; --text-dim:#6b8096;
+    --accent:#0055cc; --accent-light:#e8f0fd; --accent-border:#99bbee;
+    --green:#0a7c4e; --green-light:#e6f5ee; --green-border:#7ecfaa;
+    --red:#c0143c; --red-light:#fdeef2; --red-border:#f0a0b0;
+    --orange:#b85c00; --orange-light:#fef3e6; --orange-border:#f0b87a;
+    --purple:#5b21b6; --purple-light:#f0ebff; --purple-border:#b39ee0;
+    --gold:#856404; --gold-light:#fefbe6; --gold-border:#e0c84a;
+    --teal:#0e7490; --teal-light:#e6f6fa; --teal-border:#7dd3e8;
+    --slate:#334155; --slate-light:#f1f5f9; --slate-border:#94a3b8;
+    --r:8px; --rl:12px;
+    --sh:0 1px 3px rgba(0,0,0,.08); --shm:0 4px 12px rgba(0,0,0,.1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+  code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:rgba(0,0,0,.06);padding:2px 5px;border-radius:3px}
+  pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;background:#1e2a3a;color:#e2e8f0;padding:16px 18px;border-radius:8px;overflow-x:auto;margin:0}
+  pre .c{color:#6b8096}
+  pre .k{color:#7dd3e8}
+  pre .s{color:#7ecfaa}
+  pre .t{color:#f0b87a}
+  pre .v{color:#b39ee0}
+
+  header{background:var(--text);padding:16px 36px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shm);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+  .logo{background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .hdr-left{display:flex;align-items:center;gap:14px}
+  .hdr-title{font-size:17px;font-weight:600;color:#fff}
+  .hdr-sub{font-size:12px;color:#8899aa;font-family:'JetBrains Mono',monospace;margin-top:2px}
+  .hdr-tags{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .htag{padding:5px 11px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:500}
+  .htag-red{background:rgba(192,20,60,.25);color:#ffaacc;border:1px solid rgba(192,20,60,.4)}
+  .htag-blue{background:rgba(0,85,204,.25);color:#88bbff;border:1px solid rgba(0,85,204,.4)}
+  .htag-green{background:rgba(10,124,78,.25);color:#88ddbb;border:1px solid rgba(10,124,78,.4)}
+  .htag-warn{background:rgba(184,92,0,.25);color:#ffcc88;border:1px solid rgba(184,92,0,.4)}
+
+  .main{padding:28px 36px;max-width:1480px;margin:0 auto}
+
+  .sh{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:11px;border-bottom:2px solid var(--border);margin-top:32px}
+  .sh:first-child{margin-top:0}
+  .sn{background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+  .st{font-size:16px;font-weight:700;color:var(--text)}
+  .sd{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-left:auto}
+
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:500;white-space:nowrap}
+  .p-blue{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border)}
+  .p-green{background:var(--green-light);color:var(--green);border:1px solid var(--green-border)}
+  .p-red{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
+  .p-orange{background:var(--orange-light);color:var(--orange);border:1px solid var(--orange-border)}
+  .p-purple{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border)}
+  .p-gold{background:var(--gold-light);color:var(--gold);border:1px solid var(--gold-border)}
+  .p-teal{background:var(--teal-light);color:var(--teal);border:1px solid var(--teal-border)}
+  .p-slate{background:var(--slate-light);color:var(--slate);border:1px solid var(--slate-border)}
+
+  .notice{padding:10px 14px;border-radius:6px;font-size:13px;display:flex;gap:8px;align-items:flex-start;margin-top:10px;line-height:1.5}
+  .n-warn{background:var(--gold-light);border:1px solid var(--gold-border);color:var(--gold)}
+  .n-info{background:var(--accent-light);border:1px solid var(--accent-border);color:var(--accent)}
+  .n-ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green)}
+  .n-red{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
+  .ni{font-size:14px;flex-shrink:0;margin-top:1px}
+  .nt strong{font-weight:600}
+
+  .fade{opacity:0;transform:translateY(10px);animation:fu .4s ease forwards}
+  @keyframes fu{to{opacity:1;transform:none}}
+  .fade:nth-child(1){animation-delay:.05s}.fade:nth-child(2){animation-delay:.10s}
+  .fade:nth-child(3){animation-delay:.15s}.fade:nth-child(4){animation-delay:.20s}
+  .fade:nth-child(5){animation-delay:.25s}.fade:nth-child(6){animation-delay:.30s}
+  .fade:nth-child(7){animation-delay:.35s}.fade:nth-child(8){animation-delay:.40s}
+  .fade:nth-child(9){animation-delay:.45s}.fade:nth-child(10){animation-delay:.50s}
+
+  /* ── DECISION CARD ── */
+  .decision{background:var(--green-light);border:2px solid var(--green-border);border-radius:var(--rl);padding:16px 20px;display:flex;align-items:flex-start;gap:14px}
+  .decision-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+  .decision-title{font-size:14px;font-weight:700;color:var(--green);margin-bottom:4px}
+  .decision-body{font-size:13px;color:var(--text-mid);line-height:1.6}
+
+  /* ── FLOW DIAGRAM ── */
+  .flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:14px 0}
+  .flow-box{background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--text);text-align:center;min-width:120px}
+  .flow-box.red{background:var(--red-light);border-color:var(--red-border);color:var(--red)}
+  .flow-box.blue{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent)}
+  .flow-box.green{background:var(--green-light);border-color:var(--green-border);color:var(--green)}
+  .flow-box.orange{background:var(--orange-light);border-color:var(--orange-border);color:var(--orange)}
+  .flow-box.teal{background:var(--teal-light);border-color:var(--teal-border);color:var(--teal)}
+  .flow-box.purple{background:var(--purple-light);border-color:var(--purple-border);color:var(--purple)}
+  .flow-box.slate{background:var(--slate-light);border-color:var(--slate-border);color:var(--slate)}
+  .flow-sub{font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:400;margin-top:3px;opacity:.8}
+  .flow-arrow{font-size:18px;color:var(--border-strong);padding:0 6px;flex-shrink:0}
+  .flow-arrow.down{transform:rotate(90deg)}
+
+  /* ── COMPARISON TABLE ── */
+  .cmp{width:100%;border-collapse:collapse;font-size:13px}
+  .cmp th{background:var(--text);color:#fff;padding:10px 14px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600}
+  .cmp th:first-child{border-radius:8px 0 0 0}
+  .cmp th:last-child{border-radius:0 8px 0 0}
+  .cmp td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text-mid);line-height:1.5}
+  .cmp tr:last-child td{border-bottom:none}
+  .cmp tr:nth-child(even) td{background:var(--bg3)}
+  .cmp .win{color:var(--green);font-weight:600}
+  .cmp .lose{color:var(--red)}
+  .cmp .neu{color:var(--text-dim)}
+
+  /* ── SCHEMA BOX ── */
+  .schema-wrap{background:#1e2a3a;border-radius:var(--rl);overflow:hidden}
+  .schema-hd{background:#0f1825;padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b8096;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .schema-dot{width:8px;height:8px;border-radius:50%}
+
+  /* ── LAYER CARDS ── */
+  .layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .layer-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)}
+  .layer-hd{padding:12px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px}
+  .layer-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .layer-title{font-size:13px;font-weight:700;color:var(--text)}
+  .layer-sub{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .layer-body{padding:14px 16px}
+  .layer-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-mid);padding:6px 0;border-bottom:1px solid var(--bg3);line-height:1.5}
+  .layer-item:last-child{border-bottom:none}
+  .ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+  /* ── STORAGE TIERS ── */
+  .tiers{display:flex;flex-direction:column;gap:4px;margin:14px 0}
+  .tier{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:8px;border:1.5px solid transparent}
+  .tier-hot{background:#f0f4ff;border-color:var(--accent-border)}
+  .tier-cold{background:var(--orange-light);border-color:var(--orange-border)}
+  .tier-frozen{background:var(--slate-light);border-color:var(--slate-border)}
+  .tier-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;width:80px;flex-shrink:0}
+  .tier-name{font-size:13px;font-weight:700;color:var(--text);min-width:200px}
+  .tier-detail{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;flex:1}
+  .tier-cost{font-size:11px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:4px;font-weight:600}
+  .tier-arrow{font-size:20px;color:var(--border-strong);text-align:center;margin:2px 0}
+
+  /* ── TWO COL ── */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+  /* ── RULE CARD ── */
+  .rule{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh);margin-bottom:12px}
+  .rule-hd{padding:10px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .rule-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+  .rule-body{padding:12px 16px;font-size:13px;color:var(--text-mid);line-height:1.6}
+  .rule-body strong{color:var(--text)}
+
+  /* ── ACCESS CONTROL ── */
+  .ac-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .ac-box{border-radius:8px;padding:12px 14px;border:1.5px solid transparent}
+  .ac-title{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .ac-row{font-size:12px;color:var(--text-mid);padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06);font-family:'JetBrains Mono',monospace}
+  .ac-row:last-child{border-bottom:none}
+
+  /* ── FOOTNOTE ── */
+  .footnote{border-top:1px solid var(--border);padding-top:13px;margin-top:20px;font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;line-height:1.8}
+  .footnote-item{padding:3px 0;border-bottom:1px solid var(--border)}
+  .footnote-item:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="logo">🔒</div>
+    <div>
+      <div class="hdr-title">Kronix EBR — Audit Trail · Arquitetura Técnica</div>
+      <div class="hdr-sub">Fechamento de escopo · Times: Arquitetura · DevOps · Dev · v1.0 · mar/2026</div>
+    </div>
+  </div>
+  <div class="hdr-tags">
+    <span class="htag htag-red">GxP · ANVISA RDC 658/2022 · FDA 21 CFR Part 11</span>
+    <span class="htag htag-blue">.NET C# 10 · EF Core · PostgreSQL</span>
+    <span class="htag htag-green">INSERT-only · JSONB · S3 WORM</span>
+    <span class="htag htag-warn">Decisão fechada — iniciar dev</span>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- ══ 00 · DECISÃO FINAL ══ -->
+<div class="sh fade">
+  <span class="sn">00</span>
+  <span class="st">Decisão Final — O que foi escolhido e por quê</span>
+  <span class="sd">Resumo executivo · Leitura obrigatória antes de continuar</span>
+</div>
+
+<div class="fade">
+  <div class="three-col" style="margin-bottom:14px">
+
+    <div class="decision">
+      <div class="decision-icon">🔁</div>
+      <div>
+        <div class="decision-title">Trigger + Interceptor (híbrido)</div>
+        <div class="decision-body">
+          <strong>Trigger PostgreSQL</strong> — garante cobertura total. Qualquer escrita no banco é capturada, mesmo fora do ORM.<br><br>
+          <strong>EF Core Interceptor</strong> — enriquece o contexto. Adiciona o <code>actor_id</code> (quem fez), o nome do Command CQRS e metadados de negócio que o banco não tem acesso.
+        </div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-icon">📦</div>
+      <div>
+        <div class="decision-title">JSONB entity-level</div>
+        <div class="decision-body">
+          <strong>1 INSERT por transação</strong> — não importa quantos campos mudaram. O <code>before_state</code> e <code>after_state</code> capturam o estado completo da entidade como JSON estruturado.<br><br>
+          <strong>Por que não field-level:</strong> N INSERTs por transação + reconstrução de estado exige aggregation query — mais complexo para auditores e inspetores.
+        </div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-icon">🗄️</div>
+      <div>
+        <div class="decision-title">Armazenamento em camadas</div>
+        <div class="decision-body">
+          <strong>RDS PostgreSQL</strong> — 35 dias, quente, PITR disponível.<br><br>
+          <strong>S3 Glacier + Object Lock WORM</strong> — 5 anos, imutável por contrato de infraestrutura. Nem o admin AWS apaga. Custo ~20x menor que RDS por GB.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notice n-ok">
+    <div class="ni">✅</div>
+    <div class="nt"><strong>Premissa regulatória:</strong> ANVISA RDC 658/2022, FDA 21 CFR Part 11 e GMP Annex 11 exigem que registros eletrônicos sejam protegidos contra alteração e deleção, com rastreabilidade de quem, o quê, quando e de onde. Cada decisão acima foi tomada para satisfazer esse requisito por arquitetura — não por policy que pode ser esquecida.</div>
+  </div>
+</div>
+
+<!-- ══ 01 · FLUXO COMPLETO ══ -->
+<div class="sh fade">
+  <span class="sn">01</span>
+  <span class="st">Fluxo Completo — Do operador ao arquivo imutável</span>
+  <span class="sd">Visão end-to-end · Cada camada tem responsabilidade única</span>
+</div>
+
+<div class="fade">
+
+  <!-- FLUXO VISUAL -->
+  <div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);padding:20px 24px;box-shadow:var(--sh);margin-bottom:16px">
+
+    <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;font-weight:600">Caminho de uma operação — ex: operador assina um step</div>
+
+    <div style="display:flex;align-items:stretch;gap:0;overflow-x:auto">
+
+      <!-- 1 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:130px">
+        <div class="flow-box blue" style="width:100%">
+          <div>Operador</div>
+          <div class="flow-sub">Android Tablet</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Re-autentica<br>SSO/SAML</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 2 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:140px">
+        <div class="flow-box blue" style="width:100%">
+          <div>API Controller</div>
+          <div class="flow-sub">ASP.NET Core</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Extrai actor_id<br>do Bearer Token</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 3 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:150px">
+        <div class="flow-box purple" style="width:100%">
+          <div>SignStepCommand</div>
+          <div class="flow-sub">CQRS · Application Layer</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Valida regras GxP<br>Chama SaveChanges</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 4 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:160px">
+        <div class="flow-box orange" style="width:100%;border-width:2px">
+          <div>EF Core Interceptor</div>
+          <div class="flow-sub">SaveChangesInterceptor</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Captura before/after<br>Injeta actor_id + command</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 5 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:160px">
+        <div class="flow-box red" style="width:100%;border-width:2px">
+          <div>PostgreSQL Trigger</div>
+          <div class="flow-sub">AFTER INSERT/UPDATE/DELETE</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Camada de segurança<br>Captura bypasses do ORM</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 6 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:160px">
+        <div class="flow-box green" style="width:100%">
+          <div>ebr_audit.audit_events</div>
+          <div class="flow-sub">INSERT-only · REVOKE UPDATE/DELETE</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Registro imutável<br>JSONB before/after</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- 7 -->
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:130px">
+        <div class="flow-box teal" style="width:100%">
+          <div>Export Diário</div>
+          <div class="flow-sub">S3 Glacier WORM</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center">Retenção 5 anos<br>Object Lock</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:20px;flex-wrap:wrap">
+      <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--orange-light);border:1.5px solid var(--orange-border);border-radius:3px;display:inline-block"></span>Interceptor — contexto de negócio (actor, command)</div>
+      <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--red-light);border:1.5px solid var(--red-border);border-radius:3px;display:inline-block"></span>Trigger — cobertura total (safety net)</div>
+      <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--green-light);border:1.5px solid var(--green-border);border-radius:3px;display:inline-block"></span>Registro imutável — fonte da verdade regulatória</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ 02 · TRIGGER + INTERCEPTOR ══ -->
+<div class="sh fade">
+  <span class="sn">02</span>
+  <span class="st">Trigger + Interceptor — Por que os dois</span>
+  <span class="sd">Cada um resolve um problema diferente · Complementares, não redundantes</span>
+</div>
+
+<div class="fade">
+  <div class="two-col" style="margin-bottom:16px">
+
+    <!-- INTERCEPTOR -->
+    <div class="layer-card">
+      <div class="layer-hd" style="background:var(--orange-light);border-bottom-color:var(--orange-border)">
+        <div class="layer-icon" style="background:var(--orange-light)">🔌</div>
+        <div>
+          <div class="layer-title" style="color:var(--orange)">EF Core SaveChangesInterceptor</div>
+          <div class="layer-sub">Camada Application · .NET C# · Contexto de negócio</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div><strong>O que faz:</strong> intercepta toda chamada de <code>SaveChanges()</code> no EF Core antes de tocar o banco. Captura quais entidades mudaram, serializa before/after como JSONB, injeta actor_id do token SSO.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div><strong>Por que é necessário:</strong> o banco não sabe quem é o usuário SSO. O actor_id — informação mais crítica do audit GxP — só existe na camada de aplicação, no Bearer Token da requisição.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div><strong>O que também captura:</strong> nome do Command CQRS (<code>SignStepCommand</code>), contexto de negócio, correlation_id para rastreabilidade com Datadog.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div><strong>Limitação conhecida:</strong> só vê o que passa pelo <code>DbContext</code>. Scripts diretos no banco, migrations manuais e jobs que usam ADO.NET puro não são cobertos.</div></div>
+      </div>
+      <div style="padding:0 16px 14px">
+        <div class="notice n-info" style="margin-top:0">
+          <div class="ni">ℹ️</div>
+          <div class="nt"><strong>Boa prática:</strong> o interceptor deve ser registrado uma única vez no container DI como singleton. Nunca instanciar por requisição.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRIGGER -->
+    <div class="layer-card">
+      <div class="layer-hd" style="background:var(--red-light);border-bottom-color:var(--red-border)">
+        <div class="layer-icon" style="background:var(--red-light)">⚡</div>
+        <div>
+          <div class="layer-title" style="color:var(--red)">PostgreSQL Trigger</div>
+          <div class="layer-sub">Banco de dados · PL/pgSQL · Safety net total</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item"><div class="ldot" style="background:var(--red)"></div><div><strong>O que faz:</strong> dispara automaticamente no banco após qualquer <code>INSERT</code>, <code>UPDATE</code> ou <code>DELETE</code> nas tabelas de <code>ebr_core</code> — independente de quem ou o quê gerou a escrita.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--red)"></div><div><strong>Por que é necessário:</strong> garante que nenhuma escrita escapa do audit trail. Migration manual, script do DBA, job de background fora do ORM — tudo é capturado. É o safety net da arquitetura.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--red)"></div><div><strong>Como lida com o actor_id:</strong> lê da variável de sessão PostgreSQL (<code>current_setting('app.current_actor')</code>). A aplicação seta essa variável via <code>SET LOCAL</code> antes de qualquer write. Se não setar, grava <code>SYSTEM</code> — identificando operação fora do fluxo normal.</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--red)"></div><div><strong>Operações fora do ORM identificadas:</strong> actor_id = <code>SYSTEM</code> no registro é um alerta de investigação — algo escreveu no banco sem passar pela aplicação.</div></div>
+      </div>
+      <div style="padding:0 16px 14px">
+        <div class="notice n-warn" style="margin-top:0">
+          <div class="ni">⚠️</div>
+          <div class="nt"><strong>Regra de processo:</strong> qualquer acesso direto ao banco em produção requer aprovação formal da área de Qualidade. O trigger registra — o processo garante que não acontece sem controle.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COMO OS DOIS SE COMPLEMENTAM -->
+  <div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);padding:16px 20px;box-shadow:var(--sh)">
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Como os dois se complementam</div>
+    <table class="cmp" style="border-radius:8px;overflow:hidden">
+      <thead>
+        <tr><th>Cenário</th><th>Interceptor</th><th>Trigger</th><th>Resultado no audit_events</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Operador assina step via API</td><td class="win">✔ actor_id + command + before/after</td><td class="neu">Confirma a escrita</td><td class="win">Registro completo com contexto de negócio</td></tr>
+        <tr><td>Job background via EF Core</td><td class="win">✔ actor_id = job-service-account</td><td class="neu">Confirma a escrita</td><td class="win">Registro identificado como serviço</td></tr>
+        <tr><td>Migration via EF Migrations</td><td class="lose">✘ Não vê</td><td class="win">✔ Captura a escrita</td><td class="neu">Registro com actor_id = SYSTEM</td></tr>
+        <tr><td>Script manual DBA no banco</td><td class="lose">✘ Não vê</td><td class="win">✔ Captura a escrita</td><td class="neu">Registro com actor_id = SYSTEM → alerta</td></tr>
+        <tr><td>Serviço futuro via ADO.NET puro</td><td class="lose">✘ Não vê</td><td class="win">✔ Captura a escrita</td><td class="neu">Registro com actor_id = SYSTEM → investigar</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CÓDIGO TRIGGER -->
+  <div style="margin-top:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Implementação — PostgreSQL Trigger (PL/pgSQL)</div>
+    <div class="schema-wrap">
+      <div class="schema-hd">
+        <div class="schema-dot" style="background:#ef4444"></div>
+        <div class="schema-dot" style="background:#f59e0b"></div>
+        <div class="schema-dot" style="background:#22c55e"></div>
+        <span style="margin-left:8px">ebr_audit_trigger.sql</span>
+      </div>
+      <pre><span class="c">-- Função chamada pelo trigger em cada tabela do ebr_core</span>
+<span class="k">CREATE OR REPLACE FUNCTION</span> ebr_core.audit_trigger_fn()
+<span class="k">RETURNS TRIGGER AS</span> $$
+<span class="k">BEGIN</span>
+  <span class="k">INSERT INTO</span> ebr_audit.audit_events (
+    event_id, timestamp_utc, actor_id,
+    entity_type, entity_id, action,
+    before_state, after_state, source
+  ) <span class="k">VALUES</span> (
+    gen_random_uuid(),
+    now() AT TIME ZONE <span class="s">'UTC'</span>,
+    <span class="c">-- Lê actor_id da sessão. Se não setado, grava SYSTEM (alerta)</span>
+    COALESCE(current_setting(<span class="s">'app.current_actor'</span>, <span class="k">true</span>), <span class="s">'SYSTEM'</span>),
+    TG_TABLE_NAME,
+    COALESCE(NEW.id::text, OLD.id::text),
+    TG_OP,             <span class="c">-- INSERT | UPDATE | DELETE</span>
+    <span class="k">CASE</span> TG_OP <span class="k">WHEN</span> <span class="s">'DELETE'</span> <span class="k">THEN</span> to_jsonb(OLD) <span class="k">ELSE</span> to_jsonb(OLD) <span class="k">END</span>,
+    <span class="k">CASE</span> TG_OP <span class="k">WHEN</span> <span class="s">'DELETE'</span> <span class="k">THEN</span> <span class="k">NULL</span>  <span class="k">ELSE</span> to_jsonb(NEW) <span class="k">END</span>,
+    <span class="s">'TRIGGER'</span>          <span class="c">-- diferencia de registros vindos do Interceptor</span>
+  );
+  <span class="k">RETURN</span> COALESCE(NEW, OLD);
+<span class="k">END</span>;
+$$ <span class="k">LANGUAGE</span> plpgsql <span class="k">SECURITY DEFINER</span>;
+
+<span class="c">-- Aplicar em cada tabela crítica do ebr_core</span>
+<span class="k">CREATE TRIGGER</span> audit_batch_records
+  <span class="k">AFTER</span> INSERT <span class="k">OR</span> UPDATE <span class="k">OR</span> DELETE <span class="k">ON</span> ebr_core.batch_records
+  <span class="k">FOR EACH ROW EXECUTE FUNCTION</span> ebr_core.audit_trigger_fn();
+
+<span class="c">-- Repetir para: recipe_steps, executions, logbook_entries,</span>
+<span class="c">-- environmental_samples, approvals...</span></pre>
+    </div>
+  </div>
+
+  <!-- CÓDIGO INTERCEPTOR -->
+  <div style="margin-top:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Implementação — EF Core Interceptor (C#)</div>
+    <div class="schema-wrap">
+      <div class="schema-hd">
+        <div class="schema-dot" style="background:#ef4444"></div>
+        <div class="schema-dot" style="background:#f59e0b"></div>
+        <div class="schema-dot" style="background:#22c55e"></div>
+        <span style="margin-left:8px">AuditInterceptor.cs · Infrastructure/Audit/</span>
+      </div>
+      <pre><span class="k">public class</span> AuditInterceptor : SaveChangesInterceptor
+{
+    <span class="k">private readonly</span> IHttpContextAccessor _http;
+
+    <span class="k">public</span> AuditInterceptor(IHttpContextAccessor http) => _http = http;
+
+    <span class="k">public override async</span> ValueTask&lt;InterceptionResult&lt;<span class="k">int</span>&gt;&gt;
+        SavingChangesAsync(DbContextEventData data, ...)
+    {
+        <span class="k">var</span> actorId = _http.HttpContext?
+            .User.FindFirst(<span class="s">"sub"</span>)?.Value ?? <span class="s">"anonymous"</span>;
+
+        <span class="c">// Injeta na sessão PostgreSQL — o Trigger lê daqui se precisar</span>
+        <span class="k">await</span> data.Context.Database
+            .ExecuteSqlRawAsync(<span class="s">$"SET LOCAL app.current_actor = '{actorId}'"</span>);
+
+        <span class="k">var</span> entries = data.Context.ChangeTracker.Entries()
+            .Where(e => e.State is Added or Modified or Deleted);
+
+        <span class="k">foreach</span> (<span class="k">var</span> entry <span class="k">in</span> entries)
+        {
+            <span class="k">var</span> evt = <span class="k">new</span> AuditEvent {
+                EventId     = Guid.NewGuid(),
+                TimestampUtc = DateTime.UtcNow,
+                ActorId     = actorId,
+                EntityType  = entry.Entity.GetType().Name,
+                EntityId    = entry.Property(<span class="s">"Id"</span>).CurrentValue?.ToString(),
+                Action      = entry.State.ToString(),
+                BeforeState = entry.State == EntityState.Added
+                                ? <span class="k">null</span>
+                                : JsonSerializer.Serialize(entry.OriginalValues.ToObject()),
+                AfterState  = entry.State == EntityState.Deleted
+                                ? <span class="k">null</span>
+                                : JsonSerializer.Serialize(entry.CurrentValues.ToObject()),
+                Source      = <span class="s">"INTERCEPTOR"</span>  <span class="c">// diferencia do Trigger</span>
+            };
+            data.Context.Set&lt;AuditEvent&gt;().Add(evt);
+        }
+        <span class="k">return await base</span>.SavingChangesAsync(data, ...);
+    }
+}</pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ 03 · JSONB ══ -->
+<div class="sh fade">
+  <span class="sn">03</span>
+  <span class="st">JSONB — Por que entity-level e não field-level</span>
+  <span class="sd">Decisão fechada · 1 INSERT por transação · Estado completo em uma linha</span>
+</div>
+
+<div class="fade">
+
+  <div class="two-col" style="margin-bottom:16px">
+
+    <!-- FIELD LEVEL -->
+    <div style="background:var(--red-light);border:2px solid var(--red-border);border-radius:var(--rl);padding:16px 18px">
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        ✗ Field-level (legado SAP MII — FDB_AUDIT)
+        <span class="pill p-red" style="font-size:10px">Descartado</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px;line-height:1.6">Uma linha por campo alterado. Transação que muda 8 campos = 8 INSERTs separados.</div>
+      <div class="schema-wrap">
+        <div class="schema-hd"><span>FDB_AUDIT — 8 linhas para 1 transação</span></div>
+        <pre style="font-size:11px"><span class="c">-- Operador altera status + quantidade + responsável</span>
+<span class="c">-- Resultado: 3 linhas para 1 ação</span>
+TRAIL_ID | TABELA      | CAMPO      | VALOR_ANTES | VALOR_DEPOIS
+---------|-------------|------------|-------------|-------------
+  1001   | FDB_FASE    | CD_STATU   | 'EXEC'      | 'SIGN'
+  1002   | FDB_FASE    | QT_REAL    | '100'       | '98.5'
+  1003   | FDB_FASE    | CD_USUAR   | NULL        | 'user_x'
+
+<span class="c">-- Para reconstruir o estado: query de agregação complexa</span>
+<span class="k">SELECT</span> CAMPO, VALOR_ANTES, VALOR_DEPOIS
+<span class="k">FROM</span> FDB_AUDIT
+<span class="k">WHERE</span> ROW_ID = <span class="s">'123'</span> <span class="k">AND</span> DATAHORA = <span class="s">'...'</span>
+<span class="k">ORDER BY</span> TRAIL_ID; <span class="c">-- auditor monta na cabeça</span></pre>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--red)">
+        <strong>Problemas:</strong> write amplification · reconstrução de estado exige aggregation · configuração manual de quais campos auditar (<code>FDB_AUDIT_CONDICOES</code>) — risco de campo esquecido
+      </div>
+    </div>
+
+    <!-- ENTITY LEVEL -->
+    <div style="background:var(--green-light);border:2px solid var(--green-border);border-radius:var(--rl);padding:16px 18px">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        ✓ Entity-level JSONB (Kronix EBR)
+        <span class="pill p-green" style="font-size:10px">Escolhido</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px;line-height:1.6">Uma linha por transação — independente de quantos campos mudaram. Estado completo antes e depois.</div>
+      <div class="schema-wrap">
+        <div class="schema-hd"><span>audit_events — 1 linha para a mesma transação</span></div>
+        <pre style="font-size:11px"><span class="c">-- Mesma operação: 1 único INSERT</span>
+event_id  | actor_id | entity_type | action | before_state          | after_state
+----------|----------|-------------|--------|-----------------------|--------------------
+ uuid-x   | user_x   | RecipeStep  | UPDATE | {"status":"EXEC",     | {"status":"SIGN",
+          |          |             |        |  "qty":100,           |  "qty":98.5,
+          |          |             |        |  "signed_by":null}    |  "signed_by":"x"}
+
+<span class="c">-- Para reconstruir o estado: leitura direta</span>
+<span class="k">SELECT</span> before_state, after_state
+<span class="k">FROM</span> ebr_audit.audit_events
+<span class="k">WHERE</span> entity_id = <span class="s">'step-uuid'</span>
+<span class="k">ORDER BY</span> timestamp_utc; <span class="c">-- auditor lê direto</span></pre>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--green)">
+        <strong>Benefícios:</strong> 1 INSERT por transação · snapshot completo legível · cobertura total sem configuração · PostgreSQL suporta nativamente · indexável com GIN
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COMPARAÇÃO TÉCNICA -->
+  <div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)">
+    <div style="padding:10px 16px;background:var(--bg3);border-bottom:1.5px solid var(--border);font-size:11px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px">Comparação técnica detalhada</div>
+    <table class="cmp">
+      <thead>
+        <tr><th>Critério</th><th>Field-level (legado)</th><th>Entity-level JSONB</th><th>Relevância para EBR</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>INSERTs por transação</strong></td><td class="lose">N (um por campo)</td><td class="win">1</td><td>Menor contention no WAL do PostgreSQL</td></tr>
+        <tr><td><strong>Tamanho por registro</strong></td><td class="win">Pequeno (4 colunas VARCHAR)</td><td class="neu">Maior (dois JSONBs)</td><td>Irrelevante no volume do EBR</td></tr>
+        <tr><td><strong>Reconstrução de estado</strong></td><td class="lose">Aggregation de N linhas</td><td class="win">Leitura direta de 1 linha</td><td>Crítico para inspeção regulatória</td></tr>
+        <tr><td><strong>Risco de campo não auditado</strong></td><td class="lose">Real (depende de FDB_AUDIT_CONDICOES)</td><td class="win">Zero (interceptor pega tudo)</td><td>🔴 Crítico — campo esquecido = não-conformidade</td></tr>
+        <tr><td><strong>Indexação para queries</strong></td><td class="neu">B-tree em colunas fixas</td><td class="win">GIN index no JSONB</td><td>Queries por campo específico do estado</td></tr>
+        <tr><td><strong>Suporte nativo PostgreSQL</strong></td><td class="win">Sim (VARCHAR)</td><td class="win">Sim (tipo nativo JSONB)</td><td>Sem extensão necessária</td></tr>
+        <tr><td><strong>Suporte no EF Core (Npgsql)</strong></td><td class="win">Sim</td><td class="win">Sim — mapeamento automático</td><td>Zero configuração extra</td></tr>
+        <tr><td><strong>Legibilidade para auditor</strong></td><td class="lose">Baixa — N linhas para montar</td><td class="win">Alta — snapshot completo em 1 linha</td><td>Direto na inspeção ANVISA/FDA</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SCHEMA DA TABELA -->
+  <div style="margin-top:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Schema — audit_events (ebr_audit)</div>
+    <div class="schema-wrap">
+      <div class="schema-hd">
+        <div class="schema-dot" style="background:#ef4444"></div>
+        <div class="schema-dot" style="background:#f59e0b"></div>
+        <div class="schema-dot" style="background:#22c55e"></div>
+        <span style="margin-left:8px">schema: ebr_audit · tabela: audit_events · permissão: INSERT only</span>
+      </div>
+      <pre><span class="k">CREATE TABLE</span> ebr_audit.audit_events (
+  event_id      UUID          <span class="k">DEFAULT</span> gen_random_uuid() <span class="k">PRIMARY KEY</span>,
+  timestamp_utc TIMESTAMPTZ   <span class="k">NOT NULL DEFAULT</span> now() AT TIME ZONE <span class="s">'UTC'</span>,
+  actor_id      VARCHAR(255)  <span class="k">NOT NULL</span>,   <span class="c">-- user_id do SSO ou SYSTEM</span>
+  entity_type   VARCHAR(100)  <span class="k">NOT NULL</span>,   <span class="c">-- BatchRecord, RecipeStep, etc.</span>
+  entity_id     VARCHAR(255)  <span class="k">NOT NULL</span>,   <span class="c">-- UUID da entidade afetada</span>
+  action        VARCHAR(50)   <span class="k">NOT NULL</span>,   <span class="c">-- INSERT | UPDATE | DELETE | SIGN | APPROVE</span>
+  before_state  JSONB,                     <span class="c">-- NULL em criações</span>
+  after_state   JSONB,                     <span class="c">-- NULL em deleções</span>
+  reason        TEXT,                      <span class="c">-- motivo obrigatório para ações GxP críticas</span>
+  source        VARCHAR(20)   <span class="k">NOT NULL</span>    <span class="c">-- INTERCEPTOR | TRIGGER</span>
+    <span class="k">CHECK</span> (source <span class="k">IN</span> (<span class="s">'INTERCEPTOR'</span>, <span class="s">'TRIGGER'</span>))
+);
+
+<span class="c">-- Índices principais</span>
+<span class="k">CREATE INDEX</span> idx_audit_entity     <span class="k">ON</span> ebr_audit.audit_events (entity_id, timestamp_utc);
+<span class="k">CREATE INDEX</span> idx_audit_actor       <span class="k">ON</span> ebr_audit.audit_events (actor_id, timestamp_utc);
+<span class="k">CREATE INDEX</span> idx_audit_entity_type <span class="k">ON</span> ebr_audit.audit_events (entity_type, timestamp_utc);
+<span class="k">CREATE INDEX</span> idx_audit_after_gin   <span class="k">ON</span> ebr_audit.audit_events <span class="k">USING GIN</span> (after_state);
+
+<span class="c">-- Imutabilidade: remove permissão de UPDATE e DELETE da role da aplicação</span>
+<span class="k">REVOKE</span> UPDATE, DELETE <span class="k">ON</span> ebr_audit.audit_events <span class="k">FROM</span> ebr_app_role;
+<span class="k">GRANT</span> INSERT, SELECT                <span class="k">ON</span> ebr_audit.audit_events <span class="k">TO</span> ebr_app_role;</pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ 04 · ARMAZENAMENTO ══ -->
+<div class="sh fade">
+  <span class="sn">04</span>
+  <span class="st">Armazenamento em Camadas — Hot · Warm · Cold</span>
+  <span class="sd">Custo x Acesso x Compliance · Cada tier tem responsabilidade única</span>
+</div>
+
+<div class="fade">
+
+  <div class="tiers">
+    <div class="tier tier-hot">
+      <div class="tier-label" style="color:var(--accent)">🔥 HOT</div>
+      <div class="tier-name">RDS PostgreSQL · schema ebr_audit</div>
+      <div class="tier-detail">Retenção 35 dias · PITR disponível · Multi-AZ · Backup automático diário</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="pill p-blue">Acesso operacional imediato</span>
+        <span class="pill p-blue">PITR — restauração por segundo</span>
+        <span class="pill p-blue">Queries diretas via API read-only</span>
+      </div>
+    </div>
+    <div class="tier-arrow">↓ Export diário automático (Lambda ou pg_dump agendado)</div>
+    <div class="tier tier-cold">
+      <div class="tier-label" style="color:var(--orange)">❄️ COLD</div>
+      <div class="tier-name">S3 Glacier + Object Lock WORM</div>
+      <div class="tier-detail">Retenção 5 anos · Imutável — REVOKE de deleção no nível AWS · Custo ~20x menor que RDS/GB · SSE-KMS</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="pill p-orange">Object Lock — nem root AWS apaga</span>
+        <span class="pill p-orange">WORM — Write Once Read Many</span>
+        <span class="pill p-orange">Criptografia SSE-KMS · chave dedicada EBR</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice n-ok" style="margin-top:14px">
+    <div class="ni">✅</div>
+    <div class="nt"><strong>Por que 35 dias no RDS e não mais?</strong> RDS Multi-AZ é o armazenamento mais caro da stack — ~$0.115/GB/mês (gp3). S3 Glacier custa ~$0.004/GB/mês. Manter 5 anos no RDS seria 28x mais caro sem benefício operacional. Dados de audit com mais de 35 dias raramente são consultados de forma urgente. Quando necessários (inspeção), a latência de recuperação do S3 Glacier é aceitável.</div>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+
+    <div class="rule">
+      <div class="rule-hd" style="background:var(--accent-light);border-bottom-color:var(--accent-border)">
+        <div class="rule-title" style="color:var(--accent)">🔍 Por que PITR no RDS?</div>
+        <span class="pill p-blue" style="font-size:10px">DevOps</span>
+      </div>
+      <div class="rule-body">
+        PITR (Point-in-Time Recovery) permite restaurar o banco para <strong>qualquer segundo</strong> dentro dos 35 dias — não apenas para o backup diário das 2h. Em ambiente GxP, se houver um incidente técnico que corrompa dados, você precisa demonstrar que os registros de audit anteriores ao incidente estão íntegros. Um backup diário deixa uma janela de até 24h sem cobertura. PITR fecha essa janela.
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd" style="background:var(--orange-light);border-bottom-color:var(--orange-border)">
+        <div class="rule-title" style="color:var(--orange)">🔒 Por que Object Lock no S3?</div>
+        <span class="pill p-orange" style="font-size:10px">DevOps · Qualidade</span>
+      </div>
+      <div class="rule-body">
+        Object Lock no modo <strong>Compliance</strong> significa que o objeto não pode ser deletado ou sobrescrito por nenhuma entidade — nem o root account AWS, nem via API, nem por ordem judicial antes do período expirar. Isso transforma "prometemos que não alteramos" em uma garantia técnica demonstrável para o inspetor. FDA 21 CFR Part 11 §11.10(e) exige proteção contra alteração — Object Lock WORM é a implementação mais direta em cloud.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══ 05 · CONTROLE DE ACESSO ══ -->
+<div class="sh fade">
+  <span class="sn">05</span>
+  <span class="st">Controle de Acesso — Quem pode fazer o quê</span>
+  <span class="sd">Imutabilidade por banco · Não por policy · Princípio do menor privilégio</span>
+</div>
+
+<div class="fade">
+
+  <div class="ac-grid">
+
+    <div class="ac-box" style="background:var(--accent-light);border-color:var(--accent-border)">
+      <div class="ac-title" style="color:var(--accent)">🔵 ebr_app_role <span class="pill p-blue" style="font-size:10px">Aplicação</span></div>
+      <div class="ac-row">ebr_core — SELECT / INSERT / UPDATE / DELETE</div>
+      <div class="ac-row">ebr_audit.audit_events — INSERT / SELECT</div>
+      <div class="ac-row" style="color:var(--red)">✗ UPDATE em audit_events — REVOKED</div>
+      <div class="ac-row" style="color:var(--red)">✗ DELETE em audit_events — REVOKED</div>
+    </div>
+
+    <div class="ac-box" style="background:var(--gold-light);border-color:var(--gold-border)">
+      <div class="ac-title" style="color:var(--gold)">🟡 ebr_readonly_role <span class="pill p-gold" style="font-size:10px">Qualidade / Auditoria</span></div>
+      <div class="ac-row">ebr_audit.audit_events — SELECT only</div>
+      <div class="ac-row">ebr_core — SELECT only (views controladas)</div>
+      <div class="ac-row" style="color:var(--red)">✗ Sem acesso a INSERT / UPDATE / DELETE</div>
+      <div class="ac-row" style="color:var(--red)">✗ Sem acesso a tabelas de sistema</div>
+    </div>
+
+    <div class="ac-box" style="background:var(--red-light);border-color:var(--red-border)">
+      <div class="ac-title" style="color:var(--red)">🔴 ebr_dba_role <span class="pill p-red" style="font-size:10px">DBA · Processo controlado</span></div>
+      <div class="ac-row">ebr_core — acesso completo (migrations)</div>
+      <div class="ac-row" style="color:var(--red)">✗ ebr_audit — SELECT only via role separada</div>
+      <div class="ac-row" style="color:var(--red)">✗ Acesso direto ao ebr_audit bloqueado</div>
+      <div class="ac-row" style="color:var(--gold)">⚠ Qualquer acesso requer aprovação de Qualidade</div>
+    </div>
+
+  </div>
+
+  <div class="notice n-red" style="margin-top:14px">
+    <div class="ni">🔒</div>
+    <div class="nt"><strong>Regra não negociável:</strong> a role da aplicação (<code>ebr_app_role</code>) tem <code>REVOKE UPDATE, DELETE</code> na tabela <code>audit_events</code> em nível de banco. Isso significa que mesmo que um desenvolvedor escreva código com <code>UPDATE</code> na tabela de audit, o PostgreSQL rejeita a operação. A imutabilidade é garantida pelo banco — não por code review.</div>
+  </div>
+
+</div>
+
+<!-- ══ 06 · BOAS PRÁTICAS ══ -->
+<div class="sh fade">
+  <span class="sn">06</span>
+  <span class="st">Boas Práticas Aplicadas — Referências de mercado</span>
+  <span class="sd">O que cada decisão segue · Para o time de Arquitetura e DevOps</span>
+</div>
+
+<div class="fade">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">📐 Separation of Concerns no Audit</div>
+        <span class="pill p-slate" style="font-size:10px">Arquitetura</span>
+      </div>
+      <div class="rule-body">
+        Schema <code>ebr_audit</code> separado do <code>ebr_core</code> na mesma instância RDS. Write de audit não concorre com write operacional no mesmo tablespace. Buffer pool independente. WAL independente. Padrão adotado em sistemas regulados (SAP S/4, Veeva Vault, Oracle EBS).
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">🔐 Principle of Least Privilege</div>
+        <span class="pill p-slate" style="font-size:10px">DevOps · Segurança</span>
+      </div>
+      <div class="rule-body">
+        Cada role tem exatamente as permissões que precisa — nem mais. A aplicação não pode apagar audit. A equipe de qualidade não pode alterar dados operacionais. O DBA não acessa audit trail diretamente. Padrão NIST 800-53 AC-6.
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">📦 Immutable Audit Log Pattern</div>
+        <span class="pill p-slate" style="font-size:10px">Arquitetura · Qualidade</span>
+      </div>
+      <div class="rule-body">
+        Registros de audit são append-only por contrato de banco (REVOKE) e por contrato de infraestrutura (S3 Object Lock). Padrão recomendado por OWASP para audit trails em sistemas críticos. Equivalente ao event sourcing para dados de compliance.
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">🏗️ Defense in Depth</div>
+        <span class="pill p-slate" style="font-size:10px">Arquitetura</span>
+      </div>
+      <div class="rule-body">
+        Interceptor + Trigger são duas camadas independentes. Se uma falha ou for bypassada, a outra ainda captura. Não é redundância — é defense in depth. Padrão de segurança em sistemas onde a cobertura do audit é requisito regulatório não negociável.
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">💾 Tiered Storage (Hot/Cold)</div>
+        <span class="pill p-slate" style="font-size:10px">DevOps · FinOps</span>
+      </div>
+      <div class="rule-body">
+        Dados quentes (35 dias) em RDS para acesso operacional. Dados frios (5 anos) em S3 Glacier para compliance. Padrão AWS Well-Architected Framework — Cost Optimization Pillar. Redução estimada de 80-90% no custo de armazenamento de longo prazo vs. manter tudo em RDS.
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-hd">
+        <div class="rule-title">🔍 Observability no Audit Trail</div>
+        <span class="pill p-slate" style="font-size:10px">DevOps</span>
+      </div>
+      <div class="rule-body">
+        Alerta Datadog configurado para falha na escrita do <code>audit_events</code> — zero tolerância. Campo <code>source</code> (INTERCEPTOR vs TRIGGER) permite detectar bypasses do ORM em produção. Dashboard Grafana para área de Qualidade — volume de eventos por módulo e por site sem acesso à API técnica.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notice n-warn" style="margin-top:14px">
+    <div class="ni">⚠️</div>
+    <div class="nt"><strong>Validação pendente — Consultoria Especializada em Compliance GxP (*):</strong> a abordagem de dois schemas na mesma instância PostgreSQL (<code>ebr_core</code> + <code>ebr_audit</code>) requer validação formal com consultoria especializada antes de ser considerada decisão final para fins regulatórios. Esta arquitetura representa a direção técnica proposta — não é declaração de conformidade com ANVISA RDC 658/2022, GMP Annex 11 ou FDA 21 CFR Part 11.</div>
+  </div>
+
+</div>
+
+<!-- ══ 07 · CHECKLIST DEV ══ -->
+<div class="sh fade">
+  <span class="sn">07</span>
+  <span class="st">Checklist de Implementação — Para o time de Dev</span>
+  <span class="sd">O que precisa estar pronto antes do Go Live · Nada é opcional</span>
+</div>
+
+<div class="fade">
+  <div class="three-col">
+
+    <div class="layer-card">
+      <div class="layer-hd" style="background:var(--accent-light);border-bottom-color:var(--accent-border)">
+        <div class="layer-icon" style="background:var(--accent-light)">🏗️</div>
+        <div>
+          <div class="layer-title" style="color:var(--accent)">Infraestrutura (DevOps)</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>Schema <code>ebr_audit</code> criado e isolado no RDS</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>Roles criadas: <code>ebr_app_role</code>, <code>ebr_readonly_role</code>, <code>ebr_dba_role</code> com permissões corretas</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div><code>REVOKE UPDATE, DELETE</code> aplicado em <code>audit_events</code></div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>S3 Glacier criado com Object Lock modo Compliance · retenção 5 anos</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>Export diário agendado (Lambda ou cron job) RDS → S3</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>Alerta Datadog configurado para falha de escrita no <code>audit_events</code></div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--accent)"></div><div>PITR habilitado no RDS · janela 35 dias</div></div>
+      </div>
+    </div>
+
+    <div class="layer-card">
+      <div class="layer-hd" style="background:var(--orange-light);border-bottom-color:var(--orange-border)">
+        <div class="layer-icon" style="background:var(--orange-light)">⚙️</div>
+        <div>
+          <div class="layer-title" style="color:var(--orange)">Banco de Dados (DBA)</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Tabela <code>audit_events</code> criada com schema definido neste documento</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Trigger <code>audit_trigger_fn()</code> implementado e testado</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Trigger aplicado em todas as tabelas críticas do <code>ebr_core</code></div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Índices criados: entity_id, actor_id, entity_type, GIN no after_state</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Teste de tentativa de UPDATE/DELETE em <code>audit_events</code> deve retornar erro de permissão</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--orange)"></div><div>Validar que <code>actor_id = SYSTEM</code> aparece quando escrita ocorre fora do ORM</div></div>
+      </div>
+    </div>
+
+    <div class="layer-card">
+      <div class="layer-hd" style="background:var(--purple-light);border-bottom-color:var(--purple-border)">
+        <div class="layer-icon" style="background:var(--purple-light)">💻</div>
+        <div>
+          <div class="layer-title" style="color:var(--purple)">Aplicação (Dev)</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div><code>AuditInterceptor</code> implementado e registrado como singleton no DI</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div><code>SET LOCAL app.current_actor</code> executado antes de cada <code>SaveChanges()</code></div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div>Campo <code>source</code> populado como <code>INTERCEPTOR</code> em todos os registros gerados pelo ORM</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div>API read-only de audit implementada — <code>GET /audit/events?entity_id=&amp;from=&amp;to=</code></div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div>Teste unitário: garantir que <code>AuditInterceptor</code> não dispara em queries (SELECT)</div></div>
+        <div class="layer-item"><div class="ldot" style="background:var(--purple)"></div><div>Teste de integração: operação + verificação do registro gerado no <code>audit_events</code></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTNOTE -->
+<div class="footnote fade">
+  <div class="footnote-item"><strong style="color:var(--text-mid)">(*) Validação pendente — Consultoria Especializada em Compliance GxP:</strong> decisões sinalizadas impactam requisitos regulatórios (ANVISA RDC 658/2022 · FDA 21 CFR Part 11 · GMP Annex 11) e devem ser validadas por consultoria especializada antes de serem consideradas decisão final.</div>
+  <div class="footnote-item"><strong style="color:var(--text-mid)">Referência de design:</strong> este documento é derivado do Kronix EBR — Desenho Técnico v6.1. Em caso de conflito, o Desenho Técnico é a fonte de verdade.</div>
+  <div class="footnote-item"><strong style="color:var(--text-mid)">ADR-004:</strong> a decisão formal sobre Audit Trail (schema, interceptor, storage) será registrada na ADR-004 — Audit Trail Service, derivada deste artefato.</div>
+  <div class="footnote-item"><strong style="color:var(--text-mid)">LOCAL_ID:</strong> o legado SAP MII rastreia o terminal de origem (LOCAL_ID) em todas as tabelas e no audit trail. Validar com área de Qualidade se capturar IP/device-id da requisição é exigência regulatória para o Kronix EBR — campo <code>device_id</code> pode ser adicionado ao schema sem breaking change.</div>
+</div>
+
+</div>
+</body>
+</html>
